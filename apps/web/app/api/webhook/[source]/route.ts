@@ -84,7 +84,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
       if (installation && installation.userId) {
         // We found a linked installation!
-        const user = installation.userId as any; // populated
+        const user = installation.userId as unknown as {
+          email: string;
+          telegramChatId?: string;
+          telegramBotToken?: string;
+        };
         if (user.telegramChatId) {
           chatId = user.telegramChatId;
         }
@@ -98,6 +102,25 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         console.warn(
           `No installation found for ID ${installationId}, using default config if available.`,
         );
+      }
+    }
+
+    // Handle generic SaaS Webhooks (e.g. Render) via ?userId=...
+    const url = new URL(request.url);
+    const userId = url.searchParams.get("userId");
+
+    if (userId && !installationId) {
+      try {
+        const user = await User.findById(userId);
+        if (user) {
+          if (user.telegramChatId) chatId = user.telegramChatId;
+          if (user.telegramBotToken) botToken = user.telegramBotToken;
+          console.log(
+            `Routing webhook ${source} to User ${user.email} (via userId param)`,
+          );
+        }
+      } catch (e) {
+        console.error("Invalid userId in webhook params", e);
       }
     }
 
@@ -131,6 +154,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleInstallationEvent(payload: any, eventType: string) {
   const installationId = payload.installation.id;
   const action = payload.action;

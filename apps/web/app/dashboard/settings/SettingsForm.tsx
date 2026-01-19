@@ -98,6 +98,49 @@ export default function SettingsForm({
         </div>
       </div>
 
+      <div className="pt-6 border-t border-gray-100">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Render Integration (Email)
+        </h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Receive Render deployment notifications by forwarding emails to this
+          webhook.
+        </p>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Your Render Webhook URL
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              readOnly
+              value={`${
+                typeof window !== "undefined"
+                  ? window.location.origin
+                  : process.env.NEXT_PUBLIC_BASE_URL
+              }/api/webhook/render?userId=${userId}`}
+              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 font-mono text-sm focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const url = `${window.location.origin}/api/webhook/render?userId=${userId}`;
+                navigator.clipboard.writeText(url);
+                setMessage("Copied to clipboard!");
+                setTimeout(() => setMessage(""), 2000);
+              }}
+              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              Copy
+            </button>
+          </div>
+          <p className="mt-2 text-xs text-gray-500">
+            Use this URL in your Google Apps Script to forward Render emails.
+          </p>
+        </div>
+      </div>
+
       <div className="flex items-center gap-4">
         <button
           type="submit"

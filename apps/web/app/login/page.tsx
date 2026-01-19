@@ -41,7 +41,7 @@ function LoginForm() {
       if (!res.ok) throw new Error("Failed to send magic link");
 
       setMode("otp-verify");
-    } catch (_err) {
+    } catch {
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -65,7 +65,7 @@ function LoginForm() {
 
       // Success - Redirect
       router.push(returnTo || "/dashboard");
-    } catch (_err) {
+    } catch {
       setError("Invalid code. Please try again.");
     } finally {
       setIsLoading(false);

@@ -5,7 +5,9 @@
  * 1. Go to https://script.google.com/
  * 2. Create a new project
  * 3. Paste this code
- * 4. Update WEBHOOK_URL with your deployed bot URL
+ * 4. Update WEBHOOK_URL with your deployed bot URL.
+ *    IMPORTANT: You must include your userId param from the dashboard!
+ *    Example: https://your-domain.vercel.app/api/webhook/render?userId=65a...
  * 5. Set up a trigger:
  *    - Click the clock icon (Triggers)
  *    - Add Trigger
@@ -15,7 +17,8 @@
  *    - Interval: Every minute
  */
 
-const WEBHOOK_URL = "https://your-domain.vercel.app/api/webhook/render-mail";
+const WEBHOOK_URL =
+  "https://your-domain.vercel.app/api/webhook/render?userId=YOUR_USER_ID";
 
 function processRenderEmails() {
   const labelName = "Render-Processed";
