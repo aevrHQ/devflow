@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
-import { sendMessage } from "@/lib/webhook/telegram";
+import { sendPlainMessage } from "@/lib/webhook/telegram";
 
 // This route receives webhooks FROM Telegram
 // You need to set your telegram bot webhook to point here:
@@ -35,27 +35,24 @@ export async function POST(request: NextRequest) {
               user.telegramChatId = chat.id.toString();
               await user.save();
 
-              await sendMessage(
+              await sendPlainMessage(
                 "✅ Successfully connected your Telegram account to Pinga! You will now receive notifications here.",
-                {},
                 chat.id.toString(),
               );
               console.log(`Linked Telegram Chat ${chat.id} to User ${userId}`);
             } else {
-              await sendMessage(
+              await sendPlainMessage(
                 "❌ Could not find a user account to link. Please try again from the dashboard.",
-                {},
                 chat.id.toString(),
               );
             }
           } catch (err) {
             console.error("Error linking user:", err);
-            await sendMessage("❌ Invalid link code.", {}, chat.id.toString());
+            await sendPlainMessage("❌ Invalid link code.", chat.id.toString());
           }
         } else {
-          await sendMessage(
+          await sendPlainMessage(
             "👋 Hello! To connect your account, please use the link provided in your Pinga Dashboard.",
-            {},
             chat.id.toString(),
           );
         }
