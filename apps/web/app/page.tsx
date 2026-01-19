@@ -5,13 +5,10 @@ import { motion } from "motion/react";
 import {
   ArrowRight,
   Github,
-  Bell,
-  Shield,
-  Zap,
   CheckCircle2,
-  Terminal,
   Server,
   MessageCircle,
+  Lock,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -249,7 +246,7 @@ function Step({
 function SecurityItem({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+      <div className="shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600">
         <CheckCircle2 className="w-4 h-4" />
       </div>
       <span className="text-gray-600 font-medium">{text}</span>
