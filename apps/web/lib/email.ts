@@ -85,17 +85,23 @@ export function generateEmailHtml(
 /**
  * Send Magic Link Email
  */
-export async function sendMagicLink(email: string, link: string) {
+export async function sendMagicLink(email: string, link: string, otp?: string) {
+  const content = `
+    <p>Click the button below to sign in. This link expires in 15 minutes.</p>
+    ${otp ? `<div style="text-align: center; margin: 24px 0; background-color: #f1f5f9; padding: 12px; border-radius: 8px; font-size: 24px; font-weight: bold; letter-spacing: 4px;">${otp}</div>` : ""}
+    <p>Or use the code above if you are logging in on a different device.</p>
+  `;
+
   const html = generateEmailHtml(
-    "Sign in to Pinga",
-    "<p>Click the button below to sign in. This link expires in 15 minutes.</p>",
+    otp ? `Your Login Code: ${otp}` : "Sign in to Pinga",
+    content,
     link,
     "Sign In",
   );
 
   await sendEmail({
     to: email,
-    subject: "Sign in to Pinga",
+    subject: otp ? `Your Login Code: ${otp}` : "Sign in to Pinga",
     html,
   });
 }

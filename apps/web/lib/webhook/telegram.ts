@@ -45,6 +45,10 @@ export async function sendMessage(
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
   try {
+    // Add a timeout signal
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -54,7 +58,8 @@ export async function sendMessage(
         parse_mode: parseMode,
         disable_web_page_preview: disableWebPagePreview,
       }),
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
 
     if (!response.ok) {
       const error = await response.text();
@@ -63,8 +68,12 @@ export async function sendMessage(
     }
 
     return true;
-  } catch (error) {
-    console.error("Failed to send Telegram message:", error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Failed to send Telegram message:", err.message);
+    if (err.cause) {
+      console.error("Cause:", err.cause);
+    }
     return false;
   }
 }

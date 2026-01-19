@@ -4,43 +4,51 @@ import MagicLinkToken from "@/models/MagicLinkToken";
 import User from "@/models/User";
 import { signToken, setAuthCookie } from "@/lib/auth";
 import crypto from "crypto";
+import { z } from "zod";
 
-export async function GET(request: Request) {
+const verifySchema = z.object({
+  email: z.string().email(),
+  otp: z.string().length(6),
+});
+
+export async function POST(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const token = searchParams.get("token");
-    const email = searchParams.get("email");
+    const body = await request.json();
+    const result = verifySchema.safeParse(body);
 
-    if (!token || !email) {
+    if (!result.success) {
       return NextResponse.json(
-        { error: "Missing token or email" },
+        { error: "Invalid email or code" },
         { status: 400 },
       );
     }
 
+    const { email, otp } = result.data;
+
     await connectToDatabase();
 
-    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
+    // Find valid token
     const magicToken = await MagicLinkToken.findOne({
       email,
-      tokenHash,
+      otpHash,
       used: false,
       expires: { $gt: new Date() },
     });
 
     if (!magicToken) {
       return NextResponse.json(
-        { error: "Invalid or expired token" },
+        { error: "Invalid or expired code" },
         { status: 400 },
       );
     }
 
-    // Mark as used
+    // Mark used
     magicToken.used = true;
     await magicToken.save();
 
-    // Find or create User
+    // Find/Create User
     let user = await User.findOne({ email });
     if (!user) {
       user = await User.create({ email });
@@ -52,26 +60,12 @@ export async function GET(request: Request) {
       ? 30 * 24 * 60 * 60 // 30 days
       : 24 * 60 * 60; // 1 day
 
-    const jwtToken = signToken(payload, maxAge);
-
-    // Set Cookie
+    const jwtToken = signToken(payload, "1d"); // Expires in 1 day for standard session
     await setAuthCookie(jwtToken, maxAge);
 
-    // Redirect to dashboard
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      "http://localhost:3000";
-
-    const returnTo = searchParams.get("return_to");
-    const redirectUrl =
-      returnTo && returnTo.startsWith("/")
-        ? `${baseUrl}${returnTo}`
-        : `${baseUrl}/dashboard`;
-
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Verification error:", error);
+    console.error("OTP Verification Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

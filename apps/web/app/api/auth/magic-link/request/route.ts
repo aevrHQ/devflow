@@ -8,6 +8,7 @@ import { z } from "zod";
 const requestSchema = z.object({
   email: z.string().email(),
   keepSignedIn: z.boolean().optional(),
+  returnTo: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { email, keepSignedIn } = result.data;
+    const { email, keepSignedIn, returnTo } = result.data;
 
     await connectToDatabase();
 
@@ -31,10 +32,15 @@ export async function POST(request: Request) {
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
+    // Generate 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
     // Store in DB
     await MagicLinkToken.create({
       email,
       tokenHash,
+      otpHash,
       expires,
       keepSignedIn: !!keepSignedIn,
     });
@@ -44,12 +50,14 @@ export async function POST(request: Request) {
       process.env.NEXT_PUBLIC_BASE_URL ||
       process.env.NEXT_PUBLIC_APP_URL ||
       "http://localhost:3000";
-    const link = `${baseUrl}/api/auth/magic-link/verify?token=${token}&email=${encodeURIComponent(
-      email,
-    )}`;
+
+    let link = `${baseUrl}/api/auth/magic-link/verify?token=${token}&email=${encodeURIComponent(email)}`;
+    if (returnTo) {
+      link += `&return_to=${encodeURIComponent(returnTo)}`;
+    }
 
     // Send Email
-    await sendMagicLink(email, link);
+    await sendMagicLink(email, link, otp);
 
     return NextResponse.json({ success: true, message: "Magic link sent" });
   } catch (error) {

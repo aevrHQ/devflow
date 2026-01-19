@@ -3,6 +3,7 @@ import { Schema, model, models, Document, Model } from "mongoose";
 export interface IMagicLinkToken {
   email: string;
   tokenHash: string;
+  otpHash?: string;
   expires: Date;
   used: boolean;
   keepSignedIn: boolean;
@@ -14,6 +15,7 @@ export interface MagicLinkTokenDocument extends IMagicLinkToken, Document {}
 const MagicLinkTokenSchema = new Schema<MagicLinkTokenDocument>({
   email: { type: String, required: true },
   tokenHash: { type: String, required: true },
+  otpHash: { type: String }, // 6-digit OTP hash
   expires: { type: Date, required: true },
   used: { type: Boolean, default: false },
   keepSignedIn: { type: Boolean, default: false },
