@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
               await user.save();
 
               await sendMessage(
-                "✅ Successfully connected your Telegram account to Pinga! You will now receive notifications here.",
+                "✅ Successfully connected your Telegram account to Pinga\\! You will now receive notifications here\\.",
                 {},
                 chat.id.toString(),
               );
