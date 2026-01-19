@@ -19,8 +19,24 @@ export interface TelegramNotification {
 /**
  * Escape special characters for Telegram MarkdownV2
  */
-function escapeMarkdownV2(text: string): string {
+export function escapeMarkdownV2(text: string): string {
   return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, "\\$&");
+}
+
+/**
+ * Send a plain text message to Telegram (auto-escaped)
+ */
+export async function sendPlainMessage(
+  text: string,
+  chatIdOverride?: string,
+  botTokenOverride?: string,
+): Promise<boolean> {
+  return sendMessage(
+    escapeMarkdownV2(text),
+    { parseMode: "MarkdownV2" },
+    chatIdOverride,
+    botTokenOverride,
+  );
 }
 
 /**
