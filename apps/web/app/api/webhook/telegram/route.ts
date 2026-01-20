@@ -16,6 +16,31 @@ export async function POST(request: NextRequest) {
     if (update.message && update.message.text) {
       const { text, chat } = update.message;
 
+      // Handle /help command
+      if (text === "/help" || text === "/help@pingapingbot") {
+        const isGroup = chat.type === "group" || chat.type === "supergroup";
+        const helpMessage = isGroup
+          ? `🤖 *Pinga Bot - Group Chat Setup*\n\n` +
+            `To receive notifications in this group:\n\n` +
+            `1️⃣ Go to your Pinga Dashboard → Settings\n` +
+            `2️⃣ Click "Add Telegram" to create a new channel\n` +
+            `3️⃣ Click "Connect with Telegram"\n` +
+            `4️⃣ The link will automatically connect this group!\n\n` +
+            `💡 *Tip:* You can filter which notifications come here by configuring webhook rules in the dashboard.\n\n` +
+            `Need help? Visit your dashboard for more options.`
+          : `🤖 *Pinga Bot - Personal Chat Setup*\n\n` +
+            `To receive notifications here:\n\n` +
+            `1️⃣ Go to your Pinga Dashboard → Settings\n` +
+            `2️⃣ Click "Add Telegram" to create a new channel\n` +
+            `3️⃣ Click "Connect with Telegram"\n` +
+            `4️⃣ You'll be redirected here to complete the setup!\n\n` +
+            `✨ You can have multiple channels for different projects.\n\n` +
+            `Need help? Visit your dashboard for more options.`;
+
+        await sendPlainMessage(helpMessage, chat.id.toString());
+        return NextResponse.json({ ok: true });
+      }
+
       // Handle /start <userId> or /start channel_{userId}_{channelIndex}
       if (text.startsWith("/start")) {
         const parts = text.split(" ");
@@ -52,10 +77,17 @@ export async function POST(request: NextRequest) {
 
                   await user.save();
 
-                  await sendPlainMessage(
-                    `✅ Successfully connected "${user.channels[channelIndex].name || "Channel"}" to this ${isGroupChat ? "group" : "chat"}! You will now receive filtered notifications here.`,
-                    chat.id.toString(),
-                  );
+                  const successMessage = isGroupChat
+                    ? `✅ *Group Connected Successfully!*\n\n` +
+                      `"${user.channels[channelIndex].name || "Channel"}" is now linked to this group.\n\n` +
+                      `🔔 You'll receive filtered notifications here based on your dashboard settings.\n\n` +
+                      `💡 Tip: Use /help to see available commands.`
+                    : `✅ *Channel Connected Successfully!*\n\n` +
+                      `"${user.channels[channelIndex].name || "Channel"}" is now linked to this chat.\n\n` +
+                      `🔔 You'll receive notifications here.\n\n` +
+                      `💡 Tip: Use /help to see available commands.`;
+
+                  await sendPlainMessage(successMessage, chat.id.toString());
                   console.log(
                     `Linked Telegram Chat ${chat.id} to User ${userId} Channel ${channelIndex} (${isGroupChat ? "group" : "private"})`,
                   );
@@ -84,7 +116,7 @@ export async function POST(request: NextRequest) {
                 await user.save();
 
                 await sendPlainMessage(
-                  "✅ Successfully connected your Telegram account to Pinga! You will now receive notifications here.",
+                  "✅ Successfully connected your Telegram account to Pinga! You will now receive notifications here.\n\n💡 Tip: Use /help for more information.",
                   chat.id.toString(),
                 );
                 console.log(
@@ -105,11 +137,47 @@ export async function POST(request: NextRequest) {
             }
           }
         } else {
-          await sendPlainMessage(
-            "👋 Hello! To connect your account, please use the link provided in your Pinga Dashboard.",
-            chat.id.toString(),
-          );
+          // No parameter - show welcome message
+          const isGroup = chat.type === "group" || chat.type === "supergroup";
+          const welcomeMessage = isGroup
+            ? `👋 *Welcome to Pinga!*\n\n` +
+              `I'm your developer notification bot.\n\n` +
+              `To get started:\n` +
+              `1. Visit your Pinga Dashboard\n` +
+              `2. Go to Settings → Notification Channels\n` +
+              `3. Add a Telegram channel and click "Connect"\n\n` +
+              `Use /help to see all available commands.`
+            : `👋 *Welcome to Pinga!*\n\n` +
+              `I help you receive developer notifications from GitHub, Vercel, Render, and more!\n\n` +
+              `To get started, visit your Pinga Dashboard and connect your Telegram account.\n\n` +
+              `Use /help to see all available commands.`;
+
+          await sendPlainMessage(welcomeMessage, chat.id.toString());
         }
+      }
+    }
+
+    // Handle bot being added to group
+    if (update.my_chat_member) {
+      const { chat, new_chat_member } = update.my_chat_member;
+
+      // Check if bot was added (status changed to "member" or "administrator")
+      if (
+        new_chat_member.status === "member" ||
+        new_chat_member.status === "administrator"
+      ) {
+        const welcomeMessage =
+          `🎉 *Thanks for adding me to this group!*\n\n` +
+          `To start receiving notifications here:\n\n` +
+          `1️⃣ Open your Pinga Dashboard\n` +
+          `2️⃣ Go to Settings → Notification Channels\n` +
+          `3️⃣ Click "Add Telegram"\n` +
+          `4️⃣ Click "Connect with Telegram"\n` +
+          `5️⃣ The bot will automatically link to this group!\n\n` +
+          `💡 You can configure which notifications this group receives in your dashboard.\n\n` +
+          `Use /help anytime for assistance.`;
+
+        await sendPlainMessage(welcomeMessage, chat.id.toString());
       }
     }
 
