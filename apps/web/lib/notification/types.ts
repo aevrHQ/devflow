@@ -19,13 +19,20 @@ export interface ChannelConfig {
   [key: string]: unknown;
 }
 
+export interface ChannelResult {
+  success: boolean;
+  error?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+}
+
 export interface NotificationChannel {
   name: string;
   type: string;
   send(
     config: ChannelConfig,
     notification: NotificationPayload,
-  ): Promise<boolean>;
+  ): Promise<ChannelResult>;
 }
 
 export interface UserChannel {

@@ -63,11 +63,15 @@ export class NotificationService {
       };
 
       if (this.shouldSendToChannel(legacyChannel, notification)) {
-        const success = await telegramChannel.send(
+        const result = await telegramChannel.send(
           { ...legacyChannel.config, enabled: true } as ChannelConfig,
           notification,
         );
-        results.push(success);
+        results.push(result.success);
+
+        // Optional: Log legacy attempt if needed, or rely on old behavior (which was silent?)
+        // The original code didn't log legacy attempts to the database, so we keep it as is
+        // unless we want to start logging them. The original code only pushed to results.
       }
     }
 
@@ -102,11 +106,11 @@ export class NotificationService {
             `[NotificationService] Dispatching to channel: ${userChannel.name} (${userChannel.type})`,
           );
           try {
-            const success = await channelImpl.send(
+            const result = await channelImpl.send(
               userChannel.config as ChannelConfig,
               notification,
             );
-            results.push(success);
+            results.push(result.success);
 
             await this.logAttempt(
               userId,
@@ -114,8 +118,8 @@ export class NotificationService {
               userChannel.type,
               userChannel.name,
               notification,
-              success ? "success" : "failure",
-              success ? undefined : "Channel returned failure",
+              result.success ? "success" : "failure",
+              result.error || (result.success ? undefined : "Unknown failure"),
             );
           } catch (error) {
             console.error(

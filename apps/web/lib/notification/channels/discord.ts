@@ -2,6 +2,7 @@ import {
   NotificationChannel,
   ChannelConfig,
   NotificationPayload,
+  ChannelResult,
 } from "../types";
 
 export class DiscordChannel implements NotificationChannel {
@@ -11,14 +12,14 @@ export class DiscordChannel implements NotificationChannel {
   async send(
     config: ChannelConfig,
     notification: NotificationPayload,
-  ): Promise<boolean> {
-    if (!config.enabled) return false;
+  ): Promise<ChannelResult> {
+    if (!config.enabled) return { success: false, error: "Channel disabled" };
 
     const webhookUrl = config.webhookUrl as string;
 
     if (!webhookUrl) {
       console.warn("Discord channel missing webhookUrl");
-      return false;
+      return { success: false, error: "Missing Discord webhookUrl" };
     }
 
     // Map fields to Discord Embed Fields
@@ -63,18 +64,18 @@ export class DiscordChannel implements NotificationChannel {
       });
 
       if (!response.ok) {
-        console.error(
-          "Discord API error:",
-          response.status,
-          await response.text(),
-        );
-        return false;
+        const errorText = await response.text();
+        console.error("Discord API error:", response.status, errorText);
+        return {
+          success: false,
+          error: `Discord API error: ${response.status} - ${errorText}`,
+        };
       }
 
-      return true;
+      return { success: true };
     } catch (error) {
       console.error("Failed to send Discord message:", error);
-      return false;
+      return { success: false, error: String(error) };
     }
   }
 }

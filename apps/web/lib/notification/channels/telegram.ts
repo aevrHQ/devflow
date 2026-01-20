@@ -2,6 +2,7 @@ import {
   NotificationChannel,
   ChannelConfig,
   NotificationPayload,
+  ChannelResult,
 } from "../types";
 import { sendMessage, escapeMarkdownV2 } from "@/lib/webhook/telegram";
 
@@ -12,8 +13,8 @@ export class TelegramChannel implements NotificationChannel {
   async send(
     config: ChannelConfig,
     notification: NotificationPayload,
-  ): Promise<boolean> {
-    if (!config.enabled) return false;
+  ): Promise<ChannelResult> {
+    if (!config.enabled) return { success: false, error: "Channel disabled" };
 
     // Extract chat ID and bot token from config or fallback (logic adapted)
     const chatId = (config.chatId as string) || process.env.TELEGRAM_CHAT_ID;
@@ -22,7 +23,7 @@ export class TelegramChannel implements NotificationChannel {
 
     if (!chatId || !botToken) {
       console.warn("Telegram channel missing credentials");
-      return false;
+      return { success: false, error: "Missing Telegram credentials" };
     }
 
     const lines: string[] = [];

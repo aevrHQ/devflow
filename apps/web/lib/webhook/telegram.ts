@@ -26,11 +26,16 @@ export function escapeMarkdownV2(text: string): string {
 /**
  * Send a plain text message to Telegram (auto-escaped)
  */
+/**
+ * Send a plain text message to Telegram (auto-escaped)
+ */
+import { ChannelResult } from "@/lib/notification/types";
+
 export async function sendPlainMessage(
   text: string,
   chatIdOverride?: string,
   botTokenOverride?: string,
-): Promise<boolean> {
+): Promise<ChannelResult> {
   return sendMessage(
     escapeMarkdownV2(text),
     { parseMode: "MarkdownV2" },
@@ -47,7 +52,7 @@ export async function sendMessage(
   options: SendMessageOptions = {},
   chatIdOverride?: string,
   botTokenOverride?: string,
-): Promise<boolean> {
+): Promise<ChannelResult> {
   const { parseMode = "MarkdownV2", disableWebPagePreview = true } = options;
 
   const botToken = botTokenOverride || config.telegram.botToken;
@@ -55,7 +60,10 @@ export async function sendMessage(
 
   if (!botToken || !chatId) {
     console.warn("Telegram credentials missing (botToken or chatId)");
-    return false;
+    return {
+      success: false,
+      error: "Telegram credentials missing (botToken or chatId)",
+    };
   }
 
   console.log(
@@ -86,18 +94,21 @@ export async function sendMessage(
       console.error(
         `[Telegram] API Error! Status: ${response.status} | Chat: ${chatId} | Response: ${errorText}`,
       );
-      return false;
+      return {
+        success: false,
+        error: `Telegram API Error: ${response.status} - ${errorText}`,
+      };
     }
 
     console.log(`[Telegram] Message sent successfully to ${chatId}`);
-    return true;
+    return { success: true, data: await response.json() };
   } catch (error: unknown) {
     const err = error as Error;
     console.error("Failed to send Telegram message:", err.message);
     if (err.cause) {
       console.error("Cause:", err.cause);
     }
-    return false;
+    return { success: false, error: err.message };
   }
 }
 
@@ -106,7 +117,7 @@ export async function sendMessage(
  */
 export async function sendNotification(
   notification: TelegramNotification,
-): Promise<boolean> {
+): Promise<ChannelResult> {
   const lines: string[] = [];
 
   // Title with emoji
