@@ -2,12 +2,25 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Loader2, Plus, Trash2, CheckCircle2 } from "lucide-react";
+import WebhookFilterForm from "./WebhookFilterForm";
 
 interface Channel {
   type: string;
   config: Record<string, unknown>;
   enabled: boolean;
   name?: string;
+  webhookRules?: {
+    sources: {
+      type: string;
+      enabled: boolean;
+      filters: {
+        repositories?: string[];
+        eventTypes?: string[];
+        services?: string[];
+        [key: string]: unknown;
+      };
+    }[];
+  };
 }
 
 interface NotificationChannelsFormProps {
@@ -197,6 +210,15 @@ export default function NotificationChannelsForm({
                     />
                   </div>
                 )}
+
+                {/* Webhook Filtering */}
+                <WebhookFilterForm
+                  channelIndex={index}
+                  currentRules={channel.webhookRules}
+                  onUpdate={(rules) =>
+                    updateChannel(index, { webhookRules: rules })
+                  }
+                />
               </div>
             )}
 

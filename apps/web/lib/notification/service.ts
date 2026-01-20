@@ -3,6 +3,7 @@ import {
   NotificationPayload,
   NotificationChannel,
   ChannelConfig,
+  UserChannel,
 } from "./types";
 import { telegramChannel } from "./channels/telegram";
 import { discordChannel } from "./channels/discord";
@@ -36,20 +37,39 @@ export class NotificationService {
 
     // 2. Legacy Support: Send to Telegram if configured the old way
     if (user.telegramChatId && user.telegramBotToken) {
-      // Create a transient config for legacy telegram
-      const legacyConfig = {
+      // Check if legacy channel should receive this webhook
+      const legacyChannel = {
+        type: "telegram",
         enabled: true,
-        chatId: user.telegramChatId,
-        botToken: user.telegramBotToken,
+        config: {
+          chatId: user.telegramChatId,
+          botToken: user.telegramBotToken,
+        },
       };
-      const success = await telegramChannel.send(legacyConfig, notification);
-      results.push(success);
+
+      if (this.shouldSendToChannel(legacyChannel, notification)) {
+        const success = await telegramChannel.send(
+          { ...legacyChannel.config, enabled: true } as ChannelConfig,
+          notification,
+        );
+        results.push(success);
+      }
     }
 
     // 3. Multi-Channel Support
     if (user.channels && user.channels.length > 0) {
       for (const userChannel of user.channels) {
         if (!userChannel.enabled) continue;
+
+        // Check webhook rules
+        if (
+          !this.shouldSendToChannel(userChannel as UserChannel, notification)
+        ) {
+          console.log(
+            `Filtered out ${notification.source} for channel "${userChannel.name || userChannel.type}"`,
+          );
+          continue;
+        }
 
         const channelImpl = this.channels.get(userChannel.type);
         if (channelImpl) {
@@ -73,6 +93,91 @@ export class NotificationService {
     }
 
     return results.some((r) => r === true);
+  }
+
+  private shouldSendToChannel(
+    channel:
+      | UserChannel
+      | {
+          type: string;
+          enabled: boolean;
+          config: Record<string, unknown>;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          webhookRules?: any;
+        },
+    notification: NotificationPayload,
+  ): boolean {
+    const rules = channel.webhookRules;
+
+    // No rules = send everything (backward compatible)
+    if (!rules?.sources?.length) return true;
+
+    const source = notification.source || notification.eventType || "unknown";
+
+    // Find rule for this source
+    const sourceRule = rules.sources.find(
+      (s: { type: string }) => s.type === source,
+    );
+
+    // Source not in list = block
+    if (!sourceRule) {
+      console.log(`Source ${source} not in webhook rules`);
+      return false;
+    }
+
+    // Source disabled = block
+    if (!sourceRule.enabled) {
+      console.log(`Source ${source} is disabled`);
+      return false;
+    }
+
+    const filters = sourceRule.filters;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: Record<string, any> = (notification.rawPayload || {}) as Record<
+      string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any
+    >;
+
+    // Repository filter (for GitHub)
+    if (filters.repositories?.length) {
+      const repo = data.repository?.full_name || data.repository?.name;
+      if (!repo || !filters.repositories.includes(repo)) {
+        console.log(
+          `Repository ${repo} not in filter list: ${filters.repositories.join(", ")}`,
+        );
+        return false;
+      }
+    }
+
+    // Event type filter
+    if (filters.eventTypes?.length) {
+      const eventType =
+        notification.eventType ||
+        data.action ||
+        data.deployment_status?.state ||
+        data.event;
+
+      if (!eventType || !filters.eventTypes.includes(eventType)) {
+        console.log(
+          `Event ${eventType} not in filter list: ${filters.eventTypes.join(", ")}`,
+        );
+        return false;
+      }
+    }
+
+    // Service filter (for Render, Vercel)
+    if (filters.services?.length) {
+      const service = data.service?.name || data.project?.name;
+      if (!service || !filters.services.includes(service)) {
+        console.log(
+          `Service ${service} not in filter list: ${filters.services.join(", ")}`,
+        );
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 

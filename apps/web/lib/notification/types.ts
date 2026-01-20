@@ -8,7 +8,8 @@ export interface NotificationPayload {
   source?: string;
   eventType?: string;
   summary?: string; // AI generated summary
-  rawPayload?: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rawPayload?: Record<string, any>; // Full webhook payload for filtering
 }
 
 export interface ChannelConfig {
@@ -30,4 +31,16 @@ export interface UserChannel {
   config: ChannelConfig;
   enabled: boolean;
   name?: string;
+  webhookRules?: {
+    sources: {
+      type: string;
+      enabled: boolean;
+      filters: {
+        repositories?: string[];
+        eventTypes?: string[];
+        services?: string[];
+        [key: string]: unknown;
+      };
+    }[];
+  };
 }
