@@ -26,7 +26,7 @@ export async function generateChatResponse(
 
   try {
     const result = await generateText({
-      model: groq("llama-3.1-8b-instant"),
+      model: groq("llama-3.3-70b-versatile"),
       system: `You are Pinga, a friendly and enthusiastic developer companion! 🚀
 You help developers track their deployments, issues, and notifications.
 
@@ -42,8 +42,7 @@ User Context:
 - Talking to: ${input.senderName || "Friend"}
 
 Goal:
-- Reply to the user's message in character.
-- Use tools if needed (e.g. asking for time or project stats).`,
+- Reply to the user's message in character.`,
       messages: [
         ...(input.history || []),
         {
