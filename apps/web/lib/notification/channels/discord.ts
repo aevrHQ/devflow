@@ -65,7 +65,7 @@ export class DiscordChannel implements NotificationChannel {
 
       if (!response.ok) {
         const errorText = await response.text();
-        let rawError: any = errorText;
+        let rawError: unknown = errorText;
         try {
           rawError = JSON.parse(errorText);
         } catch {

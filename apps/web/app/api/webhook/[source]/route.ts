@@ -162,7 +162,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           email: "system@pinga.local", // Dummy email for global notifications
           telegramChatId: process.env.TELEGRAM_CHAT_ID,
           telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
-          channels: [],
           preferences: {
             aiSummary: false,
             allowedSources: [],

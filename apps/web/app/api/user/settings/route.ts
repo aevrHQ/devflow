@@ -46,11 +46,6 @@ export async function POST(request: Request) {
       updateData.telegramChatId = result.data.telegramChatId;
     if (result.data.telegramBotToken !== undefined)
       updateData.telegramBotToken = result.data.telegramBotToken;
-    const updateData: Record<string, unknown> = {};
-    if (result.data.telegramChatId !== undefined)
-      updateData.telegramChatId = result.data.telegramChatId;
-    if (result.data.telegramBotToken !== undefined)
-      updateData.telegramBotToken = result.data.telegramBotToken;
 
     if (result.data.preferences !== undefined)
       updateData.preferences = result.data.preferences;

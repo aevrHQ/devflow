@@ -113,7 +113,10 @@ export class NotificationService {
           );
           try {
             const result = await channelImpl.send(
-              userChannel.config as ChannelConfig,
+              {
+                ...userChannel.config,
+                enabled: userChannel.enabled,
+              } as ChannelConfig,
               notification,
             );
             results.push(result.success);
