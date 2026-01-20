@@ -12,6 +12,12 @@ export async function POST(request: NextRequest) {
   try {
     const update = await request.json();
 
+    // LOUD LOGGING for debugging group visibility
+    console.log(
+      `[Telegram Webhook] Raw Update:`,
+      JSON.stringify(update, null, 2).substring(0, 500),
+    );
+
     // Check if it's a message
     if (update.message && update.message.text) {
       const { text, chat } = update.message;
@@ -192,8 +198,11 @@ export async function POST(request: NextRequest) {
       } else if (!text.startsWith("/")) {
         // Handle Chat / AI Assistant
         const botUsername = (
-          process.env.TELEGRAM_BOT_NAME || "pingapingbot"
+          process.env.TELEGRAM_BOT_NAME ||
+          process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME ||
+          "pingapingbot"
         ).toLowerCase();
+
         const lowerText = text.toLowerCase();
         const isGroup = chat.type === "group" || chat.type === "supergroup";
 
@@ -203,7 +212,9 @@ export async function POST(request: NextRequest) {
         if (isGroup) {
           // Check for @mention or reply
           if (lowerText.includes(`@${botUsername}`)) {
-            console.log(`[Telegram] Bot mentioned in group ${chat.id}`);
+            console.log(
+              `[Telegram] Bot mentioned in group ${chat.id} (name matched: ${botUsername})`,
+            );
             shouldReply = true;
           }
           if (
