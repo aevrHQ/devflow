@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (result.data.telegramChatId !== undefined)
       updateData.telegramChatId = result.data.telegramChatId;
     if (result.data.telegramBotToken !== undefined)

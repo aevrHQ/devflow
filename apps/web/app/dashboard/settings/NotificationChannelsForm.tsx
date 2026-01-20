@@ -148,27 +148,103 @@ export default function NotificationChannelsForm({
             </div>
 
             {channel.type === "telegram" && (
-              <div className="space-y-2">
-                {!channel.config.chatId ? (
-                  <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-                    <p className="text-xs text-blue-900 mb-2">
-                      Click below to connect this channel with Telegram
-                    </p>
-                    <a
-                      href={`https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || "pingapingbot"}?start=channel_${userId}_${index}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
-                    >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.48-.94-2.4-1.55-1.06-.7-.37-1.09.22-1.7.15-.16 2.86-2.61 2.91-2.83.01-.03.01-.15-.06-.21-.07-.06-.17-.04-.25-.02-.11.02-1.91 1.2-5.39 3.56-.51.35-.97.52-1.38.51-.45-.01-1.32-.26-1.96-.46-.79-.25-1.41-.38-1.36-.8.03-.22.33-.44.91-.67 3.55-1.54 5.92-2.56 7.1-3.08 3.37-1.47 4.07-1.78 4.54-1.78.1 0 .34.02.49.14.12.1.15.24.16.34 0 .07 0 .21-.01.31z" />
-                      </svg>
-                      Connect with Telegram
-                    </a>
-                    <p className="text-[10px] text-blue-700 mt-2">
-                      Works with private chats and group chats
-                    </p>
-                  </div>
+              <div className="space-y-3">
+                <label className="block text-xs font-medium text-gray-700">
+                  Chat Type
+                </label>
+                <div className="flex gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`chat-type-${index}`}
+                      checked={
+                        !(channel.config as Record<string, unknown>).isGroupChat
+                      }
+                      onChange={() =>
+                        updateChannel(index, {
+                          config: {
+                            ...channel.config,
+                            isGroupChat: false,
+                          },
+                        })
+                      }
+                      className="rounded-full border-gray-300"
+                    />
+                    <span className="text-sm">Personal DM</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`chat-type-${index}`}
+                      checked={
+                        !!(channel.config as Record<string, unknown>)
+                          .isGroupChat
+                      }
+                      onChange={() =>
+                        updateChannel(index, {
+                          config: {
+                            ...channel.config,
+                            isGroupChat: true,
+                          },
+                        })
+                      }
+                      className="rounded-full border-gray-300"
+                    />
+                    <span className="text-sm">Group Chat</span>
+                  </label>
+                </div>
+
+                {!(channel.config as Record<string, unknown>).chatId ? (
+                  (channel.config as Record<string, unknown>).isGroupChat ? (
+                    // Group Chat Instructions
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
+                      <p className="text-sm text-blue-900 font-medium">
+                        📋 Steps to connect group chat:
+                      </p>
+                      <ol className="text-sm text-blue-800 space-y-2 list-decimal list-inside">
+                        <li>
+                          Add @
+                          {process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME ||
+                            "your_bot"}{" "}
+                          to your Telegram group
+                        </li>
+                        <li>In the group, send this command:</li>
+                      </ol>
+                      <div className="bg-white p-3 rounded border border-blue-300 font-mono text-xs break-all">
+                        /start channel_{userId}_{index}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            `/start channel_${userId}_${index}`,
+                          );
+                          alert("Command copied! Paste it in your group chat.");
+                        }}
+                        className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+                      >
+                        📋 Copy Command
+                      </button>
+                      <p className="text-xs text-blue-700">
+                        💡 The bot will confirm when connected successfully
+                      </p>
+                    </div>
+                  ) : (
+                    // Personal DM Button
+                    <div className="space-y-2">
+                      <a
+                        href={`https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || "your_bot"}?start=channel_${userId}_${index}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full text-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+                      >
+                        Connect with Telegram
+                      </a>
+                      <p className="text-xs text-gray-500">
+                        Click to open Telegram and connect this channel
+                      </p>
+                    </div>
+                  )
                 ) : (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50 px-3 py-2 rounded-md">
@@ -185,7 +261,11 @@ export default function NotificationChannelsForm({
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      Connected to Chat ID:{" "}
+                      Connected to{" "}
+                      {(channel.config as Record<string, unknown>).isGroupChat
+                        ? "Group"
+                        : "DM"}
+                      :{" "}
                       {String(
                         (channel.config as Record<string, unknown>).chatId ||
                           "",

@@ -4,7 +4,7 @@ import { storePayload, getPayloadUrl } from "@/lib/webhook/storage";
 import { validateConfig } from "@/lib/webhook/config";
 import connectToDatabase from "@/lib/mongodb";
 import Installation from "@/models/Installation";
-import User, { UserDocument } from "@/models/User";
+import User, { IUser, UserDocument } from "@/models/User";
 import WebhookEvent from "@/models/WebhookEvent";
 
 interface RouteParams {
@@ -158,12 +158,18 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         const { notificationService } =
           await import("@/lib/notification/service");
         // Create a fake user context for global env dispatch
-        const globalUser = {
+        const globalUser: IUser = {
+          email: "system@pinga.local", // Dummy email for global notifications
           telegramChatId: process.env.TELEGRAM_CHAT_ID,
           telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
           channels: [],
-          preferences: {},
-        } as any;
+          preferences: {
+            aiSummary: false,
+            allowedSources: [],
+          },
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
         sent = await notificationService.send(globalUser, {
           ...result.notification,
