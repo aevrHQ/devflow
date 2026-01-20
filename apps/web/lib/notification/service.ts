@@ -76,8 +76,14 @@ export class NotificationService {
     }
 
     // 3. Multi-Channel Support
-    if (user.channels && user.channels.length > 0) {
-      for (const userChannel of user.channels) {
+    // 3. Multi-Channel Support
+    const { default: Channel } = await import("@/models/Channel");
+    const channels = await Channel.find({ userId });
+
+    if (channels && channels.length > 0) {
+      for (const ch of channels) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const userChannel: any = ch.toObject ? ch.toObject() : ch;
         if (!userChannel.enabled) continue;
 
         // Check webhook rules

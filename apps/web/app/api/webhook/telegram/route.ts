@@ -58,43 +58,44 @@ export async function POST(request: NextRequest) {
 
               try {
                 const user = await User.findById(userId);
+                const { default: Channel } = await import("@/models/Channel");
+                // Fetch channels sorted by creation time to maintain index consistency
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const channels: any[] = await Channel.find({ userId }).sort({
+                  createdAt: 1,
+                });
+
                 console.log("Channel link attempt:", {
                   userId,
                   channelIndex,
                   userFound: !!user,
-                  channelsExist: !!user?.channels,
-                  channelsLength: user?.channels?.length,
-                  channelExists: !!(
-                    user?.channels && user.channels[channelIndex]
-                  ),
+                  channelsLength: channels.length,
+                  channelExists: !!channels[channelIndex],
                 });
 
-                if (user && user.channels && user.channels[channelIndex]) {
+                if (user && channels[channelIndex]) {
+                  const targetChannel = channels[channelIndex];
                   // Detect if group chat
                   const isGroupChat =
                     chat.type === "group" || chat.type === "supergroup";
 
                   // Update specific channel
-                  const currentConfig =
-                    (user.channels[channelIndex].config as Record<
-                      string,
-                      unknown
-                    >) || {};
-                  user.channels[channelIndex].config = {
+                  const currentConfig = targetChannel.config || {};
+                  targetChannel.config = {
                     ...currentConfig,
                     chatId: chat.id.toString(),
                     isGroupChat,
                   };
 
-                  await user.save();
+                  await targetChannel.save();
 
                   const successMessage = isGroupChat
                     ? `✅ *Group Connected Successfully!*\n\n` +
-                      `"${user.channels[channelIndex].name || "Channel"}" is now linked to this group.\n\n` +
+                      `"${targetChannel.name || "Channel"}" is now linked to this group.\n\n` +
                       `🔔 You'll receive filtered notifications here based on your dashboard settings.\n\n` +
                       `💡 Tip: Use /help to see available commands.`
                     : `✅ *Channel Connected Successfully!*\n\n` +
-                      `"${user.channels[channelIndex].name || "Channel"}" is now linked to this chat.\n\n` +
+                      `"${targetChannel.name || "Channel"}" is now linked to this chat.\n\n` +
                       `🔔 You'll receive notifications here.\n\n` +
                       `💡 Tip: Use /help to see available commands.`;
 
@@ -106,11 +107,9 @@ export async function POST(request: NextRequest) {
                   // More helpful error message
                   const errorDetails = !user
                     ? "User not found"
-                    : !user.channels
-                      ? "No channels configured"
-                      : user.channels.length === 0
-                        ? "No channels created yet"
-                        : `Channel ${channelIndex} doesn't exist (you have ${user.channels.length} channel(s))`;
+                    : channels.length === 0
+                      ? "No channels created yet"
+                      : `Channel ${channelIndex} doesn't exist (you have ${channels.length} channel(s))`;
 
                   console.error("Channel link failed:", errorDetails);
 
