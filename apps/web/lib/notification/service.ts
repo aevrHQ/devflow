@@ -1,4 +1,5 @@
 import { IUser } from "@/models/User";
+import NotificationLog from "@/models/NotificationLog";
 import {
   NotificationPayload,
   NotificationChannel,
@@ -21,6 +22,9 @@ export class NotificationService {
   }
 
   async send(user: IUser, notification: NotificationPayload): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const userId = (user as any)._id || (user as any).id;
+
     // 1. Check Preferences (Source filtering)
     if (
       user.preferences?.allowedSources?.length > 0 &&
@@ -30,6 +34,17 @@ export class NotificationService {
       console.log(
         `Skipping notification from source ${notification.source} (not in allowed list)`,
       );
+
+      await this.logAttempt(
+        userId,
+        undefined,
+        "global",
+        "Global Preferences",
+        notification,
+        "skipped",
+        `Source ${notification.source} not in allowed list`,
+      );
+
       return false;
     }
 
@@ -68,6 +83,16 @@ export class NotificationService {
           console.log(
             `Filtered out ${notification.source} for channel "${userChannel.name || userChannel.type}"`,
           );
+
+          await this.logAttempt(
+            userId,
+            userChannel._id,
+            userChannel.type,
+            userChannel.name,
+            notification,
+            "skipped",
+            "Filtered by channel rules",
+          );
           continue;
         }
 
@@ -79,15 +104,44 @@ export class NotificationService {
               notification,
             );
             results.push(success);
+
+            await this.logAttempt(
+              userId,
+              userChannel._id,
+              userChannel.type,
+              userChannel.name,
+              notification,
+              success ? "success" : "failure",
+              success ? undefined : "Channel returned failure",
+            );
           } catch (error) {
             console.error(
               `Failed to send to channel ${userChannel.name} (${userChannel.type}):`,
               error,
             );
             results.push(false);
+
+            await this.logAttempt(
+              userId,
+              userChannel._id,
+              userChannel.type,
+              userChannel.name,
+              notification,
+              "failure",
+              String(error),
+            );
           }
         } else {
           console.warn(`Unknown channel type: ${userChannel.type}`);
+          await this.logAttempt(
+            userId,
+            userChannel._id,
+            userChannel.type,
+            userChannel.name,
+            notification,
+            "failure",
+            `Unknown channel type: ${userChannel.type}`,
+          );
         }
       }
     }
@@ -178,6 +232,37 @@ export class NotificationService {
     }
 
     return true;
+  }
+
+  private async logAttempt(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    userId: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    channelId: any,
+    channelType: string,
+    channelName: string | undefined,
+    notification: NotificationPayload,
+    status: "success" | "failure" | "skipped",
+    error?: string,
+  ) {
+    try {
+      await NotificationLog.create({
+        userId,
+        channelId,
+        channelType,
+        channelName,
+        source: notification.source || "unknown",
+        eventType: notification.eventType || "unknown",
+        status,
+        error,
+        metadata: {
+          title: notification.title,
+          payloadUrl: notification.payloadUrl,
+        },
+      });
+    } catch (e) {
+      console.error("Failed to save notification log:", e);
+    }
   }
 }
 

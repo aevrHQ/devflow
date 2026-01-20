@@ -1,4 +1,4 @@
-import { Schema, model, models, Document, Model } from "mongoose";
+import { Schema, model, models, Document, Model, Types } from "mongoose";
 
 export interface IUser {
   email: string;
@@ -9,6 +9,7 @@ export interface IUser {
   telegramBotToken?: string; // @deprecated
 
   channels: {
+    _id?: Types.ObjectId | string;
     type: "telegram" | "discord" | "whatsapp" | "slack" | "email";
     config: unknown;
     enabled: boolean;

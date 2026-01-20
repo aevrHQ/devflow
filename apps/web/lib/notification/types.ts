@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export interface NotificationPayload {
   title: string;
   emoji: string;
@@ -27,6 +29,7 @@ export interface NotificationChannel {
 }
 
 export interface UserChannel {
+  _id?: Types.ObjectId | string;
   type: string;
   config: ChannelConfig;
   enabled: boolean;
