@@ -25,7 +25,7 @@ export async function generateChatResponse(
   });
 
   try {
-    const { text } = await generateText({
+    const result = await generateText({
       model: groq("llama-3.1-8b-instant"),
       system: `You are Pinga, a friendly and enthusiastic developer companion! 🚀
 You help developers track their deployments, issues, and notifications.
@@ -69,20 +69,20 @@ Goal:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any),
       },
-      // maxSteps: 5, // Removed due to type error in installed version
+      maxSteps: 5,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
+
+    console.log("[ChatAssistant] GenerateText Result:", {
+      text: result.text,
+      toolCallsLen: result.toolCalls?.length,
+      finishReason: result.finishReason,
     });
 
-    // Capture the new history including the AI's response and any tool interactions
-    // Since generateText with maxSteps handles the loop, result.response.messages contains the full turn usually,
-    // but here for simple history storage we essentially just want the user's new message and the final assistant response text.
-    // However, to support proper history, we should store exactly what happened.
-    // For simplicity in this MVP integration with Telegram, we will just return the text and constructing the simple history object manually in the calling route is easier for our simple storage model.
-    // BUT, ideally we pass back the tool-use messages too.
-    // Let's stick to simple text response for the main interface, but ideally we'd store the rich history.
-    // Given the User model schema change `role: user | assistant`, we might lose tool details if we just save text.
-    // For now, let's just return the text and let the caller save it as a simple 'assistant' message.
-
-    return { text: text, history: [] }; // The caller handles appending to history for now
+    return {
+      text: result.text,
+      history: [], // Still empty for now as verified in previous plan
+    };
   } catch (error) {
     console.error("Failed to generate chat response:", error);
     return {

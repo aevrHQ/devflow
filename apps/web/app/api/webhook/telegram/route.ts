@@ -275,6 +275,8 @@ export async function POST(request: NextRequest) {
             history,
           });
 
+          console.log("[Telegram Webhook] ChatAssistant Result:", result);
+
           if (result && result.text) {
             const responseText = result.text;
             await sendPlainMessage(
