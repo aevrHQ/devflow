@@ -8,6 +8,7 @@ import WebhookEvent from "@/models/WebhookEvent";
 import User from "@/models/User";
 import Channel from "@/models/Channel";
 import { Types, FilterQuery } from "mongoose";
+import { decryptJSON } from "@/lib/encryption";
 
 // --- Stats & Activity Tools ---
 
@@ -71,7 +72,10 @@ export const createDashboardTools = (context: { userId?: string } = {}) => {
             source: e.source,
             status: e.status,
             createdAt: e.createdAt,
-            repo: e.payload?.repository?.full_name,
+            // Decrypt payload for the agent
+            repo: decryptJSON(e.payload)?.repository?.full_name,
+            // We might want to expose more payload data to the agent if needed
+            // payload: decryptJSON(e.payload)
           })),
         };
       },

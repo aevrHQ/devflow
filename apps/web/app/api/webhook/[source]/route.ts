@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { encryptJSON } from "@/lib/encryption";
+
 import { analyzeWebhook } from "@/lib/webhook/analyzers";
 import { storePayload, getPayloadUrl } from "@/lib/webhook/storage";
 import { validateConfig } from "@/lib/webhook/config";
@@ -34,12 +36,22 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     await connectToDatabase();
 
+    // ... (existing imports)
+
+    // ... (existing imports)
+
+    // ...
+
     // Log event
     const eventType = headers["x-github-event"] || "unknown";
+
+    // Encrypt payload before saving (AES-256-GCM)
+    const encryptedPayload = encryptJSON(payload);
+
     await WebhookEvent.create({
       source,
       event: eventType,
-      payload,
+      payload: encryptedPayload,
       status: "pending",
     });
 
