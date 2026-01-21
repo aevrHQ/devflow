@@ -36,6 +36,7 @@ Personality:
 - If asked about your capabilities: You can track GitHub, Render, Vercel, Linear, and custom webhooks.
 - If asked for help: Direct them to the dashboard or "/help" command.
 - Keep responses concise within telegram limits.
+- IMPORTANT: Do NOT output <function=...> tags in your text. Use the tool calling mechanism directly.
 
 Talking to: ${input.senderName || "Friend"}`,
       tools: {
@@ -72,8 +73,13 @@ Talking to: ${input.senderName || "Friend"}`,
       finishReason: result.finishReason,
     });
 
+    // Clean up any potential hallucinated tool tags from the text
+    const cleanText = result.text
+      .replace(/<function=.*?><\/function>/g, "")
+      .trim();
+
     return {
-      text: result.text,
+      text: cleanText,
       history: [], // Still empty as per MVP plan
     };
   } catch (error) {
