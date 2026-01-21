@@ -52,6 +52,14 @@ Pinga is a powerful notification management system that receives webhooks from y
 3. Paste the command in your group
 4. ✅ Group connected!
 
+#### For Slack:
+
+1. Go to **Settings** → **Notification Channels**
+2. Click **"Add Slack"**
+3. Click **"Connect with Slack"**
+4. Authorize the app to access your workspace
+5. ✅ You're connected!
+
 ### Step 3: Set Up Your First Webhook
 
 #### GitHub Example:

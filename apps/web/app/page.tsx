@@ -78,7 +78,7 @@ export default function LandingPage() {
                 className="flex items-center gap-2 px-8 py-3.5 rounded-full border border-gray-200 font-medium hover:bg-gray-50 transition-colors"
               >
                 <Github className="w-4 h-4" />
-                sOpens Source
+                Open Source
               </Link>
             </div>
           </motion.div>
@@ -99,8 +99,8 @@ export default function LandingPage() {
             />
             <FeatureCard
               icon={<MessageCircle className="w-6 h-6" />}
-              title="Telegram First"
-              description="Notifications delivered where you actually read them. Formatted with emojis and links."
+              title="Multi-Channel Support"
+              description="Notifications delivered where you work. Support for Telegram, Slack, and Discord."
             />
           </div>
         </section>
