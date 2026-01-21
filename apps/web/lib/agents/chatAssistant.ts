@@ -1,5 +1,5 @@
 import { ToolLoopAgent, ModelMessage, tool, stepCountIs } from "ai";
-import { dashboardTools } from "./tools";
+import { createDashboardTools } from "./tools";
 import { createGroq } from "@ai-sdk/groq";
 import { z } from "zod";
 
@@ -7,6 +7,7 @@ interface ChatInput {
   message: string;
   senderName?: string;
   history?: ModelMessage[];
+  userId?: string;
 }
 
 export async function generateChatResponse(
@@ -41,7 +42,7 @@ Personality:
 
 Talking to: ${input.senderName || "Friend"}`,
       tools: {
-        ...dashboardTools,
+        ...createDashboardTools({ userId: input.userId }),
         get_current_time: tool({
           description: "Get the current server time",
           inputSchema: z.object({}),

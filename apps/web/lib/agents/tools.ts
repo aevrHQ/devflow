@@ -13,259 +13,247 @@ import { Types, FilterQuery } from "mongoose";
 
 const noParamsSchema = z.object({});
 
-export const getDashboardStats = tool({
-  description:
-    "Get aggregated statistics for the user's dashboard (total events, success rate, etc.)",
-  inputSchema: noParamsSchema,
-  execute: async () => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+async function getAuthorizedUserId(contextUserId?: string) {
+  if (contextUserId) return contextUserId;
+  const user = await getCurrentUser();
+  return user?.userId;
+}
 
-    return await getUserStats(user.userId);
-  },
-});
+export const createDashboardTools = (context: { userId?: string } = {}) => {
+  return {
+    getDashboardStats: tool({
+      description:
+        "Get aggregated statistics for the user's dashboard (total events, success rate, etc.)",
+      inputSchema: noParamsSchema,
+      execute: async () => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-const getRecentActivitySchema = z.object({
-  limit: z.number().optional().default(20),
-  status: z.enum(["pending", "processed", "failed", "ignored"]).optional(),
-});
+        return await getUserStats(userId);
+      },
+    }),
 
-export const getRecentActivity = tool({
-  description: "Get a list of recent webhook events/activity logs.",
-  inputSchema: getRecentActivitySchema,
-  execute: async ({
-    limit,
-    status,
-  }: z.infer<typeof getRecentActivitySchema>) => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+    getRecentActivity: tool({
+      description: "Get a list of recent webhook events/activity logs.",
+      inputSchema: z.object({
+        limit: z.number().optional().default(20),
+        status: z
+          .enum(["pending", "processed", "failed", "ignored"])
+          .optional(),
+      }),
+      execute: async ({ limit, status }) => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-    await connectToDatabase();
+        await connectToDatabase();
 
-    const installations = await Installation.find({
-      userId: new Types.ObjectId(user.userId),
-    });
-    const installationIds = installations.map((i) => i.installationId);
+        const installations = await Installation.find({
+          userId: new Types.ObjectId(userId),
+        });
+        const installationIds = installations.map((i) => i.installationId);
 
-    if (installationIds.length === 0) return { events: [] };
+        if (installationIds.length === 0) return { events: [] };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query: FilterQuery<any> = {
-      "payload.installation.id": { $in: installationIds },
-    };
-    if (status) query.status = status;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const query: FilterQuery<any> = {
+          "payload.installation.id": { $in: installationIds },
+        };
+        if (status) query.status = status;
 
-    const events = await WebhookEvent.find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit || 20);
+        const events = await WebhookEvent.find(query)
+          .sort({ createdAt: -1 })
+          .limit(limit || 20);
 
-    return {
-      events: events.map((e) => ({
-        id: e._id.toString(),
-        event: e.event,
-        source: e.source,
-        status: e.status,
-        createdAt: e.createdAt,
-        repo: e.payload?.repository?.full_name,
-      })),
-    };
-  },
-});
+        return {
+          events: events.map((e) => ({
+            id: e._id.toString(),
+            event: e.event,
+            source: e.source,
+            status: e.status,
+            createdAt: e.createdAt,
+            repo: e.payload?.repository?.full_name,
+          })),
+        };
+      },
+    }),
 
-export const getInstallations = tool({
-  description: "Get a list of connected GitHub installations/accounts.",
-  inputSchema: noParamsSchema,
-  execute: async () => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+    getInstallations: tool({
+      description: "Get a list of connected GitHub installations/accounts.",
+      inputSchema: noParamsSchema,
+      execute: async () => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-    await connectToDatabase();
-    const installations = await Installation.find({
-      userId: new Types.ObjectId(user.userId),
-    });
+        await connectToDatabase();
+        const installations = await Installation.find({
+          userId: new Types.ObjectId(userId),
+        });
 
-    return {
-      installations: installations.map((i) => ({
-        installationId: i.installationId,
-        accountLogin: i.accountLogin,
-        accountType: i.accountType,
-        repositorySelection: i.repositorySelection,
-      })),
-    };
-  },
-});
+        return {
+          installations: installations.map((i) => ({
+            installationId: i.installationId,
+            accountLogin: i.accountLogin,
+            accountType: i.accountType,
+            repositorySelection: i.repositorySelection,
+          })),
+        };
+      },
+    }),
 
-// --- Settings Tools ---
+    // --- Settings Tools ---
 
-export const getNotificationChannels = tool({
-  description: "Get the user's configured notification channels.",
-  inputSchema: noParamsSchema,
-  execute: async () => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+    getNotificationChannels: tool({
+      description: "Get the user's configured notification channels.",
+      inputSchema: noParamsSchema,
+      execute: async () => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-    await connectToDatabase();
-    const channels = await Channel.find({
-      userId: new Types.ObjectId(user.userId),
-    }).lean();
+        await connectToDatabase();
+        const channels = await Channel.find({
+          userId: new Types.ObjectId(userId),
+        }).lean();
 
-    return { channels: JSON.parse(JSON.stringify(channels)) };
-  },
-});
+        return { channels: JSON.parse(JSON.stringify(channels)) };
+      },
+    }),
 
-const addChannelSchema = z.object({
-  type: z.enum(["telegram", "discord", "slack", "email"]),
-  name: z.string().describe("Friendly name for the channel"),
-  config: z
-    .record(z.string(), z.any())
-    .describe("Configuration object (e.g. webhookUrl, chatId)"),
-});
+    addNotificationChannel: tool({
+      description: "Add a new notification channel.",
+      inputSchema: z.object({
+        type: z.enum(["telegram", "discord", "slack", "email"]),
+        name: z.string().describe("Friendly name for the channel"),
+        config: z
+          .record(z.string(), z.any())
+          .describe("Configuration object (e.g. webhookUrl, chatId)"),
+      }),
+      execute: async ({ type, name, config }) => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-export const addNotificationChannel = tool({
-  description: "Add a new notification channel.",
-  inputSchema: addChannelSchema,
-  execute: async ({ type, name, config }: z.infer<typeof addChannelSchema>) => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+        await connectToDatabase();
+        const channel = new Channel({
+          userId: new Types.ObjectId(userId),
+          type,
+          name,
+          config,
+          enabled: true,
+        });
+        await channel.save();
 
-    await connectToDatabase();
-    const channel = new Channel({
-      userId: new Types.ObjectId(user.userId),
-      type,
-      name,
-      config,
-      enabled: true,
-    });
-    await channel.save();
+        return {
+          success: true,
+          channel: JSON.parse(JSON.stringify(channel.toObject())),
+        };
+      },
+    }),
 
-    return {
-      success: true,
-      channel: JSON.parse(JSON.stringify(channel.toObject())),
-    };
-  },
-});
+    updateNotificationChannel: tool({
+      description:
+        "Update an existing notification channel configuration or filters.",
+      inputSchema: z.object({
+        channelId: z.string(),
+        updates: z.object({
+          name: z.string().optional(),
+          enabled: z.boolean().optional(),
+          config: z.record(z.string(), z.any()).optional(),
+          webhookRules: z
+            .object({
+              sources: z.array(
+                z.object({
+                  type: z.string(),
+                  enabled: z.boolean(),
+                  filters: z
+                    .object({
+                      repositories: z.array(z.string()).optional(),
+                      eventTypes: z.array(z.string()).optional(),
+                      services: z.array(z.string()).optional(),
+                    })
+                    .optional(),
+                }),
+              ),
+            })
+            .optional(),
+        }),
+      }),
+      execute: async ({ channelId, updates }) => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-const updateChannelSchema = z.object({
-  channelId: z.string(),
-  updates: z.object({
-    name: z.string().optional(),
-    enabled: z.boolean().optional(),
-    config: z.record(z.string(), z.any()).optional(),
-    webhookRules: z
-      .object({
-        sources: z.array(
-          z.object({
-            type: z.string(),
-            enabled: z.boolean(),
-            filters: z
-              .object({
-                repositories: z.array(z.string()).optional(),
-                eventTypes: z.array(z.string()).optional(),
-                services: z.array(z.string()).optional(),
-              })
-              .optional(),
-          }),
-        ),
-      })
-      .optional(),
-  }),
-});
+        await connectToDatabase();
+        const channel = await Channel.findOneAndUpdate(
+          { _id: channelId, userId: new Types.ObjectId(userId) },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          { $set: updates } as any,
+          { new: true },
+        ).lean();
 
-export const updateNotificationChannel = tool({
-  description:
-    "Update an existing notification channel configuration or filters.",
-  inputSchema: updateChannelSchema,
-  execute: async ({
-    channelId,
-    updates,
-  }: z.infer<typeof updateChannelSchema>) => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+        if (!channel) return { error: "Channel not found" };
+        return {
+          success: true,
+          channel: JSON.parse(JSON.stringify(channel)),
+        };
+      },
+    }),
 
-    await connectToDatabase();
-    // Use casting to avoid strict UpdateQuery type mismatch if necessary, or just simple object
-    const channel = await Channel.findOneAndUpdate(
-      { _id: channelId, userId: new Types.ObjectId(user.userId) },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      { $set: updates } as any,
-      { new: true },
-    ).lean();
+    deleteNotificationChannel: tool({
+      description: "Delete a notification channel.",
+      inputSchema: z.object({
+        channelId: z.string(),
+      }),
+      execute: async ({ channelId }) => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-    if (!channel) return { error: "Channel not found" };
-    return { success: true, channel: JSON.parse(JSON.stringify(channel)) };
-  },
-});
+        await connectToDatabase();
+        await Channel.deleteOne({
+          _id: channelId,
+          userId: new Types.ObjectId(userId),
+        });
+        return { success: true };
+      },
+    }),
 
-const deleteChannelSchema = z.object({
-  channelId: z.string(),
-});
+    getUserPreferences: tool({
+      description: "Get user preferences (e.g. AI summary settings).",
+      inputSchema: noParamsSchema,
+      execute: async () => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-export const deleteNotificationChannel = tool({
-  description: "Delete a notification channel.",
-  inputSchema: deleteChannelSchema,
-  execute: async ({ channelId }: z.infer<typeof deleteChannelSchema>) => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+        await connectToDatabase();
+        const userDoc = await User.findById(userId).lean();
+        return { preferences: userDoc?.preferences || {} };
+      },
+    }),
 
-    await connectToDatabase();
-    await Channel.deleteOne({
-      _id: channelId,
-      userId: new Types.ObjectId(user.userId),
-    });
-    return { success: true };
-  },
-});
+    updateUserPreferences: tool({
+      description: "Update user preferences.",
+      inputSchema: z.object({
+        aiSummary: z.boolean().optional(),
+        allowedSources: z.array(z.string()).optional(),
+      }),
+      execute: async (updates) => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
 
-export const getUserPreferences = tool({
-  description: "Get user preferences (e.g. AI summary settings).",
-  inputSchema: noParamsSchema,
-  execute: async () => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
+        await connectToDatabase();
 
-    await connectToDatabase();
-    const userDoc = await User.findById(user.userId).lean();
-    return { preferences: userDoc?.preferences || {} };
-  },
-});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const updateQuery: Record<string, any> = {};
+        if (updates.aiSummary !== undefined)
+          updateQuery["preferences.aiSummary"] = updates.aiSummary;
+        if (updates.allowedSources !== undefined)
+          updateQuery["preferences.allowedSources"] = updates.allowedSources;
 
-const updatePreferencesSchema = z.object({
-  aiSummary: z.boolean().optional(),
-  allowedSources: z.array(z.string()).optional(),
-});
+        if (Object.keys(updateQuery).length > 0) {
+          await User.findByIdAndUpdate(userId, { $set: updateQuery });
+        }
 
-export const updateUserPreferences = tool({
-  description: "Update user preferences.",
-  inputSchema: updatePreferencesSchema,
-  execute: async (updates: z.infer<typeof updatePreferencesSchema>) => {
-    const user = await getCurrentUser();
-    if (!user) return { error: "Unauthorized" };
-
-    await connectToDatabase();
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updateQuery: Record<string, any> = {};
-    if (updates.aiSummary !== undefined)
-      updateQuery["preferences.aiSummary"] = updates.aiSummary;
-    if (updates.allowedSources !== undefined)
-      updateQuery["preferences.allowedSources"] = updates.allowedSources;
-
-    if (Object.keys(updateQuery).length > 0) {
-      await User.findByIdAndUpdate(user.userId, { $set: updateQuery });
-    }
-
-    return { success: true };
-  },
-});
-
-export const dashboardTools = {
-  getDashboardStats,
-  getRecentActivity,
-  getInstallations,
-  getNotificationChannels,
-  addNotificationChannel,
-  updateNotificationChannel,
-  deleteNotificationChannel,
-  getUserPreferences,
-  updateUserPreferences,
+        return { success: true };
+      },
+    }),
+  };
 };
+
+export const dashboardTools = createDashboardTools();
