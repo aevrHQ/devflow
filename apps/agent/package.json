@@ -12,19 +12,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/devflow/devflow-agent.git"
+    "url": "https://github.com/miracleonyenma/devflow.git"
   },
   "bugs": {
-    "url": "https://github.com/devflow/devflow-agent/issues"
+    "url": "https://github.com/miracleonyenma/devflow/issues"
   },
-  "homepage": "https://github.com/devflow/devflow-agent#readme",
+  "homepage": "https://github.com/miracleonyenma/devflow#readme",
   "scripts": {
     "build": "tsc && node fix-imports.js",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "cli": "tsx src/cli.ts",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "release": "standard-version",
+    "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major"
   },
   "keywords": [
     "devflow",
@@ -51,6 +55,7 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/yargs": "^17.0.35",
+    "standard-version": "^9.5.0",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },
