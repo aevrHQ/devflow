@@ -3,8 +3,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files (when root dir is apps/agent-host)
+# Copy package files and tsconfig (when root dir is apps/agent-host)
 COPY package*.json ./
+COPY tsconfig.json ./
+COPY src ./src
 
 # Install dependencies
 RUN npm install
@@ -29,8 +31,8 @@ RUN npm install --only=production
 # Copy built code from builder
 COPY --from=builder /app/dist ./dist
 
-# Copy environment template (for reference)
-COPY .env.example ./
+# Copy environment template (for reference, optional)
+COPY .env.example ./ 2>/dev/null || true
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
