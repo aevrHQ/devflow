@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Types } from "mongoose";
+import Link from "next/link";
 
 interface DashboardPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -277,30 +278,30 @@ export default async function DashboardPage(props: DashboardPageProps) {
               Check out our guides to make the most of Pinga
             </p>
             <div className="flex flex-wrap gap-3">
-              <a
+              <Link
                 href="/help/getting-started"
                 className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
               >
                 🚀 Getting Started
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/help/telegram-groups"
                 className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
               >
                 👥 Telegram Groups
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/help/filtering"
                 className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
               >
                 🎯 Webhook Filtering
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/help/sources"
                 className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
               >
                 🔗 Webhook Sources
-              </a>
+              </Link>
             </div>
           </div>
         </div>
