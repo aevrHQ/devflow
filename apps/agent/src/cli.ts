@@ -69,7 +69,7 @@ async function initCommand(options: InitOptions): Promise<void> {
     console.log(`   Platform: ${platformUrl}`);
     console.log(`   Config Location: ~/.devflow/config.json\n`);
     console.log("🚀 Next Step:");
-    console.log(`   devflow-agent start\n`);
+    console.log(`   devflow start\n`);
   } catch (error) {
     console.error(
       `\n❌ Initialization failed: ${error instanceof Error ? error.message : String(error)}`
@@ -90,7 +90,7 @@ async function startCommand(options: StartOptions): Promise<void> {
 
   const config = loadConfig();
   if (!config) {
-    console.log("❌ No agent configured. Run 'devflow-agent init' first.");
+    console.log("❌ No agent configured. Run 'devflow init' first.");
     process.exit(1);
   }
 
@@ -271,7 +271,7 @@ export async function runCLI(): Promise<void> {
       async () => {
         const config = loadConfig();
         if (!config) {
-          console.log("❌ No agent configured. Run 'devflow-agent init' first.");
+          console.log("❌ No agent configured. Run 'devflow init' first.");
           process.exit(1);
         }
         console.log("\n✓ DevFlow Agent Status\n");
@@ -294,10 +294,10 @@ export async function runCLI(): Promise<void> {
     .epilogue(
       `
 Examples:
-  devflow-agent init
-  devflow-agent start
-  devflow-agent status
-  devflow-agent start --debug
+  devflow init
+  devflow start
+  devflow status
+  devflow start --debug
 `
     )
     .demandCommand(1, "Please specify a command")
