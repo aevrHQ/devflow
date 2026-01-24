@@ -42,7 +42,10 @@
     "github-copilot",
     "cli-agent"
   ],
-  "author": "DevFlow Contributors",
+  "author": "Miracle Onyenma",
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "dependencies": {
     "@github/copilot-sdk": "^0.1.16",
