@@ -48,11 +48,12 @@ export async function GET(request: Request) {
 
     // Generate JWT
     const payload = { userId: user._id.toString(), email: user.email };
+    const expiresIn = magicToken.keepSignedIn ? "30d" : "1d";
     const maxAge = magicToken.keepSignedIn
       ? 30 * 24 * 60 * 60 // 30 days
       : 24 * 60 * 60; // 1 day
 
-    const jwtToken = signToken(payload, maxAge);
+    const jwtToken = signToken(payload, expiresIn);
 
     // Set Cookie
     await setAuthCookie(jwtToken, maxAge);

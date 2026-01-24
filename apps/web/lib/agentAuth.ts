@@ -1,7 +1,14 @@
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "devflow-secret-key-change-in-prod";
-const JWT_EXPIRY = "30d"; // 30 days
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("❌ CRITICAL: JWT_SECRET environment variable is not set!");
+  console.error("   Set it in .env.local or your deployment platform");
+  console.error("   Generate a strong secret: openssl rand -hex 32");
+  process.exit(1);
+}
+
+const JWT_EXPIRY: string = process.env.JWT_EXPIRY || "30d"; // 30 days
 
 export interface AgentTokenPayload {
   agentId: string;
@@ -15,14 +22,18 @@ export interface AgentTokenPayload {
  */
 export function generateAgentToken(
   agentId: string,
-  userId: string
+  userId: string,
 ): { token: string; expiresAt: Date } {
-  const expiresIn = JWT_EXPIRY;
-  const token = jwt.sign({ agentId, userId }, JWT_SECRET, { expiresIn });
+  // JWT_SECRET is guaranteed to exist due to process.exit(1) above
+  const token = jwt.sign(
+    { agentId, userId },
+    JWT_SECRET as string,
+    { expiresIn: JWT_EXPIRY } as jwt.SignOptions,
+  );
 
   // Calculate expiration date
-  const decoded = jwt.decode(token) as any;
-  const expiresAt = new Date(decoded.exp * 1000);
+  const decoded = jwt.decode(token) as jwt.JwtPayload;
+  const expiresAt = new Date(decoded?.exp || 0 * 1000);
 
   return { token, expiresAt };
 }
@@ -32,9 +43,14 @@ export function generateAgentToken(
  */
 export function verifyAgentToken(token: string): AgentTokenPayload | null {
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as AgentTokenPayload;
+    // JWT_SECRET is guaranteed to exist due to process.exit(1) above
+    const payload = jwt.verify(
+      token,
+      JWT_SECRET as string,
+    ) as AgentTokenPayload;
     return payload;
   } catch (error) {
+    console.error("❌ CRITICAL: JWT verification failed!", error);
     return null;
   }
 }

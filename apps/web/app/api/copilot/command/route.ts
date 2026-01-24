@@ -16,7 +16,7 @@ export interface DevflowRequest {
     repo: string;
     branch?: string;
     naturalLanguage: string;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
   };
 }
 
@@ -24,7 +24,17 @@ export async function POST(request: NextRequest) {
   try {
     // Verify secret
     const authHeader = request.headers.get("X-API-Secret");
-    const expectedSecret = process.env.DEVFLOW_API_SECRET || "devflow-secret";
+    const expectedSecret = process.env.DEVFLOW_API_SECRET;
+
+    if (!expectedSecret) {
+      console.error(
+        "❌ CRITICAL: DEVFLOW_API_SECRET environment variable not set!",
+      );
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 },
+      );
+    }
 
     if (!authHeader || authHeader !== expectedSecret) {
       console.error("[Copilot Command] Invalid API secret");
@@ -34,19 +44,18 @@ export async function POST(request: NextRequest) {
     const devflowRequest: DevflowRequest = await request.json();
 
     console.log(
-      `[Copilot Command] Forwarding ${devflowRequest.payload.intent} for ${devflowRequest.payload.repo}`
+      `[Copilot Command] Forwarding ${devflowRequest.payload.intent} for ${devflowRequest.payload.repo}`,
     );
 
     // Store the mapping so task updates know where to send responses
     storeTaskMapping(
       devflowRequest.taskId,
       devflowRequest.source.chatId,
-      devflowRequest.source.channel
+      devflowRequest.source.channel,
     );
 
     // Forward to Agent Host
-    const agentHostUrl =
-      process.env.AGENT_HOST_URL || "http://localhost:3001";
+    const agentHostUrl = process.env.AGENT_HOST_URL || "http://localhost:3001";
 
     const response = await fetch(`${agentHostUrl}/command`, {
       method: "POST",
@@ -57,18 +66,18 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      console.error(
-        `[Copilot Command] Agent Host returned ${response.status}`
-      );
+      console.error(`[Copilot Command] Agent Host returned ${response.status}`);
       return NextResponse.json(
         { error: `Agent Host error: ${response.status}` },
-        { status: 502 }
+        { status: 502 },
       );
     }
 
     const result = await response.json();
 
-    console.log(`[Copilot Command] Agent Host accepted task: ${devflowRequest.taskId}`);
+    console.log(
+      `[Copilot Command] Agent Host accepted task: ${devflowRequest.taskId}`,
+    );
 
     return NextResponse.json({
       ok: true,
@@ -79,7 +88,7 @@ export async function POST(request: NextRequest) {
     console.error("[Copilot Command] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

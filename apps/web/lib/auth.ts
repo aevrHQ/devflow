@@ -1,11 +1,17 @@
-import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
+import type { JwtPayload, SignOptions } from "jsonwebtoken";
 import { cookies } from "next/headers";
 
 const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
 if (!ACCESS_SECRET) {
-  // throw new Error("Please define the ACCESS_TOKEN_SECRET environment variable");
+  console.error("❌ CRITICAL: ACCESS_TOKEN_SECRET environment variable not set!");
+  console.error("   Set it in .env.local or your deployment platform");
+  console.error("   Generate a strong secret: openssl rand -hex 32");
+  process.exit(1);
 }
+
+const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || "3h";
 
 export interface UserPayload extends JwtPayload {
   userId: string;
@@ -15,14 +21,17 @@ export interface UserPayload extends JwtPayload {
 /**
  * Sign a JWT token with user payload
  * @param payload - User ID and email
- * @param expiresIn - Token expiration (default: 3h)
+ * @param expiresIn - Token expiration (default: from ACCESS_TOKEN_EXPIRY env var)
  */
 export function signToken(
   payload: Omit<UserPayload, "iat" | "exp">,
-  expiresIn: SignOptions["expiresIn"] = "3h",
+  expiresIn?: string,
 ) {
   if (!ACCESS_SECRET) throw new Error("ACCESS_TOKEN_SECRET is missing");
-  return jwt.sign(payload, ACCESS_SECRET, { expiresIn });
+  const options: SignOptions = {
+    expiresIn: (expiresIn || ACCESS_TOKEN_EXPIRY) as SignOptions["expiresIn"],
+  };
+  return jwt.sign(payload, ACCESS_SECRET, options);
 }
 
 /**

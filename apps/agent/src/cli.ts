@@ -25,7 +25,7 @@ interface InitOptions {
 async function initCommand(options: InitOptions): Promise<void> {
   console.log("\n🚀 DevFlow Agent Initialization\n");
 
-  const platformUrl = options.platformUrl || "https://devflow.example.com";
+  const platformUrl = options.platformUrl || process.env.PLATFORM_URL || "https://devflow.example.com";
 
   console.log("📍 Platform URL:", platformUrl);
   console.log("⏳ Starting authentication flow...\n");
@@ -34,8 +34,8 @@ async function initCommand(options: InitOptions): Promise<void> {
     // Initiate OAuth
     const token = await initiateOAuthFlow({
       platformUrl,
-      clientId: "devflow-agent-cli",
-      redirectUri: "http://localhost:3333/callback",
+      clientId: process.env.GITHUB_CLIENT_ID || "devflow-agent-cli",
+      redirectUri: process.env.OAUTH_REDIRECT_URI || "http://localhost:3333/callback",
     });
 
     console.log("✓ Authentication successful!");
@@ -136,10 +136,13 @@ async function startCommand(options: StartOptions): Promise<void> {
 
   // Main polling loop
   let lastHeartbeat = 0;
+  const pollInterval = parseInt(process.env.POLL_INTERVAL_MS || String(options.pollInterval), 10);
+  const heartbeatInterval = parseInt(process.env.HEARTBEAT_INTERVAL_MS || "30000", 10);
+  
   while (running) {
     try {
-      // Heartbeat every 30 seconds
-      if (Date.now() - lastHeartbeat > 30000) {
+      // Heartbeat at configured interval
+      if (Date.now() - lastHeartbeat > heartbeatInterval) {
         await client.heartbeat();
         lastHeartbeat = Date.now();
       }
