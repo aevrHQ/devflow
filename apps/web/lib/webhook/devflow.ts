@@ -7,7 +7,7 @@ export interface DevflowCommand {
   description: string;
   repo?: string;
   branch?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   rawText: string;
 }
 
@@ -25,7 +25,7 @@ export function parseDevflowCommand(text: string): DevflowCommand {
 
   // Parse the command
   const match = trimmed.match(
-    /^!devflow\s+(fix-bug|fix|feature|explain|review-pr|deploy)\s+(.+)$/i
+    /^!devflow\s+(fix-bug|fix|feature|explain|review-pr|deploy)\s+(.+)$/i,
   );
 
   if (!match) {
@@ -43,7 +43,11 @@ export function parseDevflowCommand(text: string): DevflowCommand {
   if (intentStr.toLowerCase() === "fix") {
     intent = "fix-bug";
   } else {
-    intent = intentStr.toLowerCase() as "feature" | "explain" | "review-pr" | "deploy";
+    intent = intentStr.toLowerCase() as
+      | "feature"
+      | "explain"
+      | "review-pr"
+      | "deploy";
   }
 
   // Parse description for repo and branch
@@ -62,7 +66,10 @@ export function parseDevflowCommand(text: string): DevflowCommand {
       descriptionParts.shift();
 
       // Check if next part looks like a branch (no spaces, alphanumeric with - or _)
-      if (descriptionParts.length > 0 && /^[a-zA-Z0-9\-_]+$/.test(descriptionParts[0])) {
+      if (
+        descriptionParts.length > 0 &&
+        /^[a-zA-Z0-9\-_]+$/.test(descriptionParts[0])
+      ) {
         branch = descriptionParts[0];
         descriptionParts.shift();
       }
@@ -87,28 +94,28 @@ export function extractDevflowInfo(message: string): DevflowCommand | null {
   return command.isDevflow ? command : null;
 }
 
-// Format error message for invalid devflow commands
 export function getDevflowHelpText(): string {
-  return `🤖 *Devflow AI DevOps Agent*
+  return `🤖 *Devflow Agent*
 
-Use these commands to automate development tasks:
+*Dashboard & Tasks*
+🔗 [Dashboard](https://devflow-web.vercel.app/dashboard)
+📋 [View Tasks](https://devflow-web.vercel.app/dashboard/tasks)
 
-*Fix Bugs*
-\`!devflow fix owner/repo Fix the auth bug\`
+*Available Commands*
 
-*Implement Features*
-\`!devflow feature owner/repo Add CSV export\`
+1️⃣ *List Active Agents*
+   \`Can you list my active agents?\`
 
-*Explain Code*
-\`!devflow explain owner/repo Explain authentication flow\`
+2️⃣ *Execute Tasks*
+   \`Ask my agent to [task description]\`
+   Example: _"Ask my agent to update the README"_
 
-*Review PRs*
-\`!devflow review-pr owner/repo Provide feedback on PR #123\`
+3️⃣ *DevFlow Automation* (Requires Repo Access)
+   *Fix Bugs*: \`!devflow fix owner/repo Fix the auth bug\`
+   *Feature*: \`!devflow feature owner/repo Add CSV export\`
+   *Explain*: \`!devflow explain owner/repo Explain auth flow\`
 
-*Optional: Specify branch*
-\`!devflow fix owner/repo develop Fix the bug\`
-
-⏳ The agent will clone the repo, understand your request, and take action!
-📊 You'll receive real-time progress updates as the task executes.
-✅ When complete, you'll get a link to the created PR or result.`;
+*Tips*
+• Ensure your CLI agent is running: \`devflow start\`
+• Connect Telegram groups via the Dashboard Settings.`;
 }

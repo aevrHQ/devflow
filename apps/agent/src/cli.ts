@@ -191,11 +191,15 @@ async function startCommand(options: StartOptions): Promise<void> {
           // Execute task via agent-host (Copilot SDK)
           (async () => {
             try {
-              const agentHostUrl =
-                process.env.AGENT_HOST_URL || "http://localhost:3001";
+              // Fix trailing slash in Agent Host URL if present
+              const cleanAgentHostUrl = (
+                config.agentHostUrl ||
+                process.env.AGENT_HOST_URL ||
+                "http://localhost:3001"
+              ).replace(/\/$/, "");
 
               // Call agent-host to execute the workflow
-              await axios.post(`${agentHostUrl}/api/workflows/execute`, {
+              await axios.post(`${cleanAgentHostUrl}/api/workflows/execute`, {
                 taskId: cmd.task_id,
                 intent: cmd.intent,
                 repo: cmd.repo,
@@ -204,12 +208,8 @@ async function startCommand(options: StartOptions): Promise<void> {
                 naturalLanguage: cmd.description,
               });
 
-              // Report completion
-              await client.completeTask(cmd.task_id, {
-                success: true,
-              });
-
-              console.log(`✓ Task completed: ${cmd.task_id}`);
+              console.log(`✓ Task dispatched to Host: ${cmd.task_id}`);
+              // Note: We do NOT call completeTask here. The Agent Host will report completion/failure asynchronously.
             } catch (error: any) {
               const errorMsg = axios.isAxiosError(error)
                 ? `Request failed: ${error.message} (Status: ${error.response?.status})`
