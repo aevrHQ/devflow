@@ -1,19 +1,23 @@
 import { redirect } from 'next/navigation';
 
-export default function AgentAuthPage({
+export default async function AgentAuthPage({
   searchParams,
 }: {
-  searchParams: { client_id?: string; redirect_uri?: string; state?: string };
+  searchParams: Promise<{ client_id?: string; redirect_uri?: string; state?: string }>;
 }) {
-  const clientId = searchParams.client_id;
-  const redirectUri = searchParams.redirect_uri;
-  const state = searchParams.state;
+  const params = await searchParams;
+  const clientId = params.client_id;
+  const redirectUri = params.redirect_uri;
+  const state = params.state;
 
   if (!clientId || !redirectUri || !state) {
     return (
       <div style={{ padding: '40px', fontFamily: 'sans-serif', textAlign: 'center' }}>
         <h1>❌ Invalid OAuth Request</h1>
         <p>Missing required parameters: client_id, redirect_uri, or state</p>
+        <p style={{ fontSize: '0.9em', opacity: 0.7 }}>
+          Received: client_id={clientId}, redirect_uri={redirectUri}, state={state}
+        </p>
       </div>
     );
   }
