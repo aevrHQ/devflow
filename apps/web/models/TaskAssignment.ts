@@ -25,6 +25,11 @@ export interface ITaskAssignment {
   };
   createdAt: Date;
   updatedAt: Date;
+  source?: {
+    channel: "telegram" | "slack" | "dashboard" | "cli";
+    chatId?: string;
+    messageId?: string;
+  };
 }
 
 export interface TaskAssignmentDocument extends ITaskAssignment, Document {}
@@ -56,6 +61,11 @@ const TaskAssignmentSchema = new Schema<TaskAssignmentDocument>(
       output: { type: String },
       prUrl: { type: String },
       error: { type: String },
+    },
+    source: {
+      channel: { type: String, default: "dashboard" },
+      chatId: { type: String },
+      messageId: { type: String },
     },
   },
   {

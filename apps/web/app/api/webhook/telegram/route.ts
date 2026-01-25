@@ -483,6 +483,11 @@ export async function POST(request: NextRequest) {
               senderName,
               history,
               userId: user?._id.toString(),
+              source: {
+                channel: "telegram",
+                chatId: chat.id.toString(),
+                messageId: update.message.message_id?.toString(),
+              },
             });
 
             console.log("[Telegram Webhook] ChatAssistant Result:", result);

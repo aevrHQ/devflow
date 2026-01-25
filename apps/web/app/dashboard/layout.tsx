@@ -32,6 +32,12 @@ export default async function DashboardLayout({
                 Overview
               </Link>
               <Link
+                href="/dashboard/tasks"
+                className="text-gray-600 hover:text-black transition-colors"
+              >
+                Tasks
+              </Link>
+              <Link
                 href="/dashboard/settings"
                 className="text-gray-600 hover:text-black transition-colors"
               >

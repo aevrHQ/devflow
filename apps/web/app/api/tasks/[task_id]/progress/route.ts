@@ -7,7 +7,7 @@ import { verifyAgentToken, extractToken } from "@/lib/agentAuth";
  * POST /api/tasks/[task_id]/progress
  * Update task progress
  * Requires: Authorization: Bearer <token>
- * 
+ *
  * Request body:
  * {
  *   status: "in_progress" | "completed" | "failed",
@@ -18,7 +18,7 @@ import { verifyAgentToken, extractToken } from "@/lib/agentAuth";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ task_id: string }> }
+  { params }: { params: Promise<{ task_id: string }> },
 ) {
   try {
     await connectDB();
@@ -31,7 +31,7 @@ export async function POST(
     if (!token) {
       return NextResponse.json(
         { error: "Missing or invalid Authorization header" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(
     if (!payload) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function POST(
     if (!task) {
       return NextResponse.json(
         { error: "Task not found or not assigned to this agent" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -60,12 +60,16 @@ export async function POST(
     task.status = status || task.status;
     task.currentStep = step || task.currentStep;
     task.progress = progress ?? task.progress;
-    
+
     if (!task.startedAt) {
       task.startedAt = new Date();
     }
 
     await task.save();
+
+    // Send notification (fire and forget)
+    const { notifyTaskUpdate } = await import("@/lib/notifications");
+    notifyTaskUpdate(task, "progress", details).catch(console.error);
 
     return NextResponse.json(
       {
@@ -76,13 +80,13 @@ export async function POST(
           progress: task.progress,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[tasks/[task_id]/progress]", error);
     return NextResponse.json(
       { error: "Failed to update progress" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

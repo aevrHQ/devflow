@@ -23,7 +23,16 @@ async function getAuthorizedUserId(contextUserId?: string) {
   return user?.userId;
 }
 
-export const createDashboardTools = (context: { userId?: string } = {}) => {
+export const createDashboardTools = (
+  context: {
+    userId?: string;
+    source?: {
+      channel: "telegram" | "slack" | "dashboard" | "cli";
+      chatId?: string;
+      messageId?: string;
+    };
+  } = {},
+) => {
   return {
     getDashboardStats: tool({
       description:
@@ -321,6 +330,7 @@ export const createDashboardTools = (context: { userId?: string } = {}) => {
           progress: 0,
           currentStep: "queued",
           startedAt: new Date(),
+          source: context.source || { channel: "dashboard" },
         });
 
         await task.save();

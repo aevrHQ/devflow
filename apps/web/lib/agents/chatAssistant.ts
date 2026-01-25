@@ -8,6 +8,11 @@ interface ChatInput {
   senderName?: string;
   history?: ModelMessage[];
   userId?: string;
+  source?: {
+    channel: "telegram" | "slack" | "dashboard" | "cli";
+    chatId?: string;
+    messageId?: string;
+  };
 }
 
 export async function generateChatResponse(
@@ -42,7 +47,7 @@ Personality:
 
 Talking to: ${input.senderName || "Friend"}`,
       tools: {
-        ...createDashboardTools({ userId: input.userId }),
+        ...createDashboardTools({ userId: input.userId, source: input.source }),
         get_current_time: tool({
           description: "Get the current server time",
           inputSchema: z.object({}),
