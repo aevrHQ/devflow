@@ -244,25 +244,8 @@ export async function POST(request: NextRequest) {
           text.toLowerCase().startsWith("/help@")
         ) {
           const isGroup = chat.type === "group" || chat.type === "supergroup";
-          const helpMessage = isGroup
-            ? `🤖 *Pinga Bot - Group Chat Setup*\n\n` +
-              `To receive notifications in this group:\n\n` +
-              `1️⃣ Go to your Pinga Dashboard → Settings\n` +
-              `2️⃣ Click "Add Telegram" to create a new channel\n` +
-              `3️⃣ Click "Connect with Telegram"\n` +
-              `4️⃣ The link will automatically connect this group!\n\n` +
-              `💡 *Tip:* You can filter which notifications come here by configuring webhook rules in the dashboard.\n\n` +
-              `Need help? Visit your dashboard for more options.`
-            : `🤖 *Pinga Bot - Personal Chat Setup*\n\n` +
-              `To receive notifications here:\n\n` +
-              `1️⃣ Go to your Pinga Dashboard → Settings\n` +
-              `2️⃣ Click "Add Telegram" to create a new channel\n` +
-              `3️⃣ Click "Connect with Telegram"\n` +
-              `4️⃣ You'll be redirected here to complete the setup!\n\n` +
-              `✨ You can have multiple channels for different projects.\n\n` +
-              `Need help? Visit your dashboard for more options.`;
-
-          await sendPlainMessage(helpMessage, chat.id.toString());
+          // Use the unified help text from devflow.ts which contains dashboard info
+          await sendPlainMessage(getDevflowHelpText(), chat.id.toString());
           return NextResponse.json({ ok: true });
         }
 

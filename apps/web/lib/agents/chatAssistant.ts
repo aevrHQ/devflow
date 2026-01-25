@@ -53,7 +53,7 @@ Talking to: ${input.senderName || "Friend"}`,
           execute: async () => new Date().toLocaleString(),
         }),
       },
-      stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(10),
     });
 
     const result = await agent.generate({
@@ -66,6 +66,7 @@ Talking to: ${input.senderName || "Friend"}`,
     console.log("[ChatAssistant] Agent Result:", {
       text: result.text,
       stepsLen: result.steps?.length,
+      steps: JSON.stringify(result.steps, null, 2),
     });
 
     // Clean up any potential hallucinated tool tags from the text
