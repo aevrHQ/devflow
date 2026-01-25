@@ -47,7 +47,7 @@ Pinga is a powerful notification management system that receives webhooks from y
 
 **For Group Chat:**
 
-1. Add `@pingapingbot` to your Telegram group
+1. Add `@thedevflowbot` to your Telegram group
 2. Click **"Copy Command"** in the dashboard
 3. Paste the command in your group
 4. ✅ Group connected!

@@ -5,6 +5,9 @@ export interface ITaskAssignment {
   agentId: string;
   userId: string;
   intent: string; // e.g., "fix-bug", "feature", "explain", "review-pr"
+  description?: string;
+  repo?: string;
+  branch?: string;
   status: "pending" | "in_progress" | "completed" | "failed";
   progress: number; // 0-1
   currentStep: string;

@@ -28,7 +28,7 @@ Before you begin:
 
 1. Open your Telegram group
 2. Tap the group name → **Add Members**
-3. Search for `@pingapingbot` (or your bot name)
+3. Search for `@thedevflowbot` (or your bot name)
 4. Add the bot to the group
 
 > 💡 **Tip**: You need admin rights to add bots
@@ -49,7 +49,7 @@ You'll see step-by-step instructions:
 ```
 📋 Steps to connect group chat:
 
-1. Add @pingapingbot to your Telegram group
+1. Add @thedevflowbot to your Telegram group
 2. In the group, send this command:
 
    /start channel_696e67f7bf2a31d62e9a9306_1

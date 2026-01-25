@@ -21,7 +21,7 @@ async function testWebhookReply() {
         type: "supergroup",
       },
       date: 1678888888,
-      text: "@pingapingbot hello world (test reply)", // Mentioning the bot
+      text: "@thedevflowbot hello world (test reply)", // Mentioning the bot
     },
   };
 
