@@ -8,6 +8,7 @@ export interface IAgent {
   lastHeartbeat: Date;
   version: string;
   platform: string;
+  workingDirectory?: string; // Current working directory where agent was started
   capabilities: string[]; // ["fix-bug", "feature", "explain", "review-pr"]
   createdAt: Date;
   updatedAt: Date;
@@ -28,11 +29,12 @@ const AgentSchema = new Schema<AgentDocument>(
     lastHeartbeat: { type: Date, default: () => new Date() },
     version: { type: String, default: "0.1.0" },
     platform: { type: String }, // e.g., "linux", "darwin", "win32"
+    workingDirectory: { type: String }, // Current working directory where agent was started
     capabilities: { type: [String], default: [] },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Agent =

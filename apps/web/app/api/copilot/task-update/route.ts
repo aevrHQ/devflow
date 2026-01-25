@@ -3,7 +3,6 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import User from "@/models/User";
 import { sendPlainMessage } from "@/lib/webhook/telegram";
 import { sendSlackMessage } from "@/lib/webhook/slack";
 import { config } from "@/lib/webhook/config";
@@ -33,7 +32,7 @@ export function storeTaskMapping(
   taskId: string,
   chatId: string,
   channel: "telegram" | "slack",
-  token?: string
+  token?: string,
 ): void {
   taskMappings.set(taskId, { chatId, channel, token });
 }
@@ -47,7 +46,7 @@ export async function POST(request: NextRequest) {
     if (!authHeader || authHeader !== expectedSecret) {
       console.error(
         "[Copilot] Invalid API secret for task update:",
-        authHeader
+        authHeader,
       );
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -55,17 +54,17 @@ export async function POST(request: NextRequest) {
     const update: ProgressUpdate = await request.json();
 
     console.log(
-      `[Copilot] Task Update: ${update.taskId} - ${update.status} - ${update.step}`
+      `[Copilot] Task Update: ${update.taskId} - ${update.status} - ${update.step}`,
     );
 
-    // Get the task mapping
-    const mapping = taskMappings.get(update.taskId);
-    if (!mapping) {
-      console.error(`[Copilot] No mapping found for task: ${update.taskId}`);
-      return NextResponse.json(
-        { error: "Task not found" },
-        { status: 404 }
-      );
+    // Connect to database and find task
+    await connectToDatabase();
+    const TaskAssignment = (await import("@/models/TaskAssignment")).default;
+    const task = await TaskAssignment.findOne({ taskId: update.taskId });
+
+    if (!task || !task.source?.chatId) {
+      console.error(`[Copilot] No task or source found for: ${update.taskId}`);
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
     // Format message based on status
@@ -93,18 +92,34 @@ export async function POST(request: NextRequest) {
     }
 
     // Send to appropriate channel
-    if (mapping.channel === "telegram") {
-      await sendPlainMessage(message, mapping.chatId);
-    } else if (mapping.channel === "slack") {
-      await sendSlackMessage(mapping.token || config.slack.botToken, mapping.chatId, message);
+    if (task.source.channel === "telegram") {
+      await sendPlainMessage(message, task.source.chatId);
+    } else if (task.source.channel === "slack") {
+      await sendSlackMessage(
+        config.slack.botToken,
+        task.source.chatId,
+        message,
+      );
     }
+
+    // Update task status in database
+    task.status = update.status;
+    task.progress = update.progress;
+    task.currentStep = update.step;
+    if (update.status === "completed" || update.status === "failed") {
+      task.completedAt = new Date();
+    }
+    if (update.error) {
+      task.result = { success: false, error: update.error };
+    }
+    await task.save();
 
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[Copilot] Task update error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

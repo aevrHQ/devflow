@@ -56,6 +56,7 @@ export class PlatformClient {
       name: "agent", // Will be updated by platform
       version: "0.1.0",
       platform: process.platform,
+      workingDirectory: process.cwd(),
       capabilities: ["fix-bug", "feature", "explain", "review-pr"],
     });
     return response.data;

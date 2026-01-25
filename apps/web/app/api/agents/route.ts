@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { agentId, name, version, platform, capabilities } = body;
+    const { agentId, name, version, platform, capabilities, workingDirectory } =
+      body;
     // userId is derived from the token
 
     // Validate required fields
@@ -128,6 +129,7 @@ export async function POST(request: NextRequest) {
       agent.lastHeartbeat = new Date();
       agent.version = version || agent.version;
       agent.platform = platform || agent.platform;
+      agent.workingDirectory = workingDirectory || agent.workingDirectory;
       agent.capabilities = capabilities || agent.capabilities;
       await agent.save();
     } else {
@@ -140,6 +142,7 @@ export async function POST(request: NextRequest) {
         lastHeartbeat: new Date(),
         version,
         platform,
+        workingDirectory,
         capabilities,
       });
     }

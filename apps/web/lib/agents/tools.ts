@@ -307,6 +307,7 @@ export const createDashboardTools = (
               status: a.status,
               version: a.version,
               platform: a.platform,
+              workingDirectory: a.workingDirectory,
               lastHeartbeat: a.lastHeartbeat,
               capabilities: [...a.capabilities], // Convert MongooseArray to plain array
             };
@@ -327,7 +328,10 @@ export const createDashboardTools = (
         description: z
           .string()
           .describe("Full natural language description of what to do"),
-        repo: z.string().describe("Target repository (e.g. owner/name)"),
+        repo: z
+          .string()
+          .optional()
+          .describe("Target repository (optional for local tasks)"),
         branch: z.string().optional().describe("Target branch (optional)"),
       }),
       execute: async ({ agentId, intent, description, repo, branch }) => {
@@ -339,6 +343,9 @@ export const createDashboardTools = (
         const agent = await Agent.findOne({ agentId, userId });
         if (!agent) return { error: "Agent not found or unauthorized" };
 
+        // Use provided repo or fall back to agent's workingDirectory
+        const targetPath = repo || agent.workingDirectory || "local";
+
         const taskId = `task-${randomUUID()}`;
         const task = new TaskAssignment({
           taskId,
@@ -346,7 +353,7 @@ export const createDashboardTools = (
           userId,
           intent,
           description,
-          repo,
+          repo: targetPath,
           branch,
           status: "pending",
           progress: 0,
