@@ -6,6 +6,7 @@ import { ModelMessage } from "ai";
 import { transcribeAudio } from "@/lib/transcription";
 import { config } from "@/lib/webhook/config";
 import { parseDevflowCommand, getDevflowHelpText } from "@/lib/webhook/devflow";
+import { generateChatResponse } from "@/lib/agents/chatAssistant";
 import { randomUUID } from "crypto";
 
 // This route receives webhooks FROM Telegram
@@ -235,6 +236,46 @@ export async function POST(request: NextRequest) {
             );
           }
 
+          return NextResponse.json({ ok: true });
+        }
+
+        // Handle /agents command
+        if (
+          text.toLowerCase() === "/agents" ||
+          text.toLowerCase().startsWith("/agents@")
+        ) {
+          // Get user for context if available
+          await connectToDatabase();
+          let agentUser = await User.findOne({
+            telegramChatId: chat.id.toString(),
+          });
+          if (!agentUser) {
+            const { default: Channel } = await import("@/models/Channel");
+            const channel = await Channel.findOne({
+              "config.chatId": chat.id.toString(),
+            });
+            if (channel) {
+              agentUser = await User.findById(channel.userId);
+            }
+          }
+
+          // Generate AI response to list agents
+          const aiResponse = await generateChatResponse({
+            message: "List my connected agents and their status",
+            history: [],
+            userId: agentUser?._id?.toString() || "",
+            source: {
+              channel: "telegram",
+              chatId: chat.id.toString(),
+              messageId: update.message.message_id.toString(),
+            },
+            senderName: update.message.from?.first_name || "Friend",
+          });
+
+          await sendPlainMessage(
+            aiResponse?.text || "No agents found.",
+            chat.id.toString(),
+          );
           return NextResponse.json({ ok: true });
         }
 
