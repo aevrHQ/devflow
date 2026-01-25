@@ -481,7 +481,14 @@ export async function POST(request: NextRequest) {
             const result = await generateChatResponse({
               message: text,
               senderName,
-              history,
+              history: history.map((h) => ({
+                role: h.role as "user" | "assistant",
+                content: Array.isArray(h.content)
+                  ? h.content
+                      .map((p) => (p.type == "text" ? p.text : ""))
+                      .join("")
+                  : (h.content as string),
+              })),
               userId: user?._id.toString(),
               source: {
                 channel: "telegram",
