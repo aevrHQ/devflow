@@ -107,7 +107,9 @@ export function extractDevflowInfo(message: string): DevflowCommand | null {
   return command.isDevflow ? command : null;
 }
 
+// Format error message for invalid devflow commands
 export function getDevflowHelpText(): string {
+  // Using simple Markdown format compatible with Telegram's "Markdown" mode (not V2)
   return `🤖 *Devflow Agent*
 
 *Dashboard & Tasks*
