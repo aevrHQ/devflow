@@ -9,6 +9,9 @@ import User from "@/models/User";
 import Channel from "@/models/Channel";
 import { Types, FilterQuery } from "mongoose";
 import { decryptJSON } from "@/lib/encryption";
+import Agent from "@/models/Agent";
+import TaskAssignment from "@/models/TaskAssignment";
+import { randomUUID } from "crypto";
 
 // --- Stats & Activity Tools ---
 
@@ -255,6 +258,80 @@ export const createDashboardTools = (context: { userId?: string } = {}) => {
         }
 
         return { success: true };
+      },
+    }),
+
+    // --- DevFlow Agent Tools ---
+
+    getAgents: tool({
+      description:
+        "Get a list of connected DevFlow agents (CLI agents running on user machines).",
+      inputSchema: noParamsSchema,
+      execute: async () => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
+
+        await connectToDatabase();
+        const agents = await Agent.find({ userId }).lean();
+
+        return {
+          agents: agents.map((a) => ({
+            id: a.agentId,
+            name: a.name,
+            status: a.status,
+            version: a.version,
+            platform: a.platform,
+            lastHeartbeat: a.lastHeartbeat,
+            capabilities: a.capabilities,
+          })),
+        };
+      },
+    }),
+
+    createAgentTask: tool({
+      description: "Dispatch a task/command to a specific connected agent.",
+      inputSchema: z.object({
+        agentId: z.string().describe("The ID of the agent to send the task to"),
+        intent: z.string().describe("Short intent/summary of the task"),
+        description: z
+          .string()
+          .describe("Full natural language description of what to do"),
+        repo: z.string().describe("Target repository (e.g. owner/name)"),
+        branch: z.string().optional().describe("Target branch (optional)"),
+      }),
+      execute: async ({ agentId, intent, description, repo, branch }) => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
+
+        await connectToDatabase();
+
+        const agent = await Agent.findOne({ agentId, userId });
+        if (!agent) return { error: "Agent not found or unauthorized" };
+
+        const taskId = `task-${randomUUID()}`;
+        const task = new TaskAssignment({
+          taskId,
+          agentId,
+          userId,
+          intent,
+          description,
+          repo,
+          branch,
+          status: "pending",
+          progress: 0,
+          currentStep: "queued",
+          startedAt: new Date(),
+        });
+
+        await task.save();
+
+        return {
+          success: true,
+          taskId,
+          message:
+            "Task dispatched to agent. The agent will pick it up shortly.",
+          status: "pending",
+        };
       },
     }),
   };

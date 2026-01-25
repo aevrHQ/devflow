@@ -11,7 +11,7 @@ import { verifyAgentToken, extractToken } from "@/lib/agentAuth";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ agent_id: string }> }
+  { params }: { params: Promise<{ agent_id: string }> },
 ) {
   try {
     await connectDB();
@@ -23,7 +23,7 @@ export async function GET(
     if (!token) {
       return NextResponse.json(
         { error: "Missing or invalid Authorization header" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -31,17 +31,14 @@ export async function GET(
     if (!payload || payload.agentId !== agentId) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Verify agent exists and belongs to user
     const agent = await Agent.findOne({ agentId, userId: payload.userId });
     if (!agent) {
-      return NextResponse.json(
-        { error: "Agent not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Agent not found" }, { status: 404 });
     }
 
     // Get pending tasks
@@ -56,16 +53,19 @@ export async function GET(
         commands: commands.map((cmd) => ({
           task_id: cmd.taskId,
           intent: cmd.intent,
-          context: cmd, // Full context for the agent
+          description: (cmd as any).description || cmd.intent,
+          repo: (cmd as any).repo || "",
+          branch: (cmd as any).branch || "",
+          created_at: cmd.createdAt,
         })),
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[agents/[agent_id]/commands]", error);
     return NextResponse.json(
       { error: "Failed to fetch commands" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

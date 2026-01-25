@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import connectToDatabase from "@/lib/mongodb";
 import Installation from "@/models/Installation";
 import WebhookEvent from "@/models/WebhookEvent";
+import Agent from "@/models/Agent";
 import {
   Plus,
   Github,
@@ -174,53 +175,55 @@ export default async function DashboardPage(props: DashboardPageProps) {
         </div>
       </div>
 
-      {/* Stats / Installations */}
+      {/* Agents / Installations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Agents */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Github className="w-5 h-5 text-gray-700" />
-              Connected Accounts
+              <Zap className="w-5 h-5 text-gray-700" />
+              Connected Agents
             </h2>
-            <span className="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium">
-              {installations.length}
-            </span>
+            <Link
+              href="/help/agents"
+              className="text-xs text-blue-600 hover:underline"
+            >
+              Setup Guide
+            </Link>
           </div>
 
-          {installations.length === 0 ? (
+          {(await Agent.find({ userId: new Types.ObjectId(user.userId) }))
+            .length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              <p className="mb-4">No GitHub accounts connected yet.</p>
-              <a
-                href={githubInstallUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline text-sm"
-              >
-                Install the GitHub App to get started
-              </a>
+              <p className="mb-4">No agents connected yet.</p>
+              <code className="bg-gray-100 px-2 py-1 rounded-sm text-xs">
+                devflow init
+              </code>
             </div>
           ) : (
             <div className="space-y-3">
-              {installations.map((inst) => (
+              {(
+                await Agent.find({ userId: new Types.ObjectId(user.userId) })
+              ).map((agent) => (
                 <div
-                  key={inst.installationId}
+                  key={agent.agentId}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-gray-200 text-xs font-bold">
-                      {(inst.accountLogin[0] || "?").toUpperCase()}
-                    </div>
+                    <div
+                      className={`w-2 h-2 rounded-full ${agent.status === "online" ? "bg-green-500" : "bg-gray-400"}`}
+                    />
                     <div>
                       <p className="font-medium text-sm text-gray-900">
-                        {inst.accountLogin}
+                        {agent.name}
                       </p>
-                      <p className="text-xs text-gray-500 capitalize">
-                        {inst.accountType}
+                      <p className="text-xs text-gray-500 font-mono">
+                        {agent.platform} • {agent.version}
                       </p>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-400">
-                    ID: {inst.installationId}
+                  <div className="text-xs text-gray-400 font-mono">
+                    {agent.agentId.substring(0, 12)}...
                   </div>
                 </div>
               ))}
@@ -228,41 +231,96 @@ export default async function DashboardPage(props: DashboardPageProps) {
           )}
         </div>
 
-        {/* Recent Activity */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-gray-700" />
-              Recent Activity
-            </h2>
+        {/* Installations / Recent Activity Column */}
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Github className="w-5 h-5 text-gray-700" />
+                Connected Accounts
+              </h2>
+              <span className="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                {installations.length}
+              </span>
+            </div>
+
+            {installations.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p className="mb-4">No GitHub accounts connected yet.</p>
+                <a
+                  href={githubInstallUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  Install the GitHub App to get started
+                </a>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {installations.map((inst) => (
+                  <div
+                    key={inst.installationId}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-gray-200 text-xs font-bold">
+                        {(inst.accountLogin[0] || "?").toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm text-gray-900">
+                          {inst.accountLogin}
+                        </p>
+                        <p className="text-xs text-gray-500 capitalize">
+                          {inst.accountType}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      ID: {inst.installationId}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {events.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <p>No recent webhooks received.</p>
+          {/* Recent Activity */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-gray-700" />
+                Recent Activity
+              </h2>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {events.map((evt) => (
-                <div
-                  key={String(evt._id)}
-                  className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
-                >
+
+            {events.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>No recent webhooks received.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {events.map((evt) => (
                   <div
-                    className={`w-2 h-2 mt-2 rounded-full ${evt.status === "processed" ? "bg-green-500" : "bg-yellow-500"}`}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {evt.event}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {new Date(evt.createdAt).toLocaleString()}
-                    </p>
+                    key={String(evt._id)}
+                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div
+                      className={`w-2 h-2 mt-2 rounded-full ${evt.status === "processed" ? "bg-green-500" : "bg-yellow-500"}`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {evt.event}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {new Date(evt.createdAt).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

@@ -32,6 +32,9 @@ const TaskAssignmentSchema = new Schema<TaskAssignmentDocument>(
     agentId: { type: String, required: true, index: true },
     userId: { type: String, required: true, index: true },
     intent: { type: String, required: true },
+    description: { type: String }, // Full natural language description
+    repo: { type: String }, // e.g. "owner/repo"
+    branch: { type: String }, // e.g. "main"
     status: {
       type: String,
       enum: ["pending", "in_progress", "completed", "failed"],
@@ -54,7 +57,7 @@ const TaskAssignmentSchema = new Schema<TaskAssignmentDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const TaskAssignment =
