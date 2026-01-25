@@ -21,6 +21,35 @@ const pingaClient = new PingaClient(
 
 const jobQueue = new JobQueue();
 
+// Request logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  const requestId = Math.random().toString(36).substring(7);
+  console.log(
+    `[${new Date().toISOString()}] [${requestId}] ${req.method} ${req.url}`,
+  );
+  if (Object.keys(req.body).length > 0) {
+    console.log(`[${requestId}] Body:`, JSON.stringify(req.body, null, 2));
+  }
+
+  // Capture response
+  const originalJson = res.json;
+  res.json = function (body) {
+    console.log(
+      `[${requestId}] Response ${res.statusCode}:`,
+      JSON.stringify(body).substring(0, 200) + "...",
+    );
+    return originalJson.call(this, body);
+  };
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    console.log(`[${requestId}] Completed in ${duration}ms`);
+  });
+
+  next();
+});
+
 // Request validation middleware
 const validateCommand = (req: Request, res: Response, next: NextFunction) => {
   try {

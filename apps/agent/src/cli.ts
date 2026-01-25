@@ -14,6 +14,7 @@ import {
 } from "./config.js";
 import { initiateOAuthFlow, getTokenExpiration } from "./auth/oauth.js";
 import { PlatformClient, type CommandRequest } from "./agent/client.js";
+import axios from "axios";
 
 // ===== INIT COMMAND =====
 
@@ -188,32 +189,18 @@ async function startCommand(options: StartOptions): Promise<void> {
           // Execute task via agent-host (Copilot SDK)
           (async () => {
             try {
-              // Get agent-host URL from environment
               const agentHostUrl =
                 process.env.AGENT_HOST_URL || "http://localhost:3001";
 
               // Call agent-host to execute the workflow
-              const response = await fetch(
-                `${agentHostUrl}/api/workflows/execute`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    taskId: cmd.task_id,
-                    intent: cmd.intent,
-                    repo: cmd.repo,
-                    localPath: process.cwd(),
-                    branch: cmd.branch,
-                    naturalLanguage: cmd.description,
-                  }),
-                },
-              );
-
-              if (!response.ok) {
-                throw new Error(`Agent-host error: ${response.statusText}`);
-              }
+              await axios.post(`${agentHostUrl}/api/workflows/execute`, {
+                taskId: cmd.task_id,
+                intent: cmd.intent,
+                repo: cmd.repo,
+                localPath: process.cwd(),
+                branch: cmd.branch,
+                naturalLanguage: cmd.description,
+              });
 
               // Report completion
               await client.completeTask(cmd.task_id, {
@@ -221,8 +208,20 @@ async function startCommand(options: StartOptions): Promise<void> {
               });
 
               console.log(`✓ Task completed: ${cmd.task_id}`);
-            } catch (err) {
-              const errorMsg = err instanceof Error ? err.message : String(err);
+            } catch (error: any) {
+              const errorMsg = axios.isAxiosError(error)
+                ? `Request failed: ${error.message} (Status: ${error.response?.status})`
+                : error instanceof Error
+                  ? error.message
+                  : String(error);
+
+              if (axios.isAxiosError(error) && error.response?.data) {
+                console.error(
+                  "Host Response:",
+                  JSON.stringify(error.response.data, null, 2),
+                );
+              }
+
               await client.failTask(cmd.task_id, errorMsg);
               console.error(`✗ Task failed: ${cmd.task_id} - ${errorMsg}`);
             }
