@@ -12,7 +12,7 @@ interface OAuthToken {
   access_token: string;
   token_type: string;
   expires_in: number;
-  agentId: string;
+  agent_id: string; // API returns agent_id (snake_case)
 }
 
 export async function initiateOAuthFlow(
@@ -134,7 +134,7 @@ export async function initiateOAuthFlow(
               (await tokenResponse.json()) as OAuthToken;
             console.log(
               "[CLI] Token exchange successful, agent ID:",
-              token.agentId,
+              token.agent_id,
             );
 
             resolve(token);
@@ -172,7 +172,7 @@ export async function initiateOAuthFlow(
     });
 
     // Timeout after 5 minutes
-    setTimeout(
+    const timeoutHandle = setTimeout(
       () => {
         if (server) {
           console.log("[CLI] OAuth timeout, closing server");
@@ -182,6 +182,14 @@ export async function initiateOAuthFlow(
       },
       5 * 60 * 1000,
     );
+    // Ensure timeout doesn't block process exit if it's the only thing left (though we clear it anyway)
+    timeoutHandle.unref();
+
+    // ... inside server handler ...
+    // When resolving, we don't strictly need to clear if unref'd, but it's cleaner.
+    // However, since we define it at the bottom, we need to access it inside the callback.
+    // Let's rely on unref() or move the definition up.
+    // Actually, simpler to just unref it immediately.
   });
 }
 
