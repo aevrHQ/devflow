@@ -5,7 +5,9 @@ import PingaClient from "./pinga/client.js";
 import JobQueue from "./queue/processor.js";
 import { WorkflowFactory, WorkflowContext } from "./copilot/flows/index.js";
 
-dotenv.config();
+// Load .env and .env.local (local takes precedence)
+dotenv.config({ path: ".env" });
+dotenv.config({ path: ".env.local", override: true });
 
 const app: Express = express();
 const port = process.env.PORT || 3001;
