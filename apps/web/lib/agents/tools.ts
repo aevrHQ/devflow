@@ -15,7 +15,7 @@ import { randomUUID } from "crypto";
 
 // --- Stats & Activity Tools ---
 
-const noParamsSchema = z.object({});
+const noParamsSchema = z.object({}).optional().nullable();
 
 async function getAuthorizedUserId(contextUserId?: string) {
   if (contextUserId) return contextUserId;

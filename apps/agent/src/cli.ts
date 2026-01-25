@@ -165,11 +165,21 @@ async function startCommand(options: StartOptions): Promise<void> {
     try {
       // Heartbeat at configured interval
       if (Date.now() - lastHeartbeat > heartbeatInterval) {
+        if (options.debug) {
+          console.log("💓 Sending heartbeat...");
+        }
         await client.heartbeat();
         lastHeartbeat = Date.now();
+        if (options.debug) {
+          console.log("💓 Heartbeat acknowledged");
+        }
       }
 
       // Poll for commands
+      if (options.debug) {
+        // console.log("🔍 Polling for commands..."); // Too noisy if every 5s, maybe keep commented or use a higher verbosity level
+        process.stdout.write("."); // Use a dot to show activity without spamming newlines
+      }
       const commands = await client.getCommands();
 
       if (commands.length > 0) {
