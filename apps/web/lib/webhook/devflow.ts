@@ -14,8 +14,13 @@ export interface DevflowCommand {
 export function parseDevflowCommand(text: string): DevflowCommand {
   const trimmed = text.trim();
 
-  // Check if message starts with !devflow
-  if (!trimmed.toLowerCase().startsWith("!devflow")) {
+  // Check if message starts with !devflow or a direct slash command
+  const isBangCommand = trimmed.toLowerCase().startsWith("!devflow");
+  const isSlashCommand = /^\/(fix|feature|explain|review|deploy)/i.test(
+    trimmed,
+  );
+
+  if (!isBangCommand && !isSlashCommand) {
     return {
       isDevflow: false,
       description: "",
@@ -24,9 +29,17 @@ export function parseDevflowCommand(text: string): DevflowCommand {
   }
 
   // Parse the command
-  const match = trimmed.match(
-    /^!devflow\s+(fix-bug|fix|feature|explain|review-pr|deploy)\s+(.+)$/i,
-  );
+  let match;
+  if (isBangCommand) {
+    match = trimmed.match(
+      /^!devflow\s+(fix-bug|fix|feature|explain|review-pr|deploy)\s+(.+)$/i,
+    );
+  } else {
+    // Slash command parsing
+    match = trimmed.match(
+      /^\/(fix|feature|explain|review|deploy)(?:-pr)?\s+(.+)$/i,
+    );
+  }
 
   if (!match) {
     return {
@@ -39,15 +52,15 @@ export function parseDevflowCommand(text: string): DevflowCommand {
   const [, intentStr, description] = match;
   let intent: "fix-bug" | "feature" | "explain" | "review-pr" | "deploy";
 
-  // Map "fix" to "fix-bug"
-  if (intentStr.toLowerCase() === "fix") {
+  // Map intents
+  const lowerIntent = intentStr.toLowerCase();
+
+  if (lowerIntent === "fix" || lowerIntent === "fix-bug") {
     intent = "fix-bug";
+  } else if (lowerIntent === "review" || lowerIntent === "review-pr") {
+    intent = "review-pr";
   } else {
-    intent = intentStr.toLowerCase() as
-      | "feature"
-      | "explain"
-      | "review-pr"
-      | "deploy";
+    intent = lowerIntent as "feature" | "explain" | "deploy";
   }
 
   // Parse description for repo and branch
