@@ -454,7 +454,7 @@ export async function POST(request: NextRequest) {
               telegramChatId: chat.id.toString(),
             });
 
-            if (!user && isGroup) {
+            if (!user) {
               const { default: Channel } = await import("@/models/Channel");
               // find a channel with this config.chatId
               const channel = await Channel.findOne({

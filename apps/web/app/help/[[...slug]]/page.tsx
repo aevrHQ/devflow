@@ -40,6 +40,15 @@ const guides = [
     description: "Setup guide for Render deployments",
     icon: "☁️",
   },
+  {
+    slug: "agents",
+    title: "Connected Agents",
+    description: "Learn how to connect and manage local DevFlow agents",
+    icon: "⚡️",
+    // Note: The icon property expects a string (emoji) in this specific implementation based on the file content seen.
+    // Wait, the file uses emojis as strings. "zap" in lucide is an icon component, but here it renders as text {guide.icon}
+    // So I should use an emoji like ⚡️
+  },
 ];
 
 export default async function HelpPage({ params }: HelpPageProps) {
