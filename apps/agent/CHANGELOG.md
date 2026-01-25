@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/miracleonyenma/devflow/compare/v0.2.2...v0.2.3) (2026-01-25)
+
+
+### Features
+
+* Add agent host URL configuration option to the CLI and agent configuration. ([1e11cb9](https://github.com/miracleonyenma/devflow/commit/1e11cb9e6c9b671453228af249f5a36c5ac688d5))
+* Add debug error logging to CLI task failures and switch chat assistant to `openai/gpt-oss-20b` model. ([cfbcdab](https://github.com/miracleonyenma/devflow/commit/cfbcdab81e36b5ebec55ad9dd909589821b45a10))
+* Add debug logging to agent CLI heartbeat and polling, and make `noParamsSchema` optional/nullable in web agent tools. ([0467224](https://github.com/miracleonyenma/devflow/commit/04672246cd506eb518fe18d6c5db64136ae3fcf0))
+* Add request logging middleware to agent-host and switch agent CLI to use axios for enhanced error handling. ([b60bcc5](https://github.com/miracleonyenma/devflow/commit/b60bcc5c8ed6e019dcf07ebdf186b9487cc6ea4f))
+* add telegram commands registration endpoint ([1f493ab](https://github.com/miracleonyenma/devflow/commit/1f493abb6e7f877ede98696fd73bab1292e0079a))
+* Update chat assistant agent to use Llama-3.3-70b-versatile and remove a specific instruction regarding tool tag output. ([fad5692](https://github.com/miracleonyenma/devflow/commit/fad569206f81562ba61e91a87f547d3193010097))
+* Update Devflow help text with new commands and dashboard links, and refine agent task dispatch logic to delegate completion reporting to the host. ([fa9ffcc](https://github.com/miracleonyenma/devflow/commit/fa9ffccf556bc02675ba43f558616aa976740737))
+
+
+### Bug Fixes
+
+* add optional chaining for aiResponse in /agents handler ([c9b35f3](https://github.com/miracleonyenma/devflow/commit/c9b35f3ba048dcc7e7b1a61d1c54462c4e576ee1))
+* telegram slash commands and help formatting ([7da34dc](https://github.com/miracleonyenma/devflow/commit/7da34dc83a771f7d5c4abb980db35519bced9b5b))
+
+
+### Code Refactoring
+
+* convert agent capabilities from MongooseArray to a plain array. ([81508a2](https://github.com/miracleonyenma/devflow/commit/81508a23fade81ec3a32e1ff296c42e88d7892d5))
+
 ### [0.2.2](https://github.com/miracleonyenma/devflow/compare/v0.2.1...v0.2.2) (2026-01-25)
 
 
