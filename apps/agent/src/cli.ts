@@ -204,6 +204,7 @@ async function startCommand(options: StartOptions): Promise<void> {
                     taskId: cmd.task_id,
                     intent: cmd.intent,
                     repo: cmd.repo,
+                    localPath: process.cwd(),
                     branch: cmd.branch,
                     naturalLanguage: cmd.description,
                   }),

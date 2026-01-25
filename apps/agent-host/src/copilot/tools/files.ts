@@ -1,5 +1,11 @@
 import * as path from "path";
-import { readFile, writeFile, fileExists, ToolError, listFiles } from "./utils.js";
+import {
+  readFile,
+  writeFile,
+  fileExists,
+  ToolError,
+  listFiles,
+} from "./utils.js";
 
 export interface ReadFileInput {
   repoPath: string;
@@ -176,7 +182,7 @@ export class FileManager {
 }
 
 // Factory function for Copilot SDK tool definition - Read File
-export function createReadFileTool(): any {
+export function createReadFileTool(options?: { localPath?: string }): any {
   const fileManager = new FileManager();
 
   return {
@@ -202,6 +208,7 @@ export function createReadFileTool(): any {
     },
     handler: async (input: ReadFileInput): Promise<ReadFileResult> => {
       try {
+        if (options?.localPath) input.repoPath = options.localPath;
         return await fileManager.readFile(input);
       } catch (error) {
         return {
@@ -215,7 +222,7 @@ export function createReadFileTool(): any {
 }
 
 // Factory function for Copilot SDK tool definition - Write File
-export function createWriteFileTool(): any {
+export function createWriteFileTool(options?: { localPath?: string }): any {
   const fileManager = new FileManager();
 
   return {
@@ -246,6 +253,7 @@ export function createWriteFileTool(): any {
     },
     handler: async (input: WriteFileInput): Promise<WriteFileResult> => {
       try {
+        if (options?.localPath) input.repoPath = options.localPath;
         return await fileManager.writeFile(input);
       } catch (error) {
         return {
@@ -260,7 +268,7 @@ export function createWriteFileTool(): any {
 }
 
 // Factory function for Copilot SDK tool definition - List Files
-export function createListFilesTool(): any {
+export function createListFilesTool(options?: { localPath?: string }): any {
   const fileManager = new FileManager();
 
   return {
@@ -286,6 +294,7 @@ export function createListFilesTool(): any {
     },
     handler: async (input: ListFilesInput): Promise<ListFilesResult> => {
       try {
+        if (options?.localPath) input.repoPath = options.localPath;
         return await fileManager.listFiles(input);
       } catch (error) {
         return {

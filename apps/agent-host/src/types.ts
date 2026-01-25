@@ -3,6 +3,7 @@ export interface TaskPayload {
   intent: "fix-bug" | "feature" | "explain" | "review-pr" | "deploy";
   repo: string;
   branch?: string;
+  localPath?: string; // For local execution without cloning
   naturalLanguage: string;
   context?: Record<string, any>;
 }

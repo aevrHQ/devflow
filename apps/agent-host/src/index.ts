@@ -16,7 +16,7 @@ app.use(express.json());
 // Initialize clients
 const pingaClient = new PingaClient(
   process.env.PINGA_API_URL || "http://localhost:3000",
-  process.env.PINGA_API_SECRET || ""
+  process.env.PINGA_API_SECRET || "",
 );
 
 const jobQueue = new JobQueue();
@@ -79,7 +79,9 @@ app.post("/command", validateCommand, (req: Request, res: Response) => {
     // Process asynchronously
     handleCommand(command).catch((error) => {
       console.error(`Error processing command ${command.taskId}:`, error);
-      pingaClient.notifyError(command.taskId, error.message).catch(console.error);
+      pingaClient
+        .notifyError(command.taskId, error.message)
+        .catch(console.error);
     });
   } catch (error) {
     const errorMessage =
@@ -172,9 +174,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(
-    `🚀 Devflow Agent Host listening on http://localhost:${port}`
-  );
+  console.log(`🚀 Devflow Agent Host listening on http://localhost:${port}`);
   console.log(`📊 Health check: http://localhost:${port}/health`);
 });
 
@@ -190,7 +190,7 @@ async function handleCommand(command: CommandRequest): Promise<void> {
     console.log(`   Mode: Managed SaaS (using provided credentials)`);
   } else {
     console.log(
-      `   Mode: Self-hosted (using GITHUB_TOKEN environment variable)`
+      `   Mode: Self-hosted (using GITHUB_TOKEN environment variable)`,
     );
   }
 
@@ -202,6 +202,7 @@ async function handleCommand(command: CommandRequest): Promise<void> {
       taskId: command.taskId,
       intent: command.payload.intent,
       repo: command.payload.repo,
+      localPath: command.payload.localPath,
       branch: command.payload.branch,
       naturalLanguage: command.payload.naturalLanguage,
       context: command.payload.context,

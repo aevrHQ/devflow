@@ -7,7 +7,7 @@ export class ToolError extends Error {
   constructor(
     message: string,
     public tool: string,
-    public code?: string
+    public code?: string,
   ) {
     super(message);
     this.name = "ToolError";
@@ -22,15 +22,17 @@ export async function ensureRepoStoragePath(): Promise<string> {
   } catch (error) {
     throw new ToolError(
       `Failed to create storage directory: ${error}`,
-      "storage"
+      "storage",
     );
   }
 }
 
 export async function getRepoPath(
   repo: string,
-  storagePath?: string
+  storagePath?: string,
+  localPath?: string,
 ): Promise<string> {
+  if (localPath) return localPath;
   const storage = storagePath || (await ensureRepoStoragePath());
   return path.join(storage, repo.replace("/", "-"));
 }
@@ -38,7 +40,7 @@ export async function getRepoPath(
 export function executeCommand(
   command: string,
   cwd?: string,
-  timeout: number = 60000
+  timeout: number = 60000,
 ): string {
   try {
     const result = execSync(command, {
@@ -71,14 +73,14 @@ export async function readFile(filePath: string): Promise<string> {
     throw new ToolError(
       `Failed to read file: ${error}`,
       "read_file",
-      "FILE_READ_FAILED"
+      "FILE_READ_FAILED",
     );
   }
 }
 
 export async function writeFile(
   filePath: string,
-  content: string
+  content: string,
 ): Promise<void> {
   try {
     const dir = path.dirname(filePath);
@@ -88,14 +90,14 @@ export async function writeFile(
     throw new ToolError(
       `Failed to write file: ${error}`,
       "write_file",
-      "FILE_WRITE_FAILED"
+      "FILE_WRITE_FAILED",
     );
   }
 }
 
 export async function listFiles(
   dirPath: string,
-  pattern?: RegExp
+  pattern?: RegExp,
 ): Promise<string[]> {
   try {
     const files = await fs.readdir(dirPath, { recursive: true });
@@ -104,7 +106,7 @@ export async function listFiles(
     throw new ToolError(
       `Failed to list files: ${error}`,
       "list_files",
-      "LIST_FAILED"
+      "LIST_FAILED",
     );
   }
 }
@@ -116,7 +118,7 @@ export async function removeDirectory(dirPath: string): Promise<void> {
     throw new ToolError(
       `Failed to remove directory: ${error}`,
       "cleanup",
-      "CLEANUP_FAILED"
+      "CLEANUP_FAILED",
     );
   }
 }

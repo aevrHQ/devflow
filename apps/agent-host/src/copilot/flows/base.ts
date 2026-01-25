@@ -8,6 +8,7 @@ export interface WorkflowContext {
   taskId: string;
   intent: string;
   repo: string;
+  localPath?: string;
   branch?: string;
   naturalLanguage: string;
   context?: Record<string, any>;
@@ -43,7 +44,7 @@ export class WorkflowExecutor {
     taskId: string,
     step: string,
     progress: number,
-    details?: string
+    details?: string,
   ): Promise<void> {
     await this.pingaClient.sendProgressUpdate({
       taskId,
@@ -57,7 +58,7 @@ export class WorkflowExecutor {
 
   protected async sendCompletion(
     taskId: string,
-    result: WorkflowResult
+    result: WorkflowResult,
   ): Promise<void> {
     if (result.success) {
       await this.pingaClient.notifyCompletion(taskId, {
@@ -68,14 +69,14 @@ export class WorkflowExecutor {
     } else {
       await this.pingaClient.notifyError(
         taskId,
-        result.error || "Workflow failed"
+        result.error || "Workflow failed",
       );
     }
   }
 
   protected buildSystemPrompt(
     intent: string,
-    context: WorkflowContext
+    context: WorkflowContext,
   ): string {
     return `You are Devflow, an AI DevOps agent integrated with GitHub Copilot.
 
@@ -111,11 +112,13 @@ Begin by understanding the repository structure.`;
           const { decryptCredentials } = await import("../../credentials.js");
           const decrypted = decryptCredentials(context.credentials);
           userGitHubToken = decrypted.github;
-          console.log("[Workflow] Using decrypted user credentials (managed SaaS)");
+          console.log(
+            "[Workflow] Using decrypted user credentials (managed SaaS)",
+          );
         } catch (error) {
           console.warn(
             "[Workflow] Failed to decrypt credentials, falling back to env var:",
-            error instanceof Error ? error.message : error
+            error instanceof Error ? error.message : error,
           );
         }
       }
@@ -123,13 +126,19 @@ Begin by understanding the repository structure.`;
       return await this.copilot.createSession({
         model: process.env.COPILOT_MODEL || "gpt-4.1",
         streaming: true,
-        tools: getAllTools(userGitHubToken),
-        mcpServers: process.env.COPILOT_ENABLE_MCP === "true" ? {
-          github: {
-            type: "http",
-            url: "https://api.github.com/mcp/",
-          },
-        } : undefined,
+        tools: getAllTools({
+          githubToken: userGitHubToken,
+          localPath: context.localPath,
+        }),
+        mcpServers:
+          process.env.COPILOT_ENABLE_MCP === "true"
+            ? {
+                github: {
+                  type: "http",
+                  url: "https://api.github.com/mcp/",
+                },
+              }
+            : undefined,
       });
     } catch (error) {
       throw new Error(`Failed to create Copilot session: ${error}`);
@@ -138,7 +147,7 @@ Begin by understanding the repository structure.`;
 
   protected async executeWorkflow(
     prompt: string,
-    context: WorkflowContext
+    context: WorkflowContext,
   ): Promise<WorkflowResult> {
     try {
       const session = await this.setupSession(context);
@@ -156,7 +165,7 @@ Begin by understanding the repository structure.`;
           this.sendProgress(
             context.taskId,
             `Executing: ${toolName}`,
-            0.3
+            0.3,
           ).catch(console.error);
         }
 

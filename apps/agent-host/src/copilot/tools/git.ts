@@ -1,6 +1,11 @@
 import simpleGit, { SimpleGit } from "simple-git";
 import * as path from "path";
-import { getRepoPath, executeCommand, ToolError, removeDirectory } from "./utils.js";
+import {
+  getRepoPath,
+  executeCommand,
+  ToolError,
+  removeDirectory,
+} from "./utils.js";
 
 export interface GitOperationInput {
   action: "clone" | "create_branch" | "commit" | "push" | "pull" | "status";
@@ -32,7 +37,7 @@ export class GitTool {
   async clone(
     repoUrl: string,
     targetPath: string,
-    branch?: string
+    branch?: string,
   ): Promise<GitOperationResult> {
     try {
       const args = [repoUrl, targetPath];
@@ -48,17 +53,14 @@ export class GitTool {
         output: `Cloned ${repoUrl} to ${targetPath}`,
       };
     } catch (error) {
-      throw new ToolError(
-        `Failed to clone repository: ${error}`,
-        "git_clone"
-      );
+      throw new ToolError(`Failed to clone repository: ${error}`, "git_clone");
     }
   }
 
   async createBranch(
     repoPath: string,
     branchName: string,
-    fromBranch: string = "main"
+    fromBranch: string = "main",
   ): Promise<GitOperationResult> {
     try {
       const git = this.getGit(repoPath);
@@ -79,7 +81,7 @@ export class GitTool {
     } catch (error) {
       throw new ToolError(
         `Failed to create branch: ${error}`,
-        "git_create_branch"
+        "git_create_branch",
       );
     }
   }
@@ -87,7 +89,7 @@ export class GitTool {
   async commit(
     repoPath: string,
     message: string,
-    author?: { name: string; email: string }
+    author?: { name: string; email: string },
   ): Promise<GitOperationResult> {
     try {
       const git = this.getGit(repoPath);
@@ -127,7 +129,7 @@ export class GitTool {
   async push(
     repoPath: string,
     remote: string = "origin",
-    branch?: string
+    branch?: string,
   ): Promise<GitOperationResult> {
     try {
       const git = this.getGit(repoPath);
@@ -153,7 +155,7 @@ export class GitTool {
   async pull(
     repoPath: string,
     remote: string = "origin",
-    branch?: string
+    branch?: string,
   ): Promise<GitOperationResult> {
     try {
       const git = this.getGit(repoPath);
@@ -185,10 +187,7 @@ export class GitTool {
         output: JSON.stringify(status, null, 2),
       };
     } catch (error) {
-      throw new ToolError(
-        `Failed to get status: ${error}`,
-        "git_status"
-      );
+      throw new ToolError(`Failed to get status: ${error}`, "git_status");
     }
   }
 
@@ -200,7 +199,7 @@ export class GitTool {
     } catch (error) {
       throw new ToolError(
         `Failed to get current branch: ${error}`,
-        "git_current_branch"
+        "git_current_branch",
       );
     }
   }
@@ -216,7 +215,7 @@ export class GitTool {
 }
 
 // Factory function for Copilot SDK tool definition
-export function createGitOperationsTool(): any {
+export function createGitOperationsTool(options?: { localPath?: string }): any {
   const gitTool = new GitTool();
 
   return {
@@ -261,67 +260,84 @@ export function createGitOperationsTool(): any {
       try {
         switch (input.action) {
           case "clone": {
+            // If localPath is set, we don't clone, we just return success pointing to local path
+            if (options?.localPath) {
+              return {
+                action: "clone",
+                success: true,
+                output: `Using local path: ${options.localPath} (Skipped clone)`,
+              };
+            }
             const repoPath = await getRepoPath(input.repo);
             return await gitTool.clone(input.repo, repoPath);
           }
 
           case "create_branch": {
-            const repoPath = await getRepoPath(input.repo);
+            const repoPath = await getRepoPath(
+              input.repo,
+              undefined,
+              options?.localPath,
+            );
             if (!input.branchName) {
               throw new ToolError(
                 "branchName required for create_branch",
-                "git_operations"
+                "git_operations",
               );
             }
             return await gitTool.createBranch(repoPath, input.branchName);
           }
 
           case "commit": {
-            const repoPath = await getRepoPath(input.repo);
+            const repoPath = await getRepoPath(
+              input.repo,
+              undefined,
+              options?.localPath,
+            );
             if (!input.message) {
               throw new ToolError(
                 "message required for commit",
-                "git_operations"
+                "git_operations",
               );
             }
             return await gitTool.commit(repoPath, input.message, input.author);
           }
 
           case "push": {
-            const repoPath = await getRepoPath(input.repo);
-            return await gitTool.push(
-              repoPath,
-              input.remote,
-              input.branchName
+            const repoPath = await getRepoPath(
+              input.repo,
+              undefined,
+              options?.localPath,
             );
+            return await gitTool.push(repoPath, input.remote, input.branchName);
           }
 
           case "pull": {
-            const repoPath = await getRepoPath(input.repo);
-            return await gitTool.pull(
-              repoPath,
-              input.remote,
-              input.branchName
+            const repoPath = await getRepoPath(
+              input.repo,
+              undefined,
+              options?.localPath,
             );
+            return await gitTool.pull(repoPath, input.remote, input.branchName);
           }
 
           case "status": {
-            const repoPath = await getRepoPath(input.repo);
+            const repoPath = await getRepoPath(
+              input.repo,
+              undefined,
+              options?.localPath,
+            );
             return await gitTool.getStatus(repoPath);
           }
 
           default:
             throw new ToolError(
               `Unknown action: ${input.action}`,
-              "git_operations"
+              "git_operations",
             );
         }
       } catch (error) {
         if (error instanceof ToolError) throw error;
-        throw new ToolError(
-          `Git operation failed: ${error}`,
-          "git_operations"
-        );
+        throw new ToolError(`Git operation failed: ${error}`, "git_operations");
       }
     },
   };

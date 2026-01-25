@@ -9,7 +9,12 @@ import {
 } from "./files.js";
 import { createOpenPullRequestTool, GitHubPRManager } from "./github.js";
 import { createProgressUpdateTool, ProgressTracker } from "./progress.js";
-import { ToolError, executeCommand, ensureRepoStoragePath, getRepoPath } from "./utils.js";
+import {
+  ToolError,
+  executeCommand,
+  ensureRepoStoragePath,
+  getRepoPath,
+} from "./utils.js";
 
 export { createGitOperationsTool, GitTool };
 export type { GitOperationInput, GitOperationResult } from "./git.js";
@@ -42,14 +47,20 @@ export { ToolError, executeCommand, ensureRepoStoragePath, getRepoPath };
 
 // Convenience function to get all tools at once
 // Optional: pass user's GitHub token for managed SaaS mode
-export function getAllTools(userGitHubToken?: string, encryptionKey?: string): any[] {
+export interface ToolOptions {
+  githubToken?: string;
+  encryptionKey?: string;
+  localPath?: string;
+}
+
+export function getAllTools(options: ToolOptions = {}): any[] {
   return [
-    createGitOperationsTool(),
+    createGitOperationsTool(options),
     createTestRunnerTool(),
-    createReadFileTool(),
-    createWriteFileTool(),
-    createListFilesTool(),
-    createOpenPullRequestTool(userGitHubToken, encryptionKey),
+    createReadFileTool(options),
+    createWriteFileTool(options),
+    createListFilesTool(options),
+    createOpenPullRequestTool(options.githubToken, options.encryptionKey),
     createProgressUpdateTool(),
   ];
 }
