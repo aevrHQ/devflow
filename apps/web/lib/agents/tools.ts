@@ -15,7 +15,8 @@ import { randomUUID } from "crypto";
 
 // --- Stats & Activity Tools ---
 
-const noParamsSchema = z.object({}).optional().nullable();
+// Use explicit empty object schema for Groq/Llama compatibility
+const noParamsSchema = z.object({});
 
 async function getAuthorizedUserId(contextUserId?: string) {
   if (contextUserId) return contextUserId;
