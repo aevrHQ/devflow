@@ -1,7 +1,6 @@
 import open from "open";
 import http from "http";
 import { randomBytes } from "crypto";
-import axios from "axios";
 
 interface OAuthConfig {
   platformUrl: string;
@@ -16,25 +15,73 @@ interface OAuthToken {
   agentId: string;
 }
 
-export async function initiateOAuthFlow(config: OAuthConfig): Promise<OAuthToken> {
+export async function initiateOAuthFlow(
+  config: OAuthConfig,
+): Promise<OAuthToken> {
   return new Promise((resolve, reject) => {
     const state = randomBytes(32).toString("hex");
     let server: http.Server | null = null;
+    let isHandlingCallback = false;
 
     // Start local server to catch redirect
     server = http.createServer(async (req, res) => {
+      console.log(`[CLI] HTTP ${req.method} ${req.url}`);
+
+      // Ignore favicon requests
+      if (req.url?.includes("favicon")) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+
+      // Only handle the first callback, ignore subsequent requests
+      if (isHandlingCallback) {
+        console.log("[CLI] Already handling callback, ignoring this request");
+        res.writeHead(400);
+        res.end("Callback already processed");
+        return;
+      }
+
       try {
-        const url = new URL(req.url || "", `http://localhost:3000`);
+        const url = new URL(req.url || "", `http://localhost:3333`);
+
+        // Log the request for debugging
+        console.log(
+          `[CLI] Incoming request: ${req.method} ${url.pathname}${url.search}`,
+        );
+
+        // Ignore favicon and other assets explicitly
+        if (url.pathname === "/favicon.ico" || !url.searchParams.has("state")) {
+          res.writeHead(404);
+          res.end();
+          return;
+        }
+
         const code = url.searchParams.get("code");
         const returnedState = url.searchParams.get("state");
 
+        console.log("[CLI] Received callback candidate");
+
+        // Validate state
         if (returnedState !== state) {
-          throw new Error("State mismatch - authorization denied");
+          console.warn(
+            `[CLI] State mismatch (Expected: ${state.substring(0, 8)}..., Got: ${returnedState?.substring(0, 8)}...)`,
+          );
+          res.writeHead(400);
+          res.end("State mismatch - authorization denied");
+          return; // Do not reject the promise, just ignore this request
         }
 
+        console.log("[CLI] State verified successfully");
+
         if (!code) {
-          throw new Error("No authorization code received");
+          console.warn("[CLI] No authorization code received");
+          res.writeHead(400);
+          res.end("No authorization code received");
+          return;
         }
+
+        isHandlingCallback = true;
 
         // Send success response
         res.writeHead(200, { "Content-Type": "text/html" });
@@ -48,37 +95,65 @@ export async function initiateOAuthFlow(config: OAuthConfig): Promise<OAuthToken
           </html>
         `);
 
-        // Exchange code for token
-        console.log("✓ Authorization successful!");
-        console.log("⏳ Exchanging code for token...");
-
-        const tokenResponse = await axios.post(
-          `${config.platformUrl}/api/auth/callback`,
-          {
-            code,
-            client_id: config.clientId,
-            redirect_uri: config.redirectUri,
+        // Wait a moment for the response to be sent, then close server
+        console.log("[CLI] Response sent, closing server in 100ms");
+        setTimeout(async () => {
+          if (server) {
+            console.log("[CLI] Closing local callback server");
+            server.close(() => {
+              console.log("[CLI] Server closed successfully");
+            });
           }
-        );
 
-        const token: OAuthToken = tokenResponse.data;
+          // Exchange code for token
+          try {
+            console.log("[CLI] Exchanging code for token...");
+            const tokenResponse = await fetch(
+              `${config.platformUrl}/api/auth/callback`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  code,
+                  client_id: config.clientId,
+                  redirect_uri: config.redirectUri,
+                }),
+              },
+            );
 
-        // Close server
-        if (server) {
-          server.close();
-        }
+            if (!tokenResponse.ok) {
+              // Only reject if the Token Exchange ITSELF fails after a valid code
+              throw new Error(
+                `Token exchange failed: ${tokenResponse.status} ${tokenResponse.statusText}`,
+              );
+            }
 
-        resolve(token);
+            const token: OAuthToken =
+              (await tokenResponse.json()) as OAuthToken;
+            console.log(
+              "[CLI] Token exchange successful, agent ID:",
+              token.agentId,
+            );
+
+            resolve(token);
+          } catch (error) {
+            reject(error);
+          }
+        }, 100);
       } catch (error) {
-        if (server) {
-          server.close();
-        }
-        reject(error);
+        console.error(`[CLI] Request handling error:`, error);
+        res.writeHead(500);
+        res.end("Internal Server Error");
+        // Do not reject the main promise on transient request handling errors
       }
     });
 
     // Start listening
     server.listen(3333, async () => {
+      console.log("[CLI] Local callback server listening on port 3333");
+
       const authUrl = new URL(`${config.platformUrl}/auth/agent`);
       authUrl.searchParams.set("client_id", config.clientId);
       authUrl.searchParams.set("redirect_uri", config.redirectUri);
@@ -91,18 +166,22 @@ export async function initiateOAuthFlow(config: OAuthConfig): Promise<OAuthToken
         await open(authUrl.toString());
       } catch (error) {
         console.log(
-          `\n📌 Could not open browser. Please visit:\n${authUrl.toString()}\n`
+          `\n📌 Could not open browser. Please visit:\n${authUrl.toString()}\n`,
         );
       }
     });
 
     // Timeout after 5 minutes
-    setTimeout(() => {
-      if (server) {
-        server.close();
-      }
-      reject(new Error("OAuth authorization timeout"));
-    }, 5 * 60 * 1000);
+    setTimeout(
+      () => {
+        if (server) {
+          console.log("[CLI] OAuth timeout, closing server");
+          server.close();
+        }
+        reject(new Error("OAuth authorization timeout"));
+      },
+      5 * 60 * 1000,
+    );
   });
 }
 

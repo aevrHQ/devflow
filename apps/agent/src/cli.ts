@@ -296,11 +296,7 @@ export async function runCLI(): Promise<void> {
       console.log(`  Platform: ${config.platform.url}`);
       console.log(`  Config: ~/.devflow/config.json\n`);
     })
-    .option("version", {
-      alias: "v",
-      describe: "Show version",
-      type: "boolean",
-    })
+
     .option("help", {
       alias: "h",
       describe: "Show help",
