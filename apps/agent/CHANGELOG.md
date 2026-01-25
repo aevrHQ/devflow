@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/miracleonyenma/devflow/compare/v0.2.3...v0.2.4) (2026-01-25)
+
+
+### Features
+
+* enable .env.local override for environment variables ([b6cdd9c](https://github.com/miracleonyenma/devflow/commit/b6cdd9c226978c2f559db817930f33356a6d5075))
+
 ### [0.2.3](https://github.com/miracleonyenma/devflow/compare/v0.2.2...v0.2.3) (2026-01-25)
 
 
