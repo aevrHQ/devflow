@@ -13,6 +13,7 @@ export interface DevFlowConfig {
     name: string;
     version: string;
   };
+  agentHostUrl?: string; // Optional for backward compatibility, defaults to localhost if missing
   logging: {
     level: "debug" | "info" | "warn" | "error";
     format: "json" | "text";
@@ -64,7 +65,8 @@ export function createDefaultConfig(
   platformUrl: string,
   apiKey: string,
   agentId: string,
-  agentName: string
+  agentName: string,
+  agentHostUrl?: string,
 ): DevFlowConfig {
   return {
     version: "1.0",
@@ -77,6 +79,7 @@ export function createDefaultConfig(
       name: agentName,
       version: "0.1.0",
     },
+    agentHostUrl: agentHostUrl,
     logging: {
       level: "info",
       format: "json",

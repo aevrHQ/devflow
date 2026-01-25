@@ -21,6 +21,7 @@ import axios from "axios";
 interface InitOptions {
   name?: string;
   platformUrl?: string;
+  agentHostUrl?: string;
 }
 
 async function initCommand(options: InitOptions): Promise<void> {
@@ -57,6 +58,7 @@ async function initCommand(options: InitOptions): Promise<void> {
       token.access_token,
       agentId,
       agentName,
+      options.agentHostUrl || process.env.AGENT_HOST_URL,
     );
 
     const validation = validateConfig(config);
@@ -261,11 +263,17 @@ export async function runCLI(): Promise<void> {
             describe: "Platform URL",
             type: "string",
             default: "https://devflow-web.vercel.app",
+          })
+          .option("agent-host-url", {
+            describe:
+              "Agent Host URL (e.g. https://your-render-app.onrender.com)",
+            type: "string",
           }),
       (argv: any) =>
         initCommand({
           name: argv.name,
           platformUrl: argv["platform-url"],
+          agentHostUrl: argv["agent-host-url"],
         }),
     )
     .command(
