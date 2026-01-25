@@ -226,6 +226,9 @@ async function startCommand(options: StartOptions): Promise<void> {
 
               await client.failTask(cmd.task_id, errorMsg);
               console.error(`✗ Task failed: ${cmd.task_id} - ${errorMsg}`);
+              if (options.debug) {
+                console.error("Full Error Details:", error);
+              }
             }
           })();
         });

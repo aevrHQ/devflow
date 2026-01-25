@@ -32,7 +32,7 @@ export async function generateChatResponse(
 
   try {
     const agent = new ToolLoopAgent({
-      model: groq("llama-3.3-70b-versatile"),
+      model: groq("openai/gpt-oss-20b"),
       instructions: `You are Pinga, a friendly and enthusiastic developer companion! 🚀
 You help developers track their deployments, issues, and notifications.
 
