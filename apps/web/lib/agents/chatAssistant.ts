@@ -32,7 +32,7 @@ export async function generateChatResponse(
 
   try {
     const agent = new ToolLoopAgent({
-      model: groq("openai/gpt-oss-20b"),
+      model: groq("llama-3.3-70b-versatile"),
       instructions: `You are Pinga, a friendly and enthusiastic developer companion! 🚀
 You help developers track their deployments, issues, and notifications.
 
@@ -43,7 +43,6 @@ Personality:
 - If asked about your capabilities: You can track GitHub, Render, Vercel, Linear, and custom webhooks.
 - If asked for help: Direct them to the dashboard or "/help" command.
 - Keep responses concise within telegram limits.
-- IMPORTANT: Do NOT output <function=...> tags in your text. Use the tool calling mechanism directly.
 
 Talking to: ${input.senderName || "Friend"}`,
       tools: {
@@ -54,7 +53,7 @@ Talking to: ${input.senderName || "Friend"}`,
           execute: async () => new Date().toLocaleString(),
         }),
       },
-      stopWhen: stepCountIs(5), // Allow up to 5 steps for tool usage
+      stopWhen: stepCountIs(5),
     });
 
     const result = await agent.generate({
@@ -66,8 +65,7 @@ Talking to: ${input.senderName || "Friend"}`,
 
     console.log("[ChatAssistant] Agent Result:", {
       text: result.text,
-      toolCallsLen: result.toolCalls?.length,
-      finishReason: result.finishReason,
+      stepsLen: result.steps?.length,
     });
 
     // Clean up any potential hallucinated tool tags from the text
