@@ -281,18 +281,40 @@ export const createDashboardTools = (
         if (!userId) return { error: "Unauthorized" };
 
         await connectToDatabase();
-        const agents = await Agent.find({ userId }).lean();
+        const agents = await Agent.find({ userId });
+
+        const now = new Date();
+        const heartbeatThreshold = 2 * 60 * 1000; // 2 minutes
+
+        const agentStatuses = await Promise.all(
+          agents.map(async (a) => {
+            const lastHeartbeat = new Date(a.lastHeartbeat || 0);
+            const isStale =
+              now.getTime() - lastHeartbeat.getTime() > heartbeatThreshold;
+
+            if (isStale && a.status === "online") {
+              a.status = "offline";
+              await a.save();
+            } else if (!isStale && a.status === "offline") {
+              // Should theoretically be handled by heartbeat endpoint, but self-correct just in case
+              a.status = "online";
+              await a.save();
+            }
+
+            return {
+              id: a.agentId,
+              name: a.name,
+              status: a.status,
+              version: a.version,
+              platform: a.platform,
+              lastHeartbeat: a.lastHeartbeat,
+              capabilities: a.capabilities,
+            };
+          }),
+        );
 
         return {
-          agents: agents.map((a) => ({
-            id: a.agentId,
-            name: a.name,
-            status: a.status,
-            version: a.version,
-            platform: a.platform,
-            lastHeartbeat: a.lastHeartbeat,
-            capabilities: a.capabilities,
-          })),
+          agents: agentStatuses,
         };
       },
     }),
