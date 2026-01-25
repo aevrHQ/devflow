@@ -130,7 +130,14 @@ async function startCommand(options: StartOptions): Promise<void> {
   // Register agent
   try {
     console.log("📡 Registering agent...");
-    await client.register();
+    const regResponse = await client.register();
+
+    // Update client with the new Agent Token (JWT)
+    if (regResponse.token) {
+      client.setToken(regResponse.token);
+      console.log("🔑 Authentication token refreshed");
+    }
+
     console.log(`✓ Agent registered: ${config.agent.id}`);
     console.log(`✓ Listening for commands...\n`);
   } catch (error) {

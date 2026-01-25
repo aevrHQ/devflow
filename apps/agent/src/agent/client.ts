@@ -40,7 +40,16 @@ export class PlatformClient {
     });
   }
 
-  async register(): Promise<{ success: boolean; token: string; agent: { id: string; name: string } }> {
+  setToken(token: string) {
+    this.token = token;
+    this.client.defaults.headers.Authorization = `Bearer ${token}`;
+  }
+
+  async register(): Promise<{
+    success: boolean;
+    token: string;
+    agent: { id: string; name: string };
+  }> {
     const response = await this.client.post("/api/agents", {
       agentId: this.agentId,
       userId: "", // Will be set by platform from token
@@ -53,18 +62,22 @@ export class PlatformClient {
   }
 
   async getCommands(): Promise<CommandRequest[]> {
-    const response = await this.client.get(`/api/agents/${this.agentId}/commands`);
+    const response = await this.client.get(
+      `/api/agents/${this.agentId}/commands`,
+    );
     return response.data.commands || [];
   }
 
   async heartbeat(): Promise<{ success: boolean; lastHeartbeat: string }> {
-    const response = await this.client.post(`/api/agents/${this.agentId}/heartbeat`);
+    const response = await this.client.post(
+      `/api/agents/${this.agentId}/heartbeat`,
+    );
     return response.data;
   }
 
   async reportProgress(
     taskId: string,
-    update: ProgressUpdate
+    update: ProgressUpdate,
   ): Promise<{ success: boolean }> {
     const response = await this.client.post(`/api/tasks/${taskId}/progress`, {
       ...update,
@@ -75,7 +88,7 @@ export class PlatformClient {
 
   async completeTask(
     taskId: string,
-    completion: TaskCompletion
+    completion: TaskCompletion,
   ): Promise<{ success: boolean }> {
     const response = await this.client.post(`/api/tasks/${taskId}/complete`, {
       ...completion,
@@ -84,10 +97,7 @@ export class PlatformClient {
     return response.data;
   }
 
-  async failTask(
-    taskId: string,
-    error: string
-  ): Promise<{ success: boolean }> {
+  async failTask(taskId: string, error: string): Promise<{ success: boolean }> {
     return this.completeTask(taskId, {
       success: false,
       error_message: error,
