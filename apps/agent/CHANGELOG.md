@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/miracleonyenma/devflow/compare/v0.2.1...v0.2.2) (2026-01-25)
+
+
+### Features
+
+* **agents:** add new DevFlow Agent API endpoints and UI dashboard connections ([b51e8b9](https://github.com/miracleonyenma/devflow/commit/b51e8b98d5ab98a9987b0466791af12696235313))
+* **backend-communication:** add logging mechanism for task execution ([cacc485](https://github.com/miracleonyenma/devflow/commit/cacc485b486cc6d0f9096369d4e11ff6dd1cb3e6))
+* Implement dashboard task management, including dedicated list and detail pages, notification utilities, and APIs for task progress and completion. ([d504396](https://github.com/miracleonyenma/devflow/commit/d5043969c13a222d9e518138ff8f3213ff7c0df3))
+* Introduce 'Connected Agents' help guide, refine Telegram user lookup logic, and add a Telegram authentication debug script. ([99cb42c](https://github.com/miracleonyenma/devflow/commit/99cb42c09664e37f21bf28446604b8c517191817))
+
+
+### Bug Fixes
+
+* **agents:** heartbeat stale agent detection and automatic status update ([2baa542](https://github.com/miracleonyenma/devflow/commit/2baa542d2302a77e895042162c71672314399829))
+* **api/webhook, docs/content/web:** update Telegram bot username to thedevflowbot ([8db87da](https://github.com/miracleonyenma/devflow/commit/8db87da9089b0a217c7d2d9a39d57050ffb639b1))
+* **auth:** update OAuth token response handling to snake case ([f50aa2d](https://github.com/miracleonyenma/devflow/commit/f50aa2ddfa87cb66430c0857a9a0e95f7af8e7d1))
+* **copilot:** add localPath to workflow context and related functions ([b1b8ccc](https://github.com/miracleonyenma/devflow/commit/b1b8ccc812a21ea4050a9167a806e607dbaf3960))
+
+
+### Code Refactoring
+
+* Normalize Telegram webhook history content to string for chat response generation. ([a671a0d](https://github.com/miracleonyenma/devflow/commit/a671a0ddc7a6dfac30ed2def7558757309f91752))
+
 ### 0.2.1 (2026-01-25)
 
 
