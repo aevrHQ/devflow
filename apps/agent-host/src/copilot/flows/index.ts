@@ -13,10 +13,9 @@ export type WorkflowIntent =
   | "deploy";
 
 export class WorkflowFactory {
-  static getWorkflow(intent: WorkflowIntent): new (
-    pingaUrl: string,
-    pingaSecret: string
-  ) => WorkflowExecutor {
+  static getWorkflow(
+    intent: WorkflowIntent,
+  ): new (pingaUrl: string, pingaSecret: string) => WorkflowExecutor {
     switch (intent) {
       case "fix-bug":
         return FixBugWorkflow;
@@ -30,16 +29,18 @@ export class WorkflowFactory {
         // TODO: Implement deploy workflow
         throw new Error("Deploy workflow not yet implemented");
       default:
-        throw new Error(`Unknown workflow intent: ${intent}`);
+        // Fallback to FeatureWorkflow for any unrecognized intents (e.g., "update readme", custom tasks)
+        console.log(
+          `[WorkflowFactory] Unknown intent "${intent}", falling back to FeatureWorkflow`,
+        );
+        return FeatureWorkflow;
     }
   }
 
   static async executeWorkflow(
-    context: WorkflowContext
+    context: WorkflowContext,
   ): Promise<WorkflowResult> {
-    const WorkflowClass = this.getWorkflow(
-      context.intent as WorkflowIntent
-    );
+    const WorkflowClass = this.getWorkflow(context.intent as WorkflowIntent);
 
     const pingaUrl = process.env.PINGA_API_URL || "http://localhost:3000";
     const pingaSecret = process.env.PINGA_API_SECRET || "";
