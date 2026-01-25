@@ -15,9 +15,6 @@ export default async function AgentAuthPage({
       <div style={{ padding: '40px', fontFamily: 'sans-serif', textAlign: 'center' }}>
         <h1>❌ Invalid OAuth Request</h1>
         <p>Missing required parameters: client_id, redirect_uri, or state</p>
-        <p style={{ fontSize: '0.9em', opacity: 0.7 }}>
-          Received: client_id={clientId}, redirect_uri={redirectUri}, state={state}
-        </p>
       </div>
     );
   }
@@ -35,7 +32,7 @@ export default async function AgentAuthPage({
   );
   githubAuthUrl.searchParams.set(
     'redirect_uri',
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/github/callback`
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback`
   );
   githubAuthUrl.searchParams.set('scope', 'repo workflow');
   githubAuthUrl.searchParams.set('state', JSON.stringify(cliState));

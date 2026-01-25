@@ -1,18 +1,29 @@
-// CLI Agent OAuth Callback Handler
-// Handles the response from GitHub OAuth and exchanges the code for an access token
+// GitHub OAuth Callback Handler
+// Handles redirect from GitHub and exchanges code for token
+// Supports both CLI agent auth and web user auth
 
 import { NextRequest, NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const { code, client_id, redirect_uri } = await request.json();
+    const code = request.nextUrl.searchParams.get('code');
+    const state = request.nextUrl.searchParams.get('state');
 
     if (!code) {
       return NextResponse.json(
-        { error: 'Missing authorization code' },
+        { error: 'No authorization code received' },
         { status: 400 }
       );
+    }
+
+    // Parse the state to check if this is a CLI or web auth
+    let cliState = null;
+    try {
+      if (state) {
+        cliState = JSON.parse(state);
+      }
+    } catch (e) {
+      // Not valid JSON, might be plain state
     }
 
     // Exchange GitHub code for access token
@@ -28,39 +39,45 @@ export async function POST(request: NextRequest) {
           client_id: process.env.GITHUB_CLIENT_ID,
           client_secret: process.env.GITHUB_CLIENT_SECRET,
           code,
-          redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/github/callback`,
+          redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback`,
         }),
       }
     );
 
     const data = await tokenResponse.json();
-
-    if (data.error) {
-      return NextResponse.json(
-        { error: data.error_description },
-        { status: 401 }
-      );
-    }
-
     const accessToken = data.access_token;
 
     if (!accessToken) {
       return NextResponse.json(
-        { error: 'Failed to get access token' },
+        { error: data.error_description || 'Failed to get access token' },
         { status: 401 }
       );
     }
 
-    // Generate a unique agent ID
-    const agentId = `agent-${randomUUID()}`;
+    // If this is a CLI agent auth, redirect to the CLI's redirect_uri with the code
+    if (cliState?.original_redirect_uri) {
+      const redirectUrl = new URL(cliState.original_redirect_uri);
+      redirectUrl.searchParams.set('code', code);
+      redirectUrl.searchParams.set('state', cliState.original_state || '');
+      return NextResponse.redirect(redirectUrl.toString());
+    }
 
-    // Return token to CLI agent
-    return NextResponse.json({
-      access_token: accessToken,
-      token_type: 'bearer',
-      expires_in: 3600,
-      agent_id: agentId,
+    // Otherwise, this is a web auth - store token and redirect to dashboard
+    const response = NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard`
+    );
+
+    // Store token in secure HTTP-only cookie
+    response.cookies.set({
+      name: 'github_token',
+      value: accessToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
+
+    return response;
   } catch (error) {
     console.error('[Auth Callback] Error:', error);
     return NextResponse.json(
