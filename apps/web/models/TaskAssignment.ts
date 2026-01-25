@@ -30,6 +30,11 @@ export interface ITaskAssignment {
     chatId?: string;
     messageId?: string;
   };
+  logs: {
+    timestamp: Date;
+    level: "info" | "warn" | "error";
+    message: string;
+  }[];
 }
 
 export interface TaskAssignmentDocument extends ITaskAssignment, Document {}
@@ -67,6 +72,17 @@ const TaskAssignmentSchema = new Schema<TaskAssignmentDocument>(
       chatId: { type: String },
       messageId: { type: String },
     },
+    logs: [
+      {
+        timestamp: { type: Date, default: Date.now },
+        level: {
+          type: String,
+          enum: ["info", "warn", "error"],
+          default: "info",
+        },
+        message: { type: String },
+      },
+    ],
   },
   {
     timestamps: true,

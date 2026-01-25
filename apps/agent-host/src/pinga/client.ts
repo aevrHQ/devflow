@@ -30,7 +30,7 @@ class PingaClient {
       prUrl?: string;
       output?: string;
       summary?: string;
-    }
+    },
   ): Promise<void> {
     await this.sendProgressUpdate({
       taskId,
@@ -49,6 +49,19 @@ class PingaClient {
       progress: 0,
       error,
     });
+  }
+  async sendLog(
+    taskId: string,
+    level: "info" | "warn" | "error",
+    message: string,
+  ): Promise<void> {
+    await this.sendProgressUpdate({
+      taskId,
+      status: "in_progress",
+      step: "logging",
+      progress: 0, // No progress change
+      logs: [{ level, message, timestamp: Date.now() }],
+    }).catch((err) => console.error("Failed to send log:", err));
   }
 }
 

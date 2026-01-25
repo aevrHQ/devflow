@@ -24,7 +24,7 @@ export async function POST(
     await connectDB();
 
     const { task_id: taskId } = await params;
-    const { status, step, progress, details } = await request.json();
+    const { status, step, progress, details, logs } = await request.json();
 
     // Extract and verify token
     const token = extractToken(request.headers.get("Authorization") || "");
@@ -63,6 +63,10 @@ export async function POST(
 
     if (!task.startedAt) {
       task.startedAt = new Date();
+    }
+
+    if (logs && Array.isArray(logs)) {
+      task.logs.push(...logs);
     }
 
     await task.save();

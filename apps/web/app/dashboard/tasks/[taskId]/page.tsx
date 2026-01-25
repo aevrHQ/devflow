@@ -139,6 +139,49 @@ export default async function TaskDetailsPage({
               </div>
             </div>
           )}
+
+          {/* Execution Logs */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-gray-50 px-4 py-3 border-b border-gray-100">
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-gray-500" />
+                Live Execution Logs
+              </h3>
+            </div>
+            <div className="p-0 bg-gray-950 font-mono text-xs max-h-[300px] overflow-y-auto">
+              {task.logs && task.logs.length > 0 ? (
+                <table className="w-full text-left">
+                  <tbody>
+                    {task.logs.map((log, i) => (
+                      <tr
+                        key={i}
+                        className="border-b border-gray-800/50 hover:bg-gray-900"
+                      >
+                        <td className="px-4 py-1 text-gray-500 w-32 whitespace-nowrap">
+                          {new Date(log.timestamp).toLocaleTimeString()}
+                        </td>
+                        <td
+                          className={`px-4 py-1 flex-1 break-all ${
+                            log.level === "error"
+                              ? "text-red-400"
+                              : log.level === "warn"
+                                ? "text-yellow-400"
+                                : "text-green-400"
+                          }`}
+                        >
+                          {log.message}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="p-4 text-gray-500 italic text-center">
+                  No logs available yet...
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Sidebar */}

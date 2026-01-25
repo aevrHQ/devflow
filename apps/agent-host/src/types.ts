@@ -35,6 +35,11 @@ export interface ProgressUpdate {
   step: string;
   progress: number; // 0-1
   details?: string;
+  logs?: {
+    level: "info" | "warn" | "error";
+    message: string;
+    timestamp?: number;
+  }[];
   error?: string;
   timestamp?: number;
 }

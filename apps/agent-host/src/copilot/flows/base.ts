@@ -152,6 +152,17 @@ Begin by understanding the repository structure.`;
     try {
       const session = await this.setupSession(context);
 
+      this.pingaClient.sendLog(
+        context.taskId,
+        "info",
+        `Starting workflow execution for task: ${context.intent}`,
+      );
+      this.pingaClient.sendLog(
+        context.taskId,
+        "info",
+        `Context: Repo=${context.repo}, Branch=${context.branch || "default"}, LocalPath=${context.localPath || "N/A"}`,
+      );
+
       let output = "";
       let hasError = false;
       let errorMessage = "";
