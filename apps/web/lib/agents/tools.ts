@@ -308,7 +308,7 @@ export const createDashboardTools = (
               version: a.version,
               platform: a.platform,
               lastHeartbeat: a.lastHeartbeat,
-              capabilities: a.capabilities,
+              capabilities: [...a.capabilities], // Convert MongooseArray to plain array
             };
           }),
         );
