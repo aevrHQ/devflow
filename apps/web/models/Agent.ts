@@ -4,7 +4,7 @@ export interface IAgent {
   userId: string; // Reference to User
   name: string;
   agentId: string; // Unique agent identifier (generated on registration)
-  status: "online" | "offline" | "inactive";
+  status: "online" | "offline" | "inactive" | "busy";
   lastHeartbeat: Date;
   version: string;
   platform: string;
@@ -23,7 +23,7 @@ const AgentSchema = new Schema<AgentDocument>(
     agentId: { type: String, required: true, unique: true, index: true },
     status: {
       type: String,
-      enum: ["online", "offline", "inactive"],
+      enum: ["online", "offline", "inactive", "busy"],
       default: "offline",
     },
     lastHeartbeat: { type: Date, default: () => new Date() },
