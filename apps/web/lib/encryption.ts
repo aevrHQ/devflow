@@ -4,18 +4,23 @@ const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12; // For GCM, 12 bytes is standard
 const AUTH_TAG_LENGTH = 16;
 
-function getKey(): Buffer {
-  const secret = process.env.PAYLOAD_ENCRYPTION_KEY;
-  if (!secret) {
-    throw new Error("PAYLOAD_ENCRYPTION_KEY is not defined");
+function getKeys(): Buffer[] {
+  const secrets: string[] = [];
+  if (process.env.PAYLOAD_ENCRYPTION_KEY)
+    secrets.push(process.env.PAYLOAD_ENCRYPTION_KEY);
+  if (process.env.CREDENTIAL_ENCRYPTION_KEY)
+    secrets.push(process.env.CREDENTIAL_ENCRYPTION_KEY);
+
+  if (secrets.length === 0) {
+    throw new Error(
+      "PAYLOAD_ENCRYPTION_KEY or CREDENTIAL_ENCRYPTION_KEY must be defined",
+    );
   }
-  // Ensure the key is 32 bytes (256 bits)
-  // If the secret is a hex string, use it directly
-  if (secret.length === 64) {
-    return Buffer.from(secret, "hex");
-  }
-  // Otherwise, hash it to get 32 bytes (less secure if entropy is low, but standard fallback)
-  return crypto.createHash("sha256").update(secret).digest();
+
+  return secrets.map((secret) => {
+    if (secret.length === 64) return Buffer.from(secret, "hex");
+    return crypto.createHash("sha256").update(secret).digest();
+  });
 }
 
 /**
@@ -23,7 +28,8 @@ function getKey(): Buffer {
  * Returns format: iv:authTag:encryptedText (all hex)
  */
 export function encrypt(text: string): string {
-  const key = getKey();
+  const keys = getKeys();
+  const key = keys[0]; // Always use the first key (PAYLOAD preferred)
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
@@ -58,18 +64,30 @@ export function decrypt(text: string): string {
   }
 
   const [ivHex, authTagHex, encryptedHex] = parts;
-
-  const key = getKey();
   const iv = Buffer.from(ivHex, "hex");
   const authTag = Buffer.from(authTagHex, "hex");
 
-  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
-  decipher.setAuthTag(authTag);
+  const keys = getKeys();
+  let lastError: unknown;
 
-  let decrypted = decipher.update(encryptedHex, "hex", "utf8");
-  decrypted += decipher.final("utf8");
+  // Try each key until one works
+  for (const key of keys) {
+    try {
+      const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+      decipher.setAuthTag(authTag);
 
-  return decrypted;
+      let decrypted = decipher.update(encryptedHex, "hex", "utf8");
+      decrypted += decipher.final("utf8");
+
+      return decrypted;
+    } catch (error) {
+      lastError = error;
+      // Continue to next key
+    }
+  }
+
+  // If we get here, all keys failed
+  throw lastError || new Error("Decryption failed with all available keys");
 }
 
 /**

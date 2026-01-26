@@ -59,7 +59,13 @@ export async function POST(request: NextRequest) {
       const payload = verifyAgentToken(token);
       if (payload) {
         isAuthenticated = true;
+      } else {
+        console.warn("[Copilot] Bearer token verification failed");
       }
+    } else {
+      console.warn(
+        "[Copilot] No valid auth header found (Bearer or X-API-Secret)",
+      );
     }
 
     if (!isAuthenticated) {
