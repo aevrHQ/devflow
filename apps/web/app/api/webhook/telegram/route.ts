@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import User, { UserDocument } from "@/models/User";
+import Agent from "@/models/Agent";
 import { sendPlainMessage } from "@/lib/webhook/telegram";
 import { ModelMessage } from "ai";
 import { transcribeAudio } from "@/lib/transcription";
 import { config } from "@/lib/webhook/config";
 import { parseDevflowCommand, getDevflowHelpText } from "@/lib/webhook/devflow";
-import { generateChatResponse } from "@/lib/agents/chatAssistant";
 import { randomUUID } from "crypto";
 
 // This route receives webhooks FROM Telegram
@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
           text.toLowerCase() === "/agents" ||
           text.toLowerCase().startsWith("/agents@")
         ) {
-          // Get user for context if available
+          // Direct DB Query Optimization (Skip LLM)
           await connectToDatabase();
           let agentUser = await User.findOne({
             telegramChatId: chat.id.toString(),
@@ -258,23 +258,37 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // Generate AI response to list agents
-          const aiResponse = await generateChatResponse({
-            message: "List my connected agents and their status",
-            history: [],
-            userId: agentUser?._id?.toString() || "",
-            source: {
-              channel: "telegram",
-              chatId: chat.id.toString(),
-              messageId: update.message.message_id.toString(),
-            },
-            senderName: update.message.from?.first_name || "Friend",
-          });
+          if (agentUser) {
+            const agents = await Agent.find({ userId: agentUser._id });
+            const onlineCount = agents.filter(
+              (a) => a.status === "online",
+            ).length;
 
-          await sendPlainMessage(
-            aiResponse?.text || "No agents found.",
-            chat.id.toString(),
-          );
+            let response = "";
+            if (agents.length === 0) {
+              response = "🚫 No agents found connected to your account.";
+            } else {
+              response = `🤖 *Connected Agents (${onlineCount}/${agents.length})*\n\n`;
+              agents.forEach((agent) => {
+                const statusIcon =
+                  agent.status === "online"
+                    ? "🟢"
+                    : agent.status === "busy"
+                      ? "🟡"
+                      : "🔴";
+                response += `${statusIcon} *${agent.name}* \`(${agent.agentId.substring(0, 8)})\`\n`;
+                response += `   Platform: ${agent.platform} | v${agent.version}\n`;
+                response += `   Last seen: ${new Date(agent.lastHeartbeat).toLocaleString()}\n\n`;
+              });
+            }
+            await sendPlainMessage(response, chat.id.toString());
+          } else {
+            await sendPlainMessage(
+              "⚠️ Could not find your account.",
+              chat.id.toString(),
+            );
+          }
+
           return NextResponse.json({ ok: true });
         }
 
