@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
 // POST handler for CLI agent - exchanges code for token
 export async function POST(request: NextRequest) {
   try {
-    const { code, client_id, redirect_uri } = await request.json();
+    const { code } = await request.json();
 
     if (!code) {
       return NextResponse.json(

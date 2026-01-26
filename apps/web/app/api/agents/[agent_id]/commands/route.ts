@@ -53,9 +53,10 @@ export async function GET(
         commands: commands.map((cmd) => ({
           task_id: cmd.taskId,
           intent: cmd.intent,
-          description: (cmd as any).description || cmd.intent,
-          repo: (cmd as any).repo || "",
-          branch: (cmd as any).branch || "",
+          description: cmd.description || cmd.intent,
+          repo: cmd.repo || "",
+          branch: cmd.branch || "",
+          credentials: cmd.credentials,
           created_at: cmd.createdAt,
         })),
       },

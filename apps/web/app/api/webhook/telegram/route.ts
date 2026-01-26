@@ -283,7 +283,6 @@ export async function POST(request: NextRequest) {
           text.toLowerCase() === "/help" ||
           text.toLowerCase().startsWith("/help@")
         ) {
-          const isGroup = chat.type === "group" || chat.type === "supergroup";
           // Use the unified help text from devflow.ts which contains dashboard info
           await sendPlainMessage(getDevflowHelpText(), chat.id.toString());
           return NextResponse.json({ ok: true });

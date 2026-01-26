@@ -4,15 +4,9 @@ import TaskAssignment from "@/models/TaskAssignment";
 import Agent from "@/models/Agent";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import {
   ArrowLeft,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Loader2,
   GitBranch,
   Terminal,
-  ExternalLink,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -108,7 +102,7 @@ export default async function TaskDetailsPage({
             </div>
 
             {task.repo && (
-              <div className="mt-4 flex items-center gap-2 text-sm bg-gray-50 p-2 rounded-md border border-gray-100 inline-flex">
+              <div className="mt-4 items-center gap-2 text-sm bg-gray-50 p-2 rounded-md border border-gray-100 inline-flex">
                 <GitBranch className="w-4 h-4 text-gray-500" />
                 <span className="text-gray-900 font-mono">{task.repo}</span>
                 {task.branch && <span className="text-gray-400">/</span>}
