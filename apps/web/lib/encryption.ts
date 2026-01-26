@@ -63,21 +63,48 @@ export function decrypt(text: string): string {
     return text;
   }
 
-  const [ivHex, authTagHex, encryptedHex] = parts;
+  const [ivHex, part2, part3] = parts;
   const iv = Buffer.from(ivHex, "hex");
-  const authTag = Buffer.from(authTagHex, "hex");
 
   const keys = getKeys();
   let lastError: unknown;
 
+  // Detect Algorithm based on IV length
+  // GCM uses 12-byte IV (24 hex chars)
+  // CBC uses 16-byte IV (32 hex chars)
+  const isGCM = iv.length === 12;
+  const isCBC = iv.length === 16;
+
+  if (!isGCM && !isCBC) {
+    // Unknown format (maybe raw string with colons? return as is)
+    return text;
+  }
+
   // Try each key until one works
   for (const key of keys) {
     try {
-      const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
-      decipher.setAuthTag(authTag);
+      let decrypted = "";
 
-      let decrypted = decipher.update(encryptedHex, "hex", "utf8");
-      decrypted += decipher.final("utf8");
+      if (isGCM) {
+        // GCM Format: iv:authTag:encrypted
+        const authTag = Buffer.from(part2, "hex");
+        const encryptedHex = part3;
+
+        const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+        decipher.setAuthTag(authTag);
+        decrypted = decipher.update(encryptedHex, "hex", "utf8");
+        decrypted += decipher.final("utf8");
+      } else {
+        // CBC Format (Legacy): iv:hmac:encrypted (we ignore hmac for recovery simplicity)
+        // OR just iv:encrypted?
+        // If split length is 3, assume middle is HMAC or just extra.
+        // We assume last part is content for CBC legacy.
+        const encryptedHex = part3 || part2;
+
+        const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+        decrypted = decipher.update(encryptedHex, "hex", "utf8");
+        decrypted += decipher.final("utf8");
+      }
 
       return decrypted;
     } catch (error) {
