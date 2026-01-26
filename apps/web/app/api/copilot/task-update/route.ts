@@ -40,14 +40,30 @@ export function storeTaskMapping(
 export async function POST(request: NextRequest) {
   try {
     // Verify the request has the correct secret
-    const authHeader = request.headers.get("X-API-Secret");
+    // Verify the request has the correct secret OR a valid Bearer token
+    const secretHeader = request.headers.get("X-API-Secret");
+    const authHeader = request.headers.get("Authorization");
     const expectedSecret = process.env.DEVFLOW_API_SECRET || "devflow-secret";
 
-    if (!authHeader || authHeader !== expectedSecret) {
-      console.error(
-        "[Copilot] Invalid API secret for task update:",
-        authHeader,
-      );
+    let isAuthenticated = false;
+
+    // 1. Check Secret (Legacy Agent Host)
+    if (secretHeader && secretHeader === expectedSecret) {
+      isAuthenticated = true;
+    }
+    // 2. Check Bearer Token (CLI Agent)
+    else if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
+      // Use verifiedAgentToken to verify tokens issued by /api/agents/register
+      const { verifyAgentToken } = await import("@/lib/agentAuth");
+      const payload = verifyAgentToken(token);
+      if (payload) {
+        isAuthenticated = true;
+      }
+    }
+
+    if (!isAuthenticated) {
+      console.error("[Copilot] Unauthorized task update attempt");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

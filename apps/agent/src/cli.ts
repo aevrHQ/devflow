@@ -14,6 +14,7 @@ import {
 } from "./config.js";
 import { initiateOAuthFlow, getTokenExpiration } from "./auth/oauth.js";
 import { PlatformClient, type CommandRequest } from "./agent/client.js";
+import { WorkflowFactory } from "./copilot/flows/index.js";
 import axios from "axios";
 
 // ===== INIT COMMAND =====
@@ -198,41 +199,39 @@ async function startCommand(options: StartOptions): Promise<void> {
             progress: 0.25,
           });
 
-          // Execute task via agent-host (Copilot SDK)
+          // Execute task LOCALLY using embedded Workflow Engine
           (async () => {
             try {
-              // Fix trailing slash in Agent Host URL if present
-              const cleanAgentHostUrl = (
-                config.agentHostUrl ||
-                process.env.AGENT_HOST_URL ||
-                "http://localhost:3001"
-              ).replace(/\/$/, "");
+              console.log(`⚡ Executing task locally...`);
 
-              // Call agent-host to execute the workflow
-              await axios.post(`${cleanAgentHostUrl}/api/workflows/execute`, {
+              // Build context
+              const context = {
                 taskId: cmd.task_id,
                 intent: cmd.intent,
                 repo: cmd.repo,
                 localPath: process.cwd(),
                 branch: cmd.branch,
                 naturalLanguage: cmd.description,
-              });
+                source: {
+                  channel: "cli" as const,
+                  chatId: "local",
+                  messageId: cmd.task_id,
+                },
+              };
 
-              console.log(`✓ Task dispatched to Host: ${cmd.task_id}`);
-              // Note: We do NOT call completeTask here. The Agent Host will report completion/failure asynchronously.
+              // Execute workflow directly
+              // This uses the local file system and reports back to Platform via provided URL/Token
+              await WorkflowFactory.executeWorkflow(
+                context,
+                config.platform.url,
+                client.getToken(),
+              );
+
+              // Usage of agent-host URL is DEPRECATED/REMOVED in favor of local execution
+              console.log(`✓ Workflow finished: ${cmd.task_id}`);
             } catch (error: any) {
-              const errorMsg = axios.isAxiosError(error)
-                ? `Request failed: ${error.message} (Status: ${error.response?.status})`
-                : error instanceof Error
-                  ? error.message
-                  : String(error);
-
-              if (axios.isAxiosError(error) && error.response?.data) {
-                console.error(
-                  "Host Response:",
-                  JSON.stringify(error.response.data, null, 2),
-                );
-              }
+              const errorMsg =
+                error instanceof Error ? error.message : String(error);
 
               await client.failTask(cmd.task_id, errorMsg);
               console.error(`✗ Task failed: ${cmd.task_id} - ${errorMsg}`);

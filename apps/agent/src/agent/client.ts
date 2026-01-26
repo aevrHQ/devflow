@@ -45,6 +45,10 @@ export class PlatformClient {
     this.client.defaults.headers.Authorization = `Bearer ${token}`;
   }
 
+  getToken(): string {
+    return this.token;
+  }
+
   async register(): Promise<{
     success: boolean;
     token: string;
