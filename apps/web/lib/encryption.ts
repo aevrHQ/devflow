@@ -81,7 +81,12 @@ export function decrypt(text: string): string {
   }
 
   // Try each key until one works
-  for (const key of keys) {
+  console.log(
+    `[Decryption] Attempting to decrypt. Keys: ${keys.length}, IV: ${iv.length}, GCM: ${isGCM}, CBC: ${isCBC}`,
+  );
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
     try {
       let decrypted = "";
 
@@ -95,21 +100,25 @@ export function decrypt(text: string): string {
         decrypted = decipher.update(encryptedHex, "hex", "utf8");
         decrypted += decipher.final("utf8");
       } else {
-        // CBC Format (Legacy): iv:hmac:encrypted (we ignore hmac for recovery simplicity)
-        // OR just iv:encrypted?
-        // If split length is 3, assume middle is HMAC or just extra.
-        // We assume last part is content for CBC legacy.
+        // CBC Format (Legacy)
         const encryptedHex = part3 || part2;
-
         const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
         decrypted = decipher.update(encryptedHex, "hex", "utf8");
         decrypted += decipher.final("utf8");
       }
 
+      console.log(`[Decryption] Success with Key Index: ${i}`);
       return decrypted;
     } catch (error) {
+      const keyHash = crypto
+        .createHash("sha256")
+        .update(key)
+        .digest("hex")
+        .substring(0, 8);
+      console.warn(
+        `[Decryption] Failed with Key Index: ${i} (Hash: ${keyHash}) - logic: ${isGCM ? "GCM" : "CBC"} - Error: ${error instanceof Error ? error.message : String(error)}`,
+      );
       lastError = error;
-      // Continue to next key
     }
   }
 
