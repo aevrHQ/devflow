@@ -4,10 +4,7 @@ import TaskAssignment from "@/models/TaskAssignment";
 import Agent from "@/models/Agent";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-  ArrowLeft,
-  GitBranch,
-  Terminal,
-} from "lucide-react";
+import { ArrowLeft, GitBranch, Terminal } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
