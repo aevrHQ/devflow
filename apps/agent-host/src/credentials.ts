@@ -30,9 +30,9 @@ export class CredentialDecryption {
    */
   decrypt(encrypted: string): string {
     if (!this.encryptionKey.length) {
-      throw new Error(
-        "Encryption key not available. Set CREDENTIAL_ENCRYPTION_KEY environment variable."
-      );
+      // In SaaS mode (CLI), credentials are sent plain-text (decrypted by backend).
+      // So if we have no key, we assume the string is already the secret.
+      return encrypted;
     }
 
     const parts = encrypted.split(":");
@@ -47,7 +47,7 @@ export class CredentialDecryption {
     const decipher = crypto.createDecipheriv(
       "aes-256-gcm",
       this.encryptionKey,
-      iv
+      iv,
     );
     decipher.setAuthTag(authTag);
 
@@ -63,7 +63,7 @@ export class CredentialDecryption {
  */
 export function decryptCredentials(
   credentials?: { github?: string },
-  encryptionKey?: string
+  encryptionKey?: string,
 ): { github?: string } {
   if (!credentials?.github) {
     return {};
@@ -77,7 +77,7 @@ export function decryptCredentials(
   } catch (error) {
     console.error(
       "[Credential Decryption] Failed to decrypt credentials:",
-      error instanceof Error ? error.message : error
+      error instanceof Error ? error.message : error,
     );
     throw error;
   }
