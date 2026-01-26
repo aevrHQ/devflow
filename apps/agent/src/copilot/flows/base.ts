@@ -126,7 +126,7 @@ Begin by understanding the repository structure.`;
       }
 
       return await this.copilot.createSession({
-        model: process.env.COPILOT_MODEL || "gpt-4",
+        model: process.env.COPILOT_MODEL || "gpt-3.5-turbo",
         streaming: true,
         tools: getAllTools({
           githubToken: userGitHubToken,
