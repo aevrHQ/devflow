@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/db";
 import Agent from "@/models/Agent";
 import TaskAssignment from "@/models/TaskAssignment";
 import { verifyAgentToken, extractToken } from "@/lib/agentAuth";
-import { decrypt } from "@/lib/encryption";
+import { decryptCredentials } from "@/lib/credentialEncryption";
 
 /**
  * GET /api/agents/[agent_id]/commands
@@ -57,7 +57,10 @@ export async function GET(
           // Decrypt GitHub token if present
           if (credentials.github) {
             try {
-              credentials.github = decrypt(credentials.github);
+              const decrypted = decryptCredentials({
+                github: credentials.github,
+              });
+              credentials.github = decrypted.github;
             } catch (e) {
               console.error(
                 "Failed to decrypt credentials for command",
