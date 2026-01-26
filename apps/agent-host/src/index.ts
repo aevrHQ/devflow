@@ -246,8 +246,17 @@ async function handleCommand(command: CommandRequest): Promise<void> {
 
     if (result.success) {
       jobQueue.updateJobStatus(command.taskId, "completed");
+      await pingaClient.notifyCompletion(command.taskId, {
+        summary: result.summary || "Workflow completed",
+        prUrl: result.prUrl,
+        output: result.output,
+      });
     } else {
       jobQueue.updateJobStatus(command.taskId, "failed", result.error);
+      await pingaClient.notifyError(
+        command.taskId,
+        result.error || "Workflow failed",
+      );
     }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
