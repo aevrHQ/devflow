@@ -344,6 +344,9 @@ export const createDashboardTools = (
         const agent = await Agent.findOne({ agentId, userId });
         if (!agent) return { error: "Agent not found or unauthorized" };
 
+        // Fetch valid user to get credentials
+        const user = await User.findById(userId);
+
         // Use provided repo or fall back to agent's workingDirectory
         const targetPath = repo || agent.workingDirectory || "local";
 
@@ -361,6 +364,10 @@ export const createDashboardTools = (
           currentStep: "queued",
           startedAt: new Date(),
           source: context.source || { channel: "dashboard" },
+          // Attach encrypted credentials for Managed SaaS mode
+          credentials: user?.credentials?.github
+            ? { github: user.credentials.github }
+            : undefined,
         });
 
         await task.save();

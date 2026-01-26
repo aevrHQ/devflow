@@ -6,6 +6,7 @@ import PinSettingsForm from "./PinSettingsForm";
 import NotificationChannelsForm from "./NotificationChannelsForm";
 import PreferencesForm from "./PreferencesForm";
 import WebhookInfo from "./WebhookInfo";
+import CredentialsForm from "./CredentialsForm";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
@@ -24,6 +25,8 @@ export default async function SettingsPage() {
     ? JSON.parse(JSON.stringify(dbUser.preferences))
     : { aiSummary: false, allowedSources: [] };
 
+  const hasGithubToken = !!dbUser?.credentials?.github;
+
   return (
     <div className="space-y-6">
       <div>
@@ -32,6 +35,10 @@ export default async function SettingsPage() {
       </div>
 
       <div className="grid gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <CredentialsForm initialHasGithubToken={hasGithubToken} />
+        </div>
+
         <WebhookInfo userId={user.userId.toString()} />
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <h2 className="text-lg font-semibold mb-4">Notification Channels</h2>

@@ -24,6 +24,11 @@ export interface IUser {
     content: string;
     createdAt: Date;
   }[];
+
+  // Encrypted Credentials (SaaS)
+  credentials?: {
+    github?: string; // Encrypted
+  };
 }
 
 export interface UserDocument extends IUser, Document {}
@@ -55,6 +60,10 @@ const UserSchema = new Schema<UserDocument>(
         createdAt: { type: Date, default: Date.now },
       },
     ],
+
+    credentials: {
+      github: { type: String }, // Encrypted
+    },
   },
   {
     timestamps: true,

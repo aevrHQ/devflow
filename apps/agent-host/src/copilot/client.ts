@@ -2,7 +2,10 @@
 // Uses @github/copilot-sdk for agent control
 // Reference: https://github.com/github/copilot-sdk
 
-import { CopilotClient as RealCopilotClient, SessionEvent as RealSessionEvent } from "@github/copilot-sdk";
+import {
+  CopilotClient as RealCopilotClient,
+  SessionEvent as RealSessionEvent,
+} from "@github/copilot-sdk";
 
 export interface CopilotClientOptions {
   model?: string;
@@ -12,7 +15,7 @@ export interface CopilotClientOptions {
 }
 
 export interface SessionEvent {
-  type: 
+  type:
     | "assistant.message_delta"
     | "session.idle"
     | "tool.start"
@@ -34,9 +37,9 @@ export interface Session {
 
 /**
  * CopilotClient - Wrapper for GitHub Copilot SDK
- * 
+ *
  * This uses the real @github/copilot-sdk package installed from npm.
- * 
+ *
  * Requirements:
  * - GitHub Copilot CLI installed and authenticated (copilot --version)
  * - @github/copilot-sdk package installed (npm install @github/copilot-sdk)
@@ -48,19 +51,31 @@ export class CopilotClient {
 
   constructor() {
     // Initialize the real SDK client
-    this.client = new RealCopilotClient();
+    // Ensure we have authentication
+    if (!process.env.GITHUB_TOKEN && !process.env.GITHUB_COPILOT_TOKEN) {
+      console.warn(
+        "⚠️ [CopilotClient] No GITHUB_TOKEN or GITHUB_COPILOT_TOKEN found in environment!",
+      );
+      console.warn("   The Copilot SDK may fail to authenticate.");
+    }
+
+    this.client = new RealCopilotClient({
+      auth: process.env.GITHUB_TOKEN || process.env.GITHUB_COPILOT_TOKEN,
+    } as any);
   }
 
   async createSession(options: CopilotClientOptions): Promise<Session> {
     const self = this;
-    
+
     const model = options.model || this.model;
-    console.log(`[CopilotClient] Creating session with model: ${model}`);
+    console.log(`[CopilotClient] 🚀 Creating session with model: ${model}`);
     console.log(`[CopilotClient] Streaming: ${options.streaming !== false}`);
     if (options.tools?.length) {
-      console.log(`[CopilotClient] Tools: ${options.tools.map((t: any) => t.name || "unknown").join(", ")}`);
+      console.log(
+        `[CopilotClient] Tools: ${options.tools.map((t: any) => t.name || "unknown").join(", ")}`,
+      );
     }
-    
+
     try {
       // Create real SDK session
       const realSession = await this.client.createSession({
@@ -73,7 +88,7 @@ export class CopilotClient {
       return {
         async sendAndWait(request: { prompt: string }) {
           let output = "";
-          
+
           realSession.on((event: any) => {
             // Normalize SDK events to our interface
             let mappedEvent: SessionEvent | null = null;
@@ -86,7 +101,10 @@ export class CopilotClient {
               output += event.data?.deltaContent || "";
             } else if (event.type === "session.idle") {
               mappedEvent = { type: "session.idle" };
-            } else if (event.type === "tool.start" || event.type === "tool_start") {
+            } else if (
+              event.type === "tool.start" ||
+              event.type === "tool_start"
+            ) {
               mappedEvent = {
                 type: "tool.start",
                 data: { toolName: event.data?.toolName },
@@ -104,7 +122,7 @@ export class CopilotClient {
             }
 
             if (mappedEvent) {
-              self.eventListeners.forEach(listener => listener(mappedEvent!));
+              self.eventListeners.forEach((listener) => listener(mappedEvent!));
             }
           });
 
@@ -139,7 +157,7 @@ export function getCopilotClient(): CopilotClient {
 /**
  * Tool Definition Helper
  * Creates Copilot SDK-compatible tool definitions
- * 
+ *
  * Example:
  * const gitTool = defineTool("git_ops", {
  *   description: "Execute git operations",
@@ -157,12 +175,10 @@ export function defineTool(
     description: string;
     parameters?: any;
     handler?: (args: any) => Promise<any>;
-  }
+  },
 ) {
   return {
     name,
-    ...definition
+    ...definition,
   };
 }
-
-
