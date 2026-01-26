@@ -6,6 +6,9 @@ export interface CommandRequest {
   repo: string;
   branch?: string;
   description: string;
+  credentials?: {
+    github?: string;
+  };
   created_at: string;
 }
 

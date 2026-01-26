@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/db";
 import Agent from "@/models/Agent";
 import TaskAssignment from "@/models/TaskAssignment";
 import { verifyAgentToken, extractToken } from "@/lib/agentAuth";
+import { decrypt } from "@/lib/encryption";
 
 /**
  * GET /api/agents/[agent_id]/commands
@@ -50,15 +51,34 @@ export async function GET(
     return NextResponse.json(
       {
         success: true,
-        commands: commands.map((cmd) => ({
-          task_id: cmd.taskId,
-          intent: cmd.intent,
-          description: cmd.description || cmd.intent,
-          repo: cmd.repo || "",
-          branch: cmd.branch || "",
-          credentials: cmd.credentials,
-          created_at: cmd.createdAt,
-        })),
+        commands: commands.map((cmd) => {
+          const credentials = cmd.credentials ? { ...cmd.credentials } : {};
+
+          // Decrypt GitHub token if present
+          if (credentials.github) {
+            try {
+              credentials.github = decrypt(credentials.github);
+            } catch (e) {
+              console.error(
+                "Failed to decrypt credentials for command",
+                cmd.taskId,
+                e,
+              );
+              // Do not send encrypted string
+              credentials.github = "";
+            }
+          }
+
+          return {
+            task_id: cmd.taskId,
+            intent: cmd.intent,
+            description: cmd.description || cmd.intent,
+            repo: cmd.repo || "",
+            branch: cmd.branch || "",
+            credentials,
+            created_at: cmd.createdAt,
+          };
+        }),
       },
       { status: 200 },
     );
