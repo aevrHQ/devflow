@@ -45,7 +45,7 @@ export interface Session {
  * - @github/copilot-sdk package installed (npm install @github/copilot-sdk)
  */
 export class CopilotClient {
-  private model: string = process.env.COPILOT_MODEL || "gpt-4";
+  private model: string = "gpt-4";
   private client: RealCopilotClient;
   private eventListeners: Array<(event: SessionEvent) => void> = [];
 

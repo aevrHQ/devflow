@@ -48,19 +48,22 @@ export class ProgressTracker {
 }
 
 // Factory function for Copilot SDK tool definition
-export function createProgressUpdateTool(): any {
-  const pingaUrl = process.env.PINGA_API_URL;
-  const pingaSecret = process.env.PINGA_API_SECRET;
+export function createProgressUpdateTool(
+  apiUrl?: string,
+  apiSecret?: string,
+): any {
+  const pingaUrl = apiUrl || process.env.PINGA_API_URL;
+  const pingaSecret = apiSecret || process.env.PINGA_API_SECRET;
 
   if (!pingaUrl || !pingaSecret) {
     console.warn(
-      "PINGA_API_URL or PINGA_API_SECRET not configured. Progress updates will fail."
+      "PINGA_API_URL or PINGA_API_SECRET not configured. Progress updates will fail.",
     );
   }
 
   const progressTracker = new ProgressTracker(
     pingaUrl || "http://localhost:3000",
-    pingaSecret || ""
+    pingaSecret || "",
   );
 
   return {
@@ -100,7 +103,7 @@ export function createProgressUpdateTool(): any {
       required: ["taskId", "status", "step", "progress"],
     },
     handler: async (
-      input: ProgressUpdateInput
+      input: ProgressUpdateInput,
     ): Promise<ProgressUpdateResult> => {
       try {
         return await progressTracker.sendUpdate(input);

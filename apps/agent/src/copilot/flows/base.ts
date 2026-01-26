@@ -34,8 +34,10 @@ export interface WorkflowResult {
 export class WorkflowExecutor {
   protected pingaClient: PingaClient;
   protected copilot: CopilotClient;
+  protected pingaConfig: { url: string; secret: string };
 
   constructor(pingaUrl: string, pingaSecret: string) {
+    this.pingaConfig = { url: pingaUrl, secret: pingaSecret };
     this.pingaClient = new PingaClient(pingaUrl, pingaSecret);
     this.copilot = new CopilotClient(); // Will be replaced with actual SDK when available
   }
@@ -124,11 +126,13 @@ Begin by understanding the repository structure.`;
       }
 
       return await this.copilot.createSession({
-        model: process.env.COPILOT_MODEL || "gpt-4.1",
+        model: process.env.COPILOT_MODEL || "gpt-4",
         streaming: true,
         tools: getAllTools({
           githubToken: userGitHubToken,
           localPath: context.localPath,
+          pingaUrl: this.pingaConfig.url,
+          pingaSecret: this.pingaConfig.secret,
         }),
         mcpServers:
           process.env.COPILOT_ENABLE_MCP === "true"

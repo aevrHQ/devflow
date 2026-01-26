@@ -51,6 +51,8 @@ export interface ToolOptions {
   githubToken?: string;
   encryptionKey?: string;
   localPath?: string;
+  pingaUrl?: string;
+  pingaSecret?: string;
 }
 
 export function getAllTools(options: ToolOptions = {}): any[] {
@@ -61,6 +63,6 @@ export function getAllTools(options: ToolOptions = {}): any[] {
     createWriteFileTool(options),
     createListFilesTool(options),
     createOpenPullRequestTool(options.githubToken, options.encryptionKey),
-    createProgressUpdateTool(),
+    createProgressUpdateTool(options.pingaUrl, options.pingaSecret),
   ];
 }
