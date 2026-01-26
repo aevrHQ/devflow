@@ -90,6 +90,11 @@ export class CopilotClient {
           let output = "";
 
           realSession.on((event: any) => {
+            console.log(
+              `[CopilotClient] Raw Event: ${event.type}`,
+              JSON.stringify(event.data || {}, null, 2),
+            );
+
             // Normalize SDK events to our interface
             let mappedEvent: SessionEvent | null = null;
 
@@ -126,8 +131,20 @@ export class CopilotClient {
             }
           });
 
-          const response = await realSession.sendAndWait(request);
-          return response;
+          console.log(
+            `[CopilotClient] Sending Prompt: ${request.prompt.substring(0, 50)}...`,
+          );
+          try {
+            const response = await realSession.sendAndWait(request);
+            console.log(
+              `[CopilotClient] Final Response:`,
+              JSON.stringify(response, null, 2),
+            );
+            return response;
+          } catch (err) {
+            console.error(`[CopilotClient] sendAndWait failed:`, err);
+            throw err;
+          }
         },
         on(callback: (event: SessionEvent) => void) {
           self.eventListeners.push(callback);
