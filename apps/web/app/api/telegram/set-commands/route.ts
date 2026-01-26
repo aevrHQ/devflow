@@ -1,8 +1,10 @@
+import { logger } from "@untools/logger";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
+  logger.info("🔍 Setting Telegram commands", request?.body);
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token) {
     return NextResponse.json(
