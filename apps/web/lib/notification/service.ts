@@ -54,30 +54,9 @@ export class NotificationService {
 
     const results: boolean[] = [];
 
-    // 2. Legacy Support: Send to Telegram if configured the old way
-    if (user.telegramChatId && user.telegramBotToken) {
-      // Check if legacy channel should receive this webhook
-      const legacyChannel = {
-        type: "telegram",
-        enabled: true,
-        config: {
-          chatId: user.telegramChatId,
-          botToken: user.telegramBotToken,
-        },
-      };
-
-      if (this.shouldSendToChannel(legacyChannel, notification)) {
-        const result = await telegramChannel.send(
-          { ...legacyChannel.config, enabled: true } as ChannelConfig,
-          notification,
-        );
-        results.push(result.success);
-
-        // Optional: Log legacy attempt if needed, or rely on old behavior (which was silent?)
-        // The original code didn't log legacy attempts to the database, so we keep it as is
-        // unless we want to start logging them. The original code only pushed to results.
-      }
-    }
+    // 2. Legacy Support: Removed
+    // Old telegramChatId/telegramBotToken logic has been deprecated and removed.
+    // Use Channel configuration instead.
 
     // 3. Multi-Channel Support
     // 3. Multi-Channel Support

@@ -16,10 +16,9 @@ export class TelegramChannel implements NotificationChannel {
   ): Promise<ChannelResult> {
     if (!config.enabled) return { success: false, error: "Channel disabled" };
 
-    // Extract chat ID and bot token from config or fallback (logic adapted)
-    const chatId = (config.chatId as string) || process.env.TELEGRAM_CHAT_ID;
-    const botToken =
-      (config.botToken as string) || process.env.TELEGRAM_BOT_TOKEN;
+    // Extract chat ID and bot token from config
+    const chatId = config.chatId as string;
+    const botToken = config.botToken as string;
 
     if (!chatId || !botToken) {
       console.warn("Telegram channel missing credentials");

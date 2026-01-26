@@ -5,9 +5,6 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   // SaaS specific fields
-  telegramChatId?: string; // @deprecated
-  telegramBotToken?: string; // @deprecated
-
   // channels: moved to Channel model
 
   preferences: {
@@ -36,10 +33,6 @@ export interface UserDocument extends IUser, Document {}
 const UserSchema = new Schema<UserDocument>(
   {
     email: { type: String, required: true, unique: true },
-
-    // Legacy fields (kept for backward compatibility)
-    telegramChatId: { type: String },
-    telegramBotToken: { type: String },
 
     // New Multi-channel System
     // Channels are now in their own model "Channel"

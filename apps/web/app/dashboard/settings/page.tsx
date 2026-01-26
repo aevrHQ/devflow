@@ -1,7 +1,6 @@
 import { getCurrentUser } from "@/lib/auth";
 import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
-import SettingsForm from "./SettingsForm";
 import PinSettingsForm from "./PinSettingsForm";
 import NotificationChannelsForm from "./NotificationChannelsForm";
 import PreferencesForm from "./PreferencesForm";
@@ -57,21 +56,6 @@ export default async function SettingsPage() {
             Customize how you receive notifications
           </p>
           <PreferencesForm initialPreferences={preferences} />
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4">
-            Legacy Telegram Configuration
-          </h2>
-          <p className="text-sm text-gray-500 mb-4">
-            This is kept for backward compatibility. Use the Notification
-            Channels section above for new setup.
-          </p>
-          <SettingsForm
-            initialChatId={dbUser?.telegramChatId || ""}
-            initialBotToken={dbUser?.telegramBotToken || ""}
-            userId={user.userId.toString()}
-          />
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">

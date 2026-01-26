@@ -23,8 +23,6 @@ const credentialsSchema = z.object({
 });
 
 const settingsSchema = z.object({
-  telegramChatId: z.string().optional(),
-  telegramBotToken: z.string().optional(),
   channels: z.array(channelSchema).optional(),
   preferences: preferencesSchema.optional(),
   credentials: credentialsSchema.optional(),
@@ -47,10 +45,6 @@ export async function POST(request: Request) {
     await connectToDatabase();
 
     const updateData: Record<string, unknown> = {};
-    if (result.data.telegramChatId !== undefined)
-      updateData.telegramChatId = result.data.telegramChatId;
-    if (result.data.telegramBotToken !== undefined)
-      updateData.telegramBotToken = result.data.telegramBotToken;
 
     if (result.data.preferences !== undefined)
       updateData.preferences = result.data.preferences;

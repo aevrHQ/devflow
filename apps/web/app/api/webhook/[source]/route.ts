@@ -6,7 +6,7 @@ import { storePayload, getPayloadUrl } from "@/lib/webhook/storage";
 import { validateConfig } from "@/lib/webhook/config";
 import connectToDatabase from "@/lib/mongodb";
 import Installation from "@/models/Installation";
-import User, { IUser, UserDocument } from "@/models/User";
+import User, { UserDocument } from "@/models/User";
 import WebhookEvent from "@/models/WebhookEvent";
 
 interface RouteParams {
@@ -160,39 +160,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         rawPayload: payload,
       });
     } else {
-      // Legacy Global Fallback (optional, but requested to keep backward compat if user not found?)
-      // Current logic relied on Env vars if user not found.
-      // But NotificationService requires a User object to determine channels.
-      // If no user found, maybe we shouldn't send?
-      // Original code: `if (chatId && botToken) ...` (where chatId came from ENV or user).
-      // Let's try to construct a dummy user for global fallback if ENV vars exist.
-      if (process.env.TELEGRAM_CHAT_ID && process.env.TELEGRAM_BOT_TOKEN) {
-        const { notificationService } =
-          await import("@/lib/notification/service");
-        // Create a fake user context for global env dispatch
-        const globalUser: IUser = {
-          email: "system@pinga.local", // Dummy email for global notifications
-          telegramChatId: process.env.TELEGRAM_CHAT_ID,
-          telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
-          preferences: {
-            aiSummary: false,
-            allowedSources: [],
-          },
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-
-        sent = await notificationService.send(globalUser, {
-          ...result.notification,
-          payloadUrl,
-          source,
-          eventType,
-        });
-      } else {
-        console.warn(
-          "Skipping notification: No target user and no global config",
-        );
-      }
+      console.warn(
+        "Skipping notification: No target user found for this webhook.",
+      );
     }
 
     return NextResponse.json({
