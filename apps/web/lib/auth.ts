@@ -1,3 +1,4 @@
+import { logger } from "@untools/logger";
 import * as jwt from "jsonwebtoken";
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
 import { cookies } from "next/headers";
@@ -5,7 +6,9 @@ import { cookies } from "next/headers";
 const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
 if (!ACCESS_SECRET) {
-  console.error("❌ CRITICAL: ACCESS_TOKEN_SECRET environment variable not set!");
+  console.error(
+    "❌ CRITICAL: ACCESS_TOKEN_SECRET environment variable not set!",
+  );
   console.error("   Set it in .env.local or your deployment platform");
   console.error("   Generate a strong secret: openssl rand -hex 32");
   process.exit(1);
@@ -44,6 +47,7 @@ export function verifyToken(token: string): UserPayload | null {
   try {
     return jwt.verify(token, ACCESS_SECRET) as UserPayload;
   } catch (e) {
+    logger.error("❌ Invalid token", e);
     return null;
   }
 }
