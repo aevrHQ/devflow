@@ -1,6 +1,5 @@
 import connectToDatabase from "@/lib/mongodb";
-import WebhookEvent from "@/models/WebhookEvent";
-import Installation from "@/models/Installation";
+import NotificationLog from "@/models/NotificationLog";
 import { Types } from "mongoose";
 
 export interface DashboardStats {
@@ -16,47 +15,35 @@ export async function getUserStats(userId: string): Promise<DashboardStats> {
   await connectToDatabase();
   const userObjectId = new Types.ObjectId(userId);
 
-  // 1. Get user's installation IDs
-  const installations = await Installation.find({ userId: userObjectId });
-  const installationIds = installations.map((i) => i.installationId);
-
-  if (installationIds.length === 0) {
-    return {
-      totalEvents: 0,
-      successRate: 0,
-      failedEvents: 0,
-      eventsLast24Hours: 0,
-      topRepositories: [],
-      dailyActivity: [],
-    };
-  }
-
-  // 2. Base match for all queries
-  const baseMatch = {
-    "payload.installation.id": { $in: installationIds },
-  };
+  // Base match for all queries (by userId)
+  const baseMatch = { userId: userObjectId };
 
   // 3. Aggregate stats
   const [totalCount, failedCount, last24HoursCount, topRepos, dailyActivity] =
     await Promise.all([
-      // Total Events
-      WebhookEvent.countDocuments(baseMatch),
+      // Total Events (Notifications)
+      NotificationLog.countDocuments(baseMatch),
 
-      // Failed Events
-      WebhookEvent.countDocuments({ ...baseMatch, status: "failed" }),
+      // Failed Events (Notifications)
+      NotificationLog.countDocuments({ ...baseMatch, status: "failure" }),
 
       // Events Last 24 Hours
-      WebhookEvent.countDocuments({
+      NotificationLog.countDocuments({
         ...baseMatch,
         createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
       }),
 
-      // Top Repositories
-      WebhookEvent.aggregate([
+      // Top Repositories (Derived from source or metadata)
+      // Note: Source might be "github", metadata might contain repo info via payload
+      // But NotificationLog metadata structure varies.
+      // For now, let's group by 'source' as a proxy, or try to extract repo from metadata if structure known.
+      // Since metadata is Mixed, we might just group by 'channelName' or 'source' for now.
+      // Let's group by "source" to show where events come from.
+      NotificationLog.aggregate([
         { $match: baseMatch },
         {
           $group: {
-            _id: "$payload.repository.full_name",
+            _id: "$source",
             count: { $sum: 1 },
           },
         },
@@ -72,7 +59,7 @@ export async function getUserStats(userId: string): Promise<DashboardStats> {
       ]),
 
       // Daily Activity (Last 7 Days)
-      WebhookEvent.aggregate([
+      NotificationLog.aggregate([
         {
           $match: {
             ...baseMatch,
@@ -104,7 +91,7 @@ export async function getUserStats(userId: string): Promise<DashboardStats> {
     successRate: Math.round(successRate * 10) / 10,
     failedEvents: failedCount,
     eventsLast24Hours: last24HoursCount,
-    topRepositories: topRepos,
+    topRepositories: topRepos, // Actually top sources now
     dailyActivity: dailyActivity,
   };
 }

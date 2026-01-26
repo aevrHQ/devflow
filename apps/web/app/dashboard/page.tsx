@@ -2,14 +2,13 @@ import { getUserStats } from "@/lib/stats";
 import { getCurrentUser } from "@/lib/auth";
 import connectToDatabase from "@/lib/mongodb";
 import Installation from "@/models/Installation";
-import WebhookEvent from "@/models/WebhookEvent";
 import Agent from "@/models/Agent";
+import ActivityFeed from "./ActivityFeed";
 import {
   Plus,
   Github,
   Activity,
   CheckCircle,
-  BarChart3,
   Zap,
   AlertCircle,
 } from "lucide-react";
@@ -73,19 +72,10 @@ export default async function DashboardPage(props: DashboardPageProps) {
     userId: new Types.ObjectId(user.userId),
   });
 
-  // Fetch stats and events
+  // Fetch stats (now uses NotificationLog)
   const stats = await getUserStats(user.userId);
 
-  // Still fetch recent events for the list view
-  const installationIds = installations.map((i) => i.installationId);
-  const events =
-    installationIds.length > 0
-      ? await WebhookEvent.find({
-          "payload.installation.id": { $in: installationIds },
-        })
-          .sort({ createdAt: -1 })
-          .limit(10)
-      : [];
+  // Note: Activity feed is now fetched client-side via ActivityFeed component
 
   const githubAppName = process.env.GITHUB_APP_NAME || "trypinga";
   const githubInstallUrl = `https://github.com/apps/${githubAppName}/installations/new`;
@@ -287,39 +277,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
           {/* Recent Activity */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-gray-700" />
-                Recent Activity
-              </h2>
-            </div>
-
-            {events.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <p>No recent webhooks received.</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {events.map((evt) => (
-                  <div
-                    key={String(evt._id)}
-                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div
-                      className={`w-2 h-2 mt-2 rounded-full ${evt.status === "processed" ? "bg-green-500" : "bg-yellow-500"}`}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {evt.event}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {new Date(evt.createdAt).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <ActivityFeed />
           </div>
         </div>
       </div>
