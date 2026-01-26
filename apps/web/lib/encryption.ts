@@ -17,10 +17,26 @@ function getKeys(): Buffer[] {
     );
   }
 
-  return secrets.map((secret) => {
-    if (secret.length === 64) return Buffer.from(secret, "hex");
-    return crypto.createHash("sha256").update(secret).digest();
-  });
+  const derivedKeys: Buffer[] = [];
+
+  for (const secret of secrets) {
+    // 1. Hex 64 (Direct)
+    if (secret.length === 64) {
+      derivedKeys.push(Buffer.from(secret, "hex"));
+      continue;
+    }
+
+    // 2. SHA-256 Hash (Standard Web)
+    derivedKeys.push(crypto.createHash("sha256").update(secret).digest());
+
+    // 3. Raw Buffer (Legacy Agent Host)
+    // Agent host logic: Buffer.from(key.substring(0, 32)) when key is string
+    if (secret.length >= 32) {
+      derivedKeys.push(Buffer.from(secret.substring(0, 32)));
+    }
+  }
+
+  return derivedKeys;
 }
 
 /**
