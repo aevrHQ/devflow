@@ -53,39 +53,80 @@ async function initCommand(options: InitOptions): Promise<void> {
     // Generate default agent name
     const agentName = options.name || `agent-${randomBytes(4).toString("hex")}`;
 
-    // Prompt for GitHub Personal Access Token
-    const { promptForGitHubToken, validateGitHubToken } =
-      await import("./auth/github-token.js");
-
+    // Fetch GitHub token from platform (managed SaaS mode)
     let githubToken: string | undefined;
-    let tokenValid = false;
 
-    while (!tokenValid) {
-      try {
-        githubToken = await promptForGitHubToken();
+    try {
+      console.log("\n🔍 Fetching GitHub credentials from platform...");
+      const credentialsResponse = await axios.get(
+        `${platformUrl}/api/auth/agent/credentials`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.access_token}`,
+          },
+          timeout: 10000,
+        },
+      );
 
-        if (!githubToken) {
-          console.log(
-            "\n⚠️  No token provided. You can add it later by editing ~/.devflow/config.json",
-          );
-          break;
-        }
+      if (credentialsResponse.data?.credentials?.github_token) {
+        githubToken = credentialsResponse.data.credentials.github_token;
+        console.log("✓ GitHub credentials synced from platform");
 
-        console.log("\n🔍 Validating GitHub token...");
-        const validation = await validateGitHubToken(githubToken);
+        // Validate the token
+        const { validateGitHubToken } = await import("./auth/github-token.js");
+        const validation = await validateGitHubToken(githubToken as string);
 
         if (validation.valid) {
           console.log(`✓ Token validated for user: ${validation.username}`);
-          tokenValid = true;
         } else {
-          console.error(`❌ Token validation failed: ${validation.error}`);
-          console.log("Please try again (or press Ctrl+C to skip).\n");
+          console.warn(`⚠️  Token validation failed: ${validation.error}`);
+          console.warn(
+            "You may need to update your GitHub credentials on the platform.",
+          );
+          githubToken = undefined;
+        }
+      } else {
+        console.log("⚠️  No GitHub credentials found on platform.");
+        console.log(
+          "   Add your GitHub token at: " + platformUrl + "/settings",
+        );
+      }
+    } catch (error) {
+      console.warn("\n⚠️  Could not fetch credentials from platform:");
+      if (axios.isAxiosError(error)) {
+        console.warn(
+          `   ${error.response?.status}: ${error.response?.data?.error || error.message}`,
+        );
+      } else {
+        console.warn(`   ${error}`);
+      }
+      console.log(
+        "\n   You can add GitHub credentials later via the platform UI.",
+      );
+    }
+
+    // Fallback: Manual token prompt (if platform doesn't have credentials)
+    if (!githubToken) {
+      console.log("\n📝 Alternatively, you can provide a GitHub token now:");
+      console.log("   (or skip and configure it later in the platform)");
+
+      try {
+        const { promptForGitHubToken, validateGitHubToken } =
+          await import("./auth/github-token.js");
+
+        const manualToken = await promptForGitHubToken();
+
+        if (manualToken) {
+          const validation = await validateGitHubToken(manualToken);
+          if (validation.valid) {
+            githubToken = manualToken;
+            console.log(`✓ Token validated for user: ${validation.username}`);
+          } else {
+            console.error(`❌ Token validation failed: ${validation.error}`);
+          }
         }
       } catch (error) {
-        console.error("\n⚠️  Token validation error:", error);
-        console.log("Continuing without GitHub token. You can add it later.\n");
-        githubToken = undefined;
-        break;
+        console.error("\n⚠️  Token prompt error:", error);
       }
     }
 
