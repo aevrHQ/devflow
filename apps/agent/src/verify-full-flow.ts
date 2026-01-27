@@ -22,7 +22,11 @@ PingaClient.prototype.notifyError = async (taskId, error) => {
   console.error(`[Pinga Mock] Error: ${error}`);
 };
 
-PingaClient.prototype.sendLog = async (taskId, level, message, metadata) => {
+PingaClient.prototype.sendLog = async (
+  taskId: string,
+  level: "info" | "warn" | "error",
+  message: string,
+) => {
   console.log(`[Pinga Mock] Log [${level}]: ${message}`);
 };
 
