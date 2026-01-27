@@ -293,7 +293,15 @@ async function startCommand(options: StartOptions): Promise<void> {
         if (options.debug) {
           console.log("💓 Sending heartbeat...");
         }
-        await client.heartbeat();
+        const heartbeatResponse = await client.heartbeat();
+
+        // Check if agent was disconnected remotely
+        if (heartbeatResponse.status === "disconnected") {
+          console.log("\n\n🔌 Agent was disconnected remotely.");
+          console.log("   Run 'devflow start' to reconnect.\n");
+          process.exit(0);
+        }
+
         lastHeartbeat = Date.now();
         if (options.debug) {
           console.log("💓 Heartbeat acknowledged");
@@ -314,10 +322,11 @@ async function startCommand(options: StartOptions): Promise<void> {
 
         commands.forEach((cmd: CommandRequest) => {
           console.log(`\n⚡ Executing: ${cmd.intent}`);
-          console.log(`   Task ID: ${cmd.task_id}`);
+          console.log(`   Task ID: ${cmd.taskId}`);
 
           // Send progress update
-          client.reportProgress(cmd.task_id, {
+          client.reportProgress(cmd.taskId, {
+            taskId: cmd.taskId,
             status: "in_progress",
             step: cmd.intent,
             progress: 0.25,
@@ -330,18 +339,18 @@ async function startCommand(options: StartOptions): Promise<void> {
 
               // Build context
               const context = {
-                taskId: cmd.task_id,
+                taskId: cmd.taskId,
                 intent: cmd.intent,
-                repo: cmd.repo,
+                repo: cmd.repo || "",
                 localPath: process.cwd(),
                 branch: cmd.branch,
-                naturalLanguage: cmd.description,
+                naturalLanguage: cmd.description || "",
                 source: {
                   channel: "cli" as const,
                   chatId: "local",
-                  messageId: cmd.task_id,
+                  messageId: cmd.taskId,
                 },
-                sessionId: cmd.session_id, // Pass session ID to re-use Copilot sessions
+                sessionId: undefined, // Session ID not available in CommandRequest
                 // Use local GitHub token from config (more secure than platform credentials)
                 localGitHubToken: config.credentials?.github_token,
               };
@@ -356,17 +365,24 @@ async function startCommand(options: StartOptions): Promise<void> {
               await WorkflowFactory.executeWorkflow(
                 context,
                 config.platform.url,
-                client.getToken(),
+                config.platform.api_key,
               );
 
               // Usage of agent-host URL is DEPRECATED/REMOVED in favor of local execution
-              console.log(`✓ Workflow finished: ${cmd.task_id}`);
+              console.log(`✓ Workflow finished: ${cmd.taskId}`);
             } catch (error: any) {
               const errorMsg =
                 error instanceof Error ? error.message : String(error);
 
-              await client.failTask(cmd.task_id, errorMsg);
-              console.error(`✗ Task failed: ${cmd.task_id} - ${errorMsg}`);
+              // Report failure via progress update (failTask method doesn't exist)
+              await client.reportProgress(cmd.taskId, {
+                taskId: cmd.taskId,
+                status: "failed",
+                step: "Workflow execution failed",
+                progress: 1.0,
+                details: errorMsg,
+              });
+              console.error(`✗ Task failed: ${cmd.taskId} - ${errorMsg}`);
               if (options.debug) {
                 console.error("Full Error Details:", error);
               }

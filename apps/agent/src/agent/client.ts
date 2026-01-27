@@ -1,62 +1,54 @@
 import axios, { AxiosInstance } from "axios";
 
 export interface CommandRequest {
-  task_id: string;
+  commandId: string;
+  taskId: string;
   intent: string;
-  repo: string;
+  description?: string;
+  repo?: string;
   branch?: string;
-  description: string;
-  credentials?: {
-    github?: string;
-  };
-  session_id?: string;
-  created_at: string;
 }
 
 export interface ProgressUpdate {
+  taskId: string;
   status: "in_progress" | "completed" | "failed";
   step: string;
-  progress: number; // 0-1
+  progress: number;
   details?: string;
 }
 
 export interface TaskCompletion {
   success: boolean;
-  pr_url?: string;
-  error_message?: string;
+  output?: string;
+  prUrl?: string;
+  error?: string;
 }
 
 export class PlatformClient {
   private client: AxiosInstance;
   private agentId: string;
-  private token: string;
 
-  constructor(platformUrl: string, agentId: string, token: string) {
+  constructor(platformUrl: string, agentId: string, apiKey: string) {
     this.agentId = agentId;
-    this.token = token;
-
     this.client = axios.create({
       baseURL: platformUrl,
       headers: {
-        Authorization: `Bearer ${token}`,
-        "User-Agent": "devflow-agent/0.1.0",
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
+      timeout: 10000,
     });
   }
 
-  setToken(token: string) {
-    this.token = token;
+  setToken(token: string): void {
     this.client.defaults.headers.Authorization = `Bearer ${token}`;
-  }
-
-  getToken(): string {
-    return this.token;
   }
 
   async register(): Promise<{
     success: boolean;
-    token: string;
-    agent: { id: string; name: string };
+    agent: { id: string; name: string; status: string };
+    token?: string;
+    expiresAt?: string;
   }> {
     const response = await this.client.post("/api/agents", {
       agentId: this.agentId,
@@ -77,7 +69,11 @@ export class PlatformClient {
     return response.data.commands || [];
   }
 
-  async heartbeat(): Promise<{ success: boolean; lastHeartbeat: string }> {
+  async heartbeat(): Promise<{
+    success: boolean;
+    lastHeartbeat: string;
+    status?: string;
+  }> {
     const response = await this.client.post(
       `/api/agents/${this.agentId}/heartbeat`,
     );
@@ -104,12 +100,5 @@ export class PlatformClient {
       completed_at: new Date().toISOString(),
     });
     return response.data;
-  }
-
-  async failTask(taskId: string, error: string): Promise<{ success: boolean }> {
-    return this.completeTask(taskId, {
-      success: false,
-      error_message: error,
-    });
   }
 }

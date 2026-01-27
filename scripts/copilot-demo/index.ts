@@ -31,7 +31,13 @@ async function main() {
         filePath: z.string().describe("The path of the file to write to"),
         content: z.string().describe("The content to write to the file"),
       }),
-      handler: async ({ filePath, content }) => {
+      handler: async ({
+        filePath,
+        content,
+      }: {
+        filePath: string;
+        content: string;
+      }) => {
         try {
           const resolvedPath = path.resolve(process.cwd(), filePath);
           await fs.writeFile(resolvedPath, content, "utf-8");

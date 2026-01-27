@@ -292,6 +292,166 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ ok: true });
         }
 
+        // Handle /tasks command - list active tasks
+        if (
+          text.toLowerCase() === "/tasks" ||
+          text.toLowerCase().startsWith("/tasks@")
+        ) {
+          await connectToDatabase();
+          let user: UserDocument | null = await User.findOne({
+            telegramChatId: chat.id.toString(),
+          });
+          if (!user) {
+            const { default: Channel } = await import("@/models/Channel");
+            const channel = await Channel.findOne({
+              "config.chatId": chat.id.toString(),
+            });
+            if (channel) user = await User.findById(channel.userId);
+          }
+
+          if (user) {
+            const TaskAssignment = (await import("@/models/TaskAssignment"))
+              .default;
+            const tasks = await TaskAssignment.find({
+              userId: user._id,
+              status: { $in: ["pending", "in_progress"] },
+            })
+              .sort({ createdAt: -1 })
+              .limit(10);
+
+            if (tasks.length === 0) {
+              await sendPlainMessage("📋 No active tasks", chat.id.toString());
+            } else {
+              let response = `📋 Active Tasks (${tasks.length})\n\n`;
+              tasks.forEach(
+                (
+                  task: {
+                    taskId: string;
+                    description?: string;
+                    intent: string;
+                    status: string;
+                    progress: number;
+                  },
+                  idx: number,
+                ) => {
+                  const desc = task.description || task.intent;
+                  const shortId = task.taskId.substring(0, 13);
+                  response += `${idx + 1}. ${shortId}... - ${desc}\n`;
+                  response += `   Status: ${task.status} | Progress: ${Math.round(task.progress * 100)}%\n`;
+                  response += `   /cancel_${task.taskId}\n\n`;
+                },
+              );
+              await sendPlainMessage(response, chat.id.toString());
+            }
+          } else {
+            await sendPlainMessage(
+              "⚠️ Could not find your account.",
+              chat.id.toString(),
+            );
+          }
+
+          return NextResponse.json({ ok: true });
+        }
+
+        // Handle /cancel_{taskId} command
+        if (text.startsWith("/cancel_") || text.toLowerCase() === "/cancel") {
+          const taskId = text.replace("/cancel_", "").trim();
+
+          if (!taskId || taskId === "/cancel") {
+            await sendPlainMessage(
+              "Usage: /cancel_{taskId}\n\nUse /tasks to see active task IDs",
+              chat.id.toString(),
+            );
+            return NextResponse.json({ ok: true });
+          }
+
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/api/tasks/${taskId}/terminate`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              },
+            );
+
+            if (response.ok) {
+              await sendPlainMessage(
+                `✅ Task cancelled successfully!\n\nTask ID: ${taskId.substring(0, 13)}...`,
+                chat.id.toString(),
+              );
+            } else {
+              const error = await response.json();
+              await sendPlainMessage(
+                `❌ Failed to cancel task: ${error.error || "Unknown error"}`,
+                chat.id.toString(),
+              );
+            }
+          } catch (error) {
+            console.error("[Telegram] Error cancelling task:", error);
+            await sendPlainMessage(
+              `❌ Error cancelling task: ${error instanceof Error ? error.message : "Unknown error"}`,
+              chat.id.toString(),
+            );
+          }
+
+          return NextResponse.json({ ok: true });
+        }
+
+        // Handle /disconnect_{agentId} command
+        if (
+          text.startsWith("/disconnect_") ||
+          text.toLowerCase() === "/disconnect"
+        ) {
+          const agentId = text.replace("/disconnect_", "").trim();
+
+          if (!agentId || agentId === "/disconnect") {
+            await sendPlainMessage(
+              "Usage: /disconnect_{agentId}\n\nUse /agents to see connected agent IDs",
+              chat.id.toString(),
+            );
+            return NextResponse.json({ ok: true });
+          }
+
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/api/agents/${agentId}/disconnect`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              },
+            );
+
+            if (response.ok) {
+              const result = await response.json();
+              await sendPlainMessage(
+                `🔌 Agent disconnected successfully!\n\n` +
+                  `Agent: ${result.agent.name}\n` +
+                  `Tasks cancelled: ${result.tasksCancelled}\n\n` +
+                  `⚠️ Run 'devflow start' on the agent's machine to reconnect.`,
+                chat.id.toString(),
+              );
+            } else {
+              const error = await response.json();
+              await sendPlainMessage(
+                `❌ Failed to disconnect agent: ${error.error || "Unknown error"}`,
+                chat.id.toString(),
+              );
+            }
+          } catch (error) {
+            console.error("[Telegram] Error disconnecting agent:", error);
+            await sendPlainMessage(
+              `❌ Error disconnecting agent: ${error instanceof Error ? error.message : "Unknown error"}`,
+              chat.id.toString(),
+            );
+          }
+
+          return NextResponse.json({ ok: true });
+        }
+
         // Handle /help command
         if (
           text.toLowerCase() === "/help" ||

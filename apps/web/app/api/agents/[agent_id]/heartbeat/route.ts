@@ -10,7 +10,7 @@ import { verifyAgentToken, extractToken } from "@/lib/agentAuth";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ agent_id: string }> }
+  { params }: { params: Promise<{ agent_id: string }> },
 ) {
   try {
     await connectDB();
@@ -22,7 +22,7 @@ export async function POST(
     if (!token) {
       return NextResponse.json(
         { error: "Missing or invalid Authorization header" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -30,39 +30,37 @@ export async function POST(
     if (!payload || payload.agentId !== agentId) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
-    // Update agent's heartbeat
-    const agent = await Agent.findOneAndUpdate(
-      { agentId, userId: payload.userId },
-      {
-        lastHeartbeat: new Date(),
-        status: "online",
-      },
-      { new: true }
-    );
+    // Update agent's heartbeat (but preserve "disconnected" status)
+    const agent = await Agent.findOne({ agentId, userId: payload.userId });
 
     if (!agent) {
-      return NextResponse.json(
-        { error: "Agent not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Agent not found" }, { status: 404 });
     }
+
+    // Only update to online if not disconnected
+    if (agent.status !== "disconnected") {
+      agent.status = "online";
+    }
+    agent.lastHeartbeat = new Date();
+    await agent.save();
 
     return NextResponse.json(
       {
         success: true,
         lastHeartbeat: agent.lastHeartbeat,
+        status: agent.status, // Return current status so agent can detect disconnection
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[agents/[agent_id]/heartbeat]", error);
     return NextResponse.json(
       { error: "Failed to update heartbeat" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

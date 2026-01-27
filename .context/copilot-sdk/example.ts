@@ -7,7 +7,7 @@
  */
 
 import { existsSync } from "node:fs";
-import { CopilotClient, type Tool } from "../src/index.js";
+import { CopilotClient, type Tool } from "@github/copilot-sdk";
 
 async function main() {
   console.log("🚀 Starting Copilot SDK Example\n");
@@ -59,7 +59,11 @@ async function main() {
           },
           required: ["topic"],
         },
-        handler: async ({ arguments: args }) => {
+        handler: async ({
+          arguments: args,
+        }: {
+          arguments: Record<string, unknown>;
+        }) => {
           const topic = String(
             (args as { topic: string }).topic || "",
           ).toLowerCase();
@@ -92,7 +96,7 @@ async function main() {
     console.log(`✅ Session created: ${session.sessionId}\n`);
 
     // Listen to events
-    session.on((event) => {
+    session.on((event: { type: string; data: any }) => {
       console.log(
         `📢 Event [${event.type}]:`,
         JSON.stringify(event.data, null, 2),
