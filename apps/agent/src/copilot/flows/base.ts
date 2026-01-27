@@ -21,6 +21,7 @@ export interface WorkflowContext {
   credentials?: {
     github?: string; // Encrypted GitHub token
   };
+  sessionId?: string; // Optional session ID for persistence
 }
 
 export interface WorkflowResult {
@@ -107,6 +108,15 @@ Begin by understanding the repository structure.`;
 
   protected async setupSession(context: WorkflowContext): Promise<Session> {
     try {
+      // Check for existing session
+      if (context.sessionId) {
+        const { SessionRegistry } = await import("../session-registry.js");
+        const existingSession = SessionRegistry.get(context.sessionId);
+        if (existingSession) {
+          return existingSession;
+        }
+      }
+
       // Decrypt user credentials if provided (managed SaaS mode)
       let userGitHubToken: string | undefined;
       if (context.credentials?.github) {
@@ -125,7 +135,7 @@ Begin by understanding the repository structure.`;
         }
       }
 
-      return await this.copilot.createSession({
+      const session = await this.copilot.createSession({
         model: process.env.COPILOT_MODEL || "gpt-3.5-turbo",
         streaming: true,
         tools: getAllTools({
@@ -134,6 +144,7 @@ Begin by understanding the repository structure.`;
           pingaUrl: this.pingaConfig.url,
           pingaSecret: this.pingaConfig.secret,
         }),
+        githubToken: userGitHubToken,
         mcpServers:
           process.env.COPILOT_ENABLE_MCP === "true"
             ? {
@@ -144,6 +155,14 @@ Begin by understanding the repository structure.`;
               }
             : undefined,
       });
+
+      // Register new session if ID provided
+      if (context.sessionId) {
+        const { SessionRegistry } = await import("../session-registry.js");
+        SessionRegistry.register(context.sessionId, session);
+      }
+
+      return session;
     } catch (error) {
       throw new Error(`Failed to create Copilot session: ${error}`);
     }
@@ -172,11 +191,30 @@ Begin by understanding the repository structure.`;
       let errorMessage = "";
 
       // Listen for session events
-      session.on((event: SessionEvent) => {
-        console.log(`[${context.taskId}] Event:`, event.type);
+      let pendingDeltaBuffer = "";
+      let lastProgressUpdate = 0;
+      const PROGRESS_THROTTLE_MS = 2000; // Throttle text updates to every 2s
 
-        if (event.type === "tool.start") {
+      session.on((event: SessionEvent) => {
+        // console.log(`[${context.taskId}] Event:`, event.type); // Debug logging
+
+        if (
+          event.type === "tool.execution_start" ||
+          event.type === "tool.start"
+        ) {
           const toolName = event.data?.toolName || "unknown";
+          console.log(`[${context.taskId}] Tool Start: ${toolName}`);
+
+          // Flush any pending text before announcing tool start
+          if (pendingDeltaBuffer.trim().length > 0) {
+            this.sendProgress(
+              context.taskId,
+              pendingDeltaBuffer, // Send the accumulated text as the "step" description/output
+              0.3,
+            ).catch(console.error);
+            pendingDeltaBuffer = "";
+          }
+
           this.sendProgress(
             context.taskId,
             `Executing: ${toolName}`,
@@ -184,18 +222,64 @@ Begin by understanding the repository structure.`;
           ).catch(console.error);
         }
 
-        if (event.type === "tool.end") {
+        if (
+          event.type === "tool.execution_complete" ||
+          event.type === "tool.end"
+        ) {
           const result = event.data?.result;
-          console.log(`[${context.taskId}] Tool result:`, result);
+          console.log(
+            `[${context.taskId}] Tool Result:`,
+            JSON.stringify(result).substring(0, 100) + "...",
+          );
+          // We don't send a separate update for tool end to avoid noise, unless it failed
         }
 
         if (event.type === "assistant.message_delta") {
-          output += event.data?.deltaContent || "";
+          const chunk = event.data?.deltaContent || "";
+          output += chunk;
+          pendingDeltaBuffer += chunk;
+
+          // Periodically flush buffer to keep user engaged if response is long
+          const now = Date.now();
+          if (
+            now - lastProgressUpdate > PROGRESS_THROTTLE_MS &&
+            pendingDeltaBuffer.length > 20
+          ) {
+            // Send what we have so far
+            // Note: In a real streaming architecture, we'd append.
+            // Here we are updating the "step" which might overwrite previous "step" text in UI
+            // depending on how frontend handles it.
+            // For "smart batching" in a chat context, we mainly want to avoid network spam.
+            this.sendProgress(
+              context.taskId,
+              pendingDeltaBuffer, // Update current "step" with latest text chunk
+              0.4,
+            ).catch(console.error);
+            lastProgressUpdate = now;
+            // We keep buffer growing? Or reset?
+            // If we reset, the UI might see "..." -> "Hello" -> "World".
+            // If the UI replaces the text, we should probably send the *accumulated* buffer for this turn if possible,
+            // or just send the delta if the UI appends.
+            // Assuming the UI replaces "step" description:
+            // Let's NOT reset buffer here if we want to show full message building up in the "step" field.
+            // But pendingDeltaBuffer is meant to be "whats new".
+            // Let's assume the UI shows a log or chat bubble.
+            // To be safe, we just throttle.
+            // Actually, flushing effectively clears the "pending" state for the *next* update.
+            pendingDeltaBuffer = "";
+          }
+        }
+
+        if (event.type === "session.usage_info") {
+          console.log(
+            `[${context.taskId}] Token Usage: ${event.data?.currentTokens}/${event.data?.tokenLimit}`,
+          );
         }
 
         if (event.type === "error") {
           hasError = true;
           errorMessage = event.data?.message || "Unknown error";
+          console.error(`[${context.taskId}] Error:`, errorMessage);
         }
       });
 

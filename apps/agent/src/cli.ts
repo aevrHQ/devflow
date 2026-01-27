@@ -217,13 +217,14 @@ async function startCommand(options: StartOptions): Promise<void> {
                   chatId: "local",
                   messageId: cmd.task_id,
                 },
+                sessionId: cmd.session_id, // Pass session ID to re-use Copilot sessions
                 credentials: cmd.credentials, // Pass credentials to workflow
               };
 
-              // Set GitHub Token for Copilot SDK if available
-              if (cmd.credentials?.github) {
-                process.env.GITHUB_TOKEN = cmd.credentials.github;
-              }
+              // Set GitHub Token for Copilot SDK if available - REMOVED (Handled in WorkflowExecutor)
+              // if (cmd.credentials?.github) {
+              //   process.env.GITHUB_TOKEN = cmd.credentials.github;
+              // }
 
               // Execute workflow directly
               // This uses the local file system and reports back to Platform via provided URL/Token

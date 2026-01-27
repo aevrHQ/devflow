@@ -57,11 +57,11 @@ export interface ToolOptions {
 
 export function getAllTools(options: ToolOptions = {}): any[] {
   return [
-    createGitOperationsTool(options),
+    // createGitOperationsTool(options), // Using built-in git tools
     createTestRunnerTool(),
-    createReadFileTool(options),
-    createWriteFileTool(options),
-    createListFilesTool(options),
+    // createReadFileTool(options), // Using built-in file tools
+    // createWriteFileTool(options), // Using built-in file tools
+    // createListFilesTool(options), // Using built-in file tools
     createOpenPullRequestTool(options.githubToken, options.encryptionKey),
     createProgressUpdateTool(options.pingaUrl, options.pingaSecret),
   ];

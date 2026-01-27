@@ -12,21 +12,36 @@ export interface CopilotClientOptions {
   streaming?: boolean;
   tools?: any[];
   mcpServers?: Record<string, any>;
+  githubToken?: string;
 }
 
 export interface SessionEvent {
   type:
     | "assistant.message_delta"
+    | "assistant.turn_start"
+    | "assistant.turn_end"
+    | "session.usage_info"
     | "session.idle"
-    | "tool.start"
-    | "tool.end"
+    | "tool.start" // Legacy/fallback
+    | "tool.end" // Legacy/fallback
+    | "tool.execution_start"
+    | "tool.execution_complete"
     | "error";
   data?: {
     deltaContent?: string;
+    messageId?: string;
+    turnId?: string;
     toolName?: string;
-    toolResult?: any;
+    toolCallId?: string;
+    arguments?: any;
     result?: any;
+    success?: boolean;
     message?: string;
+    // session.usage_info data
+    tokenLimit?: number;
+    currentTokens?: number;
+    messagesLength?: number;
+    [key: string]: any; // Allow flexibility for other data properties
   };
 }
 
@@ -52,7 +67,8 @@ export class CopilotClient {
   constructor() {
     // Initialize the real SDK client
     // Ensure we have authentication
-    if (!process.env.GITHUB_TOKEN && !process.env.GITHUB_COPILOT_TOKEN) {
+    const token = process.env.GITHUB_TOKEN || process.env.GITHUB_COPILOT_TOKEN;
+    if (!token) {
       console.warn(
         "⚠️ [CopilotClient] No GITHUB_TOKEN or GITHUB_COPILOT_TOKEN found in environment!",
       );
@@ -60,7 +76,14 @@ export class CopilotClient {
     }
 
     this.client = new RealCopilotClient({
-      auth: process.env.GITHUB_TOKEN || process.env.GITHUB_COPILOT_TOKEN,
+      // The SDK uses GITHUB_TOKEN or GH_TOKEN from env by default, but we can pass explicit auth or env.
+      // Based on demo, passing env explicitly with multiple token vars helps robustness.
+      env: {
+        ...process.env,
+        GITHUB_TOKEN: token, // Ensure it's set if we found it
+        GH_TOKEN: token,
+        COPILOT_GITHUB_TOKEN: token,
+      },
     } as any);
   }
 
@@ -76,12 +99,48 @@ export class CopilotClient {
       );
     }
 
+    // Re-initialize client if a specific token is provided (e.g. from user credentials)
+    if (options.githubToken) {
+      console.log(
+        "[CopilotClient] 🔄 Re-initializing SDK with provided user token",
+      );
+      this.client = new RealCopilotClient({
+        env: {
+          ...process.env,
+          GITHUB_TOKEN: options.githubToken,
+          GH_TOKEN: options.githubToken,
+          COPILOT_GITHUB_TOKEN: options.githubToken,
+        },
+      } as any);
+    }
+
     try {
+      // Ensure client is started
+      // The SDK's start() is usually idempotent or we can check state if needed,
+      // but simplistic approach: just call it.
+      console.log("[CopilotClient] Starting SDK client...");
+      await this.client.start();
+
+      console.log("[CopilotClient] Verifying authentication...");
+      const authStatus = await this.client.getAuthStatus();
+      console.log(`[CopilotClient] Auth Status: ${JSON.stringify(authStatus)}`);
+
+      const statusAny = authStatus as any;
+      if (
+        statusAny.status === "NotAuthenticated" ||
+        statusAny.status === "error" ||
+        statusAny.isAuthenticated === false
+      ) {
+        throw new Error(
+          `Copilot Authentication Failed: ${authStatus.statusMessage || "Unknown reason"}`,
+        );
+      }
+
       // Create real SDK session
       const realSession = await this.client.createSession({
         model,
         streaming: options.streaming !== false,
-        tools: options.tools || [],
+        tools: options.tools, // Pass undefined if not provided, allowing SDK defaults
       });
 
       // Wrap the real session to normalize event types
@@ -90,40 +149,84 @@ export class CopilotClient {
           let output = "";
 
           realSession.on((event: any) => {
-            console.log(
-              `[CopilotClient] Raw Event: ${event.type}`,
-              JSON.stringify(event.data || {}, null, 2),
-            );
+            // console.log(
+            //   `[CopilotClient] Raw Event: ${event.type}`,
+            //   JSON.stringify(event.data || {}, null, 2),
+            // );
 
-            // Normalize SDK events to our interface
+            // Wrapper to map internal types to our exported types
             let mappedEvent: SessionEvent | null = null;
 
-            if (event.type === "assistant.message_delta") {
-              mappedEvent = {
-                type: "assistant.message_delta",
-                data: { deltaContent: event.data?.deltaContent },
-              };
-              output += event.data?.deltaContent || "";
-            } else if (event.type === "session.idle") {
-              mappedEvent = { type: "session.idle" };
-            } else if (
-              event.type === "tool.start" ||
-              event.type === "tool_start"
-            ) {
-              mappedEvent = {
-                type: "tool.start",
-                data: { toolName: event.data?.toolName },
-              };
-            } else if (event.type === "tool.end" || event.type === "tool_end") {
-              mappedEvent = {
-                type: "tool.end",
-                data: { result: event.data?.result },
-              };
-            } else if (event.type === "error") {
-              mappedEvent = {
-                type: "error",
-                data: { message: event.data?.message },
-              };
+            switch (event.type) {
+              case "assistant.message_delta":
+                mappedEvent = {
+                  type: "assistant.message_delta",
+                  data: {
+                    deltaContent: event.data?.deltaContent,
+                    messageId: event.data?.messageId,
+                  },
+                };
+                output += event.data?.deltaContent || "";
+                break;
+
+              case "assistant.turn_start":
+                mappedEvent = {
+                  type: "assistant.turn_start",
+                  data: { turnId: event.data?.turnId },
+                };
+                break;
+
+              case "assistant.turn_end":
+                mappedEvent = {
+                  type: "assistant.turn_end",
+                  data: { turnId: event.data?.turnId },
+                };
+                break;
+
+              case "session.usage_info":
+                mappedEvent = {
+                  type: "session.usage_info",
+                  data: event.data,
+                };
+                break;
+
+              case "session.idle":
+                mappedEvent = { type: "session.idle" };
+                break;
+
+              case "tool.start":
+              case "tool_start": // Fallback for older SDK versions
+              case "tool.execution_start":
+                mappedEvent = {
+                  type: "tool.execution_start",
+                  data: {
+                    toolName: event.data?.toolName,
+                    toolCallId: event.data?.toolCallId,
+                    arguments: event.data?.arguments,
+                  },
+                };
+                break;
+
+              case "tool.end":
+              case "tool_end":
+              case "tool.execution_complete":
+                mappedEvent = {
+                  type: "tool.execution_complete",
+                  data: {
+                    toolCallId: event.data?.toolCallId,
+                    result: event.data?.result,
+                    success: event.data?.success,
+                  },
+                };
+                break;
+
+              case "error":
+              case "session.error":
+                mappedEvent = {
+                  type: "error",
+                  data: { message: event.data?.message || "Unknown error" },
+                };
+                break;
             }
 
             if (mappedEvent) {

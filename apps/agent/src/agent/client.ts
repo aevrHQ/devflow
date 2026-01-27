@@ -9,6 +9,7 @@ export interface CommandRequest {
   credentials?: {
     github?: string;
   };
+  session_id?: string;
   created_at: string;
 }
 

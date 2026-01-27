@@ -3,7 +3,8 @@ import { FixBugWorkflow } from "./fix-bug.js";
 import { FeatureWorkflow } from "./feature.js";
 import { ExplainWorkflow } from "./explain.js";
 import { ReviewPRWorkflow } from "./review-pr.js";
-import { WorkflowExecutor, WorkflowContext, WorkflowResult } from "./base.js";
+import { WorkflowExecutor } from "./base.js";
+import type { WorkflowContext, WorkflowResult } from "./base.js";
 
 export type WorkflowIntent =
   | "fix-bug"

@@ -79,6 +79,7 @@ export async function GET(
             repo: cmd.repo || "",
             branch: cmd.branch || "",
             credentials,
+            session_id: cmd.source?.chatId || cmd.taskId,
             created_at: cmd.createdAt,
           };
         }),

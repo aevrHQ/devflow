@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, GitBranch, Terminal } from "lucide-react";
 
+import DeleteTaskButton from "@/components/DeleteTaskButton";
+
 export const dynamic = "force-dynamic";
 
 interface TaskDetailsPageProps {
@@ -38,13 +40,16 @@ export default async function TaskDetailsPage({
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <Link
-          href="/dashboard/tasks"
-          className="text-sm text-gray-500 hover:text-black mb-4 inline-flex items-center gap-1"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Tasks
-        </Link>
+        <div className="flex items-center justify-between mb-4">
+          <Link
+            href="/dashboard/tasks"
+            className="text-sm text-gray-500 hover:text-black inline-flex items-center gap-1"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Tasks
+          </Link>
+          <DeleteTaskButton taskId={taskId} />
+        </div>
 
         <div className="flex items-start justify-between gap-4">
           <div>
