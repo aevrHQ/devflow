@@ -4,7 +4,7 @@ import {
   NotificationPayload,
   ChannelResult,
 } from "../types";
-import { sendMessage, escapeMarkdownV2 } from "@/lib/webhook/telegram";
+import { sendMessage } from "@/lib/webhook/telegram";
 
 export class TelegramChannel implements NotificationChannel {
   name = "Telegram";
@@ -17,7 +17,6 @@ export class TelegramChannel implements NotificationChannel {
     if (!config.enabled) return { success: false, error: "Channel disabled" };
 
     // Extract chat ID and bot token from config
-    // If user didn't provide a custom bot token, use the system default
     const chatId = config.chatId as string;
     const botToken =
       (config.botToken as string) || process.env.TELEGRAM_BOT_TOKEN;
@@ -29,53 +28,40 @@ export class TelegramChannel implements NotificationChannel {
 
     const lines: string[] = [];
 
-    // Use summary if available and preferred, otherwise standard format
-    // For now, checks are done in Service, here we just format what we get.
-    // But let's append summary if present.
-
+    // Use plain text - no markdown escaping needed
     if (notification.summary) {
-      lines.push(`${escapeMarkdownV2(notification.summary)}`);
+      lines.push(notification.summary);
       lines.push(""); // Spacer
     } else {
       // Title with emoji
-      lines.push(
-        `${notification.emoji} *${escapeMarkdownV2(notification.title)}*`,
-      );
+      lines.push(`${notification.emoji} ${notification.title}`);
       lines.push("");
     }
 
-    // Fields (only show if no summary or if explicitly desired?
-    // Let's show detailed fields usually, but if summary is present maybe we want to be briefer?
-    // For MVP, l'll strip fields if summary exists to keep it "summary" style,
-    // OR we can make it a "Thread" style?
-    // Let's stick to: If summary, show summary + link. If no summary, show full details.
+    // Fields (only show if no summary exists)
     if (!notification.summary) {
       for (const field of notification.fields) {
-        const label = escapeMarkdownV2(field.label);
-        const value = escapeMarkdownV2(field.value);
-        lines.push(`${label}: ${value}`);
+        lines.push(`${field.label}: ${field.value}`);
       }
     }
 
     // Links section
     if (notification.links.length > 0) {
       lines.push("");
-      lines.push("🔗 *Links:*");
+      lines.push("🔗 Links:");
       for (const link of notification.links) {
-        const label = escapeMarkdownV2(link.label);
-        lines.push(`  • [${label}](${link.url})`);
+        lines.push(`  • ${link.label}: ${link.url}`);
       }
     }
 
-    // Payload link is always useful
+    // Payload link
     lines.push("");
-    lines.push(
-      `📄 [View Full Payload](${escapeMarkdownV2(notification.payloadUrl)})`,
-    );
+    lines.push(`📄 View Full Payload: ${notification.payloadUrl}`);
 
     const message = lines.join("\n");
 
-    return sendMessage(message, {}, chatId, botToken);
+    // Send as plain text (no markdown parsing)
+    return sendMessage(message, { parseMode: undefined }, chatId, botToken);
   }
 }
 

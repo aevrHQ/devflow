@@ -302,6 +302,17 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ ok: true });
         }
 
+        // Handle /fix, /feature, /explain, /review commands - show help
+        if (
+          text.toLowerCase().startsWith("/fix") ||
+          text.toLowerCase().startsWith("/feature") ||
+          text.toLowerCase().startsWith("/explain") ||
+          text.toLowerCase().startsWith("/review")
+        ) {
+          await sendPlainMessage(getDevflowHelpText(), chat.id.toString());
+          return NextResponse.json({ ok: true });
+        }
+
         // Handle /start <userId> or /start channel_{userId}_{channelIndex}
         if (text.startsWith("/start")) {
           const parts = text.split(" ");

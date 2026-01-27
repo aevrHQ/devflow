@@ -86,9 +86,9 @@ export async function sendMessage(
       body: JSON.stringify({
         chat_id: chatId,
         text,
-        parse_mode: parseMode,
+        ...(parseMode && { parse_mode: parseMode }), // Only include if defined
         disable_web_page_preview: disableWebPagePreview,
-        reply_to_message_id: replyToMessageId,
+        ...(replyToMessageId && { reply_to_message_id: replyToMessageId }),
       }),
       signal: controller.signal,
     }).finally(() => clearTimeout(timeoutId));
