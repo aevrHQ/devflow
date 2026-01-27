@@ -76,6 +76,18 @@ export async function POST(request: Request) {
     if (result.data.channels) {
       const { default: Channel } = await import("@/models/Channel");
 
+      // Get the IDs of channels being kept/updated
+      const submittedChannelIds = result.data.channels
+        .map((ch) => ch._id)
+        .filter((id): id is string => !!id);
+
+      // Delete channels that are NOT in the submitted list
+      await Channel.deleteMany({
+        userId: user.userId,
+        _id: { $nin: submittedChannelIds },
+      });
+
+      // Update or create channels from the submitted list
       for (const ch of result.data.channels) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const channelData: any = { ...ch };
