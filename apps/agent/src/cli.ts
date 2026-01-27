@@ -53,6 +53,46 @@ async function initCommand(options: InitOptions): Promise<void> {
     // Generate default agent name
     const agentName = options.name || `agent-${randomBytes(4).toString("hex")}`;
 
+    // Register agent with platform to get JWT token
+    console.log("\n🔐 Registering agent with platform...");
+    let jwtToken: string;
+
+    try {
+      const registerResponse = await axios.post(
+        `${platformUrl}/api/agents`,
+        {
+          agentId,
+          name: agentName,
+          version: "0.1.0",
+          platform: process.platform,
+          capabilities: ["git", "copilot"],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token.access_token}`, // GitHub token for initial auth
+            "Content-Type": "application/json",
+          },
+          timeout: 10000,
+        },
+      );
+
+      if (!registerResponse.data?.token) {
+        throw new Error("No JWT token received from platform");
+      }
+
+      jwtToken = registerResponse.data.token;
+      console.log("✓ Agent registered successfully");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          `❌ Agent registration failed: ${error.response?.status} ${error.response?.data?.error || error.message}`,
+        );
+      } else {
+        console.error(`❌ Agent registration failed: ${error}`);
+      }
+      process.exit(1);
+    }
+
     // Fetch GitHub token from platform (managed SaaS mode)
     let githubToken: string | undefined;
 
@@ -62,7 +102,7 @@ async function initCommand(options: InitOptions): Promise<void> {
         `${platformUrl}/api/auth/agent/credentials`,
         {
           headers: {
-            Authorization: `Bearer ${token.access_token}`,
+            Authorization: `Bearer ${jwtToken}`, // Use JWT token, not OAuth token
           },
           timeout: 10000,
         },
@@ -133,7 +173,7 @@ async function initCommand(options: InitOptions): Promise<void> {
     // Create and save config
     const config = createDefaultConfig(
       platformUrl,
-      token.access_token,
+      jwtToken, // Use JWT token from agent registration, not OAuth token
       agentId,
       agentName,
       options.agentHostUrl || process.env.AGENT_HOST_URL,
@@ -218,22 +258,19 @@ async function startCommand(options: StartOptions): Promise<void> {
     setTimeout(() => process.exit(0), 1000);
   });
 
-  // Register agent
+  // Send initial heartbeat to mark agent as online
   try {
-    console.log("📡 Registering agent...");
-    const regResponse = await client.register();
+    console.log("� Connecting to platform...");
+    await client.heartbeat();
 
-    // Update client with the new Agent Token (JWT)
-    if (regResponse.token) {
-      client.setToken(regResponse.token);
-      console.log("🔑 Authentication token refreshed");
-    }
-
-    console.log(`✓ Agent registered: ${config.agent.id}`);
+    console.log(`✓ Agent online: ${config.agent.id}`);
     console.log(`✓ Listening for commands...\n`);
   } catch (error) {
     console.error(
-      `❌ Registration failed: ${error instanceof Error ? error.message : String(error)}`,
+      `❌ Connection failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    console.error(
+      `   Check that the agent is registered and platform is accessible.`,
     );
     process.exit(1);
   }
