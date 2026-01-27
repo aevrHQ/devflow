@@ -22,7 +22,10 @@ export class TelegramChannel implements NotificationChannel {
       (config.botToken as string) || process.env.TELEGRAM_BOT_TOKEN;
 
     if (!chatId || !botToken) {
-      console.warn("Telegram channel missing credentials");
+      console.warn(
+        "Telegram channel missing credentials. " +
+          (!chatId ? "Missing chatId" : "Missing botToken"),
+      );
       return { success: false, error: "Missing Telegram credentials" };
     }
 
