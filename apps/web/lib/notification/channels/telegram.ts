@@ -60,8 +60,8 @@ export class TelegramChannel implements NotificationChannel {
 
     const message = lines.join("\n");
 
-    // Send as plain text (no markdown parsing)
-    return sendMessage(message, { parseMode: undefined }, chatId, botToken);
+    // Send as plain text (no markdown/HTML parsing - removes parseMode entirely)
+    return sendMessage(message, {}, chatId, botToken);
   }
 }
 

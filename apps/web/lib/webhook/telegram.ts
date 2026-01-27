@@ -53,7 +53,7 @@ export async function sendMessage(
   botTokenOverride?: string,
 ): Promise<ChannelResult> {
   const {
-    parseMode = "MarkdownV2",
+    parseMode, // No default - will be undefined if not specified
     disableWebPagePreview = true,
     replyToMessageId,
   } = options;
