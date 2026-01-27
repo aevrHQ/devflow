@@ -8,7 +8,7 @@ export interface ITaskAssignment {
   description?: string;
   repo?: string;
   branch?: string;
-  status: "pending" | "in_progress" | "completed" | "failed";
+  status: "pending" | "in_progress" | "completed" | "failed" | "cancelled";
   progress: number; // 0-1
   currentStep: string;
   startedAt: Date;
@@ -50,7 +50,7 @@ const TaskAssignmentSchema = new Schema<TaskAssignmentDocument>(
     branch: { type: String }, // e.g. "main"
     status: {
       type: String,
-      enum: ["pending", "in_progress", "completed", "failed"],
+      enum: ["pending", "in_progress", "completed", "failed", "cancelled"],
       default: "pending",
     },
     progress: { type: Number, default: 0, min: 0, max: 1 },
