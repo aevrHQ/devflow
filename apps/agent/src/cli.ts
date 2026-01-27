@@ -53,6 +53,42 @@ async function initCommand(options: InitOptions): Promise<void> {
     // Generate default agent name
     const agentName = options.name || `agent-${randomBytes(4).toString("hex")}`;
 
+    // Prompt for GitHub Personal Access Token
+    const { promptForGitHubToken, validateGitHubToken } =
+      await import("./auth/github-token.js");
+
+    let githubToken: string | undefined;
+    let tokenValid = false;
+
+    while (!tokenValid) {
+      try {
+        githubToken = await promptForGitHubToken();
+
+        if (!githubToken) {
+          console.log(
+            "\n⚠️  No token provided. You can add it later by editing ~/.devflow/config.json",
+          );
+          break;
+        }
+
+        console.log("\n🔍 Validating GitHub token...");
+        const validation = await validateGitHubToken(githubToken);
+
+        if (validation.valid) {
+          console.log(`✓ Token validated for user: ${validation.username}`);
+          tokenValid = true;
+        } else {
+          console.error(`❌ Token validation failed: ${validation.error}`);
+          console.log("Please try again (or press Ctrl+C to skip).\n");
+        }
+      } catch (error) {
+        console.error("\n⚠️  Token validation error:", error);
+        console.log("Continuing without GitHub token. You can add it later.\n");
+        githubToken = undefined;
+        break;
+      }
+    }
+
     // Create and save config
     const config = createDefaultConfig(
       platformUrl,
@@ -61,6 +97,13 @@ async function initCommand(options: InitOptions): Promise<void> {
       agentName,
       options.agentHostUrl || process.env.AGENT_HOST_URL,
     );
+
+    // Add GitHub token if provided
+    if (githubToken) {
+      config.credentials = {
+        github_token: githubToken,
+      };
+    }
 
     const validation = validateConfig(config);
     if (!validation.valid) {
@@ -75,6 +118,9 @@ async function initCommand(options: InitOptions): Promise<void> {
     console.log("📋 Configuration Summary:");
     console.log(`   Agent: ${agentName}`);
     console.log(`   Platform: ${platformUrl}`);
+    if (githubToken) {
+      console.log(`   GitHub: Configured ✓`);
+    }
     console.log(`   Config Location: ~/.devflow/config.json\n`);
     console.log("🚀 Next Step:");
     console.log(`   devflow start\n`);
@@ -218,7 +264,8 @@ async function startCommand(options: StartOptions): Promise<void> {
                   messageId: cmd.task_id,
                 },
                 sessionId: cmd.session_id, // Pass session ID to re-use Copilot sessions
-                credentials: cmd.credentials, // Pass credentials to workflow
+                // Use local GitHub token from config (more secure than platform credentials)
+                localGitHubToken: config.credentials?.github_token,
               };
 
               // Set GitHub Token for Copilot SDK if available - REMOVED (Handled in WorkflowExecutor)

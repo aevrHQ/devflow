@@ -77,6 +77,12 @@ After each major step, send a progress update to the user.
           1.0,
           result.summary,
         );
+
+        // Send completion notification to platform
+        await this.sendCompletion(context.taskId, result);
+      } else {
+        // Send error notification
+        await this.sendCompletion(context.taskId, result);
       }
 
       return result;

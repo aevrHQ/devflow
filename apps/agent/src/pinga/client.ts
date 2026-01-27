@@ -12,17 +12,35 @@ class PingaClient {
 
   async sendProgressUpdate(update: ProgressUpdate): Promise<void> {
     try {
-      await axios.post(`${this.apiUrl}/api/copilot/task-update`, update, {
-        headers: {
-          Authorization: `Bearer ${this.apiSecret}`,
-          "Content-Type": "application/json",
+      console.log(
+        `[PingaClient] Sending update for task ${update.taskId}: ${update.status} - ${update.step}`,
+      );
+      const response = await axios.post(
+        `${this.apiUrl}/api/copilot/task-update`,
+        update,
+        {
+          headers: {
+            Authorization: `Bearer ${this.apiSecret}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 10000, // 10 second timeout
         },
-      });
+      );
+      console.log(
+        `[PingaClient] Update sent successfully (${response.status})`,
+      );
     } catch (error) {
       const errorMsg = axios.isAxiosError(error)
-        ? `Request failed: ${error.message} (Status: ${error.response?.status})`
+        ? `Request failed: ${error.message} (Status: ${error.response?.status}, URL: ${this.apiUrl}/api/copilot/task-update)`
         : String(error);
       console.error(`[PingaClient] Failed to update progress: ${errorMsg}`);
+
+      // Log response data if available for debugging
+      if (axios.isAxiosError(error) && error.response?.data) {
+        console.error(
+          `[PingaClient] Response data: ${JSON.stringify(error.response.data)}`,
+        );
+      }
       // throw error; // Optional: rethrow if caller needs to know, but suppressing spam is goal
     }
   }
@@ -35,6 +53,7 @@ class PingaClient {
       summary?: string;
     },
   ): Promise<void> {
+    console.log(`[PingaClient] Notifying completion for task: ${taskId}`);
     await this.sendProgressUpdate({
       taskId,
       status: "completed",

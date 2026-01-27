@@ -14,6 +14,9 @@ export interface DevFlowConfig {
     version: string;
   };
   agentHostUrl?: string; // Optional for backward compatibility, defaults to localhost if missing
+  credentials?: {
+    github_token?: string; // Local GitHub Personal Access Token
+  };
   logging: {
     level: "debug" | "info" | "warn" | "error";
     format: "json" | "text";

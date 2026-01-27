@@ -22,6 +22,7 @@ export interface WorkflowContext {
     github?: string; // Encrypted GitHub token
   };
   sessionId?: string; // Optional session ID for persistence
+  localGitHubToken?: string; // Local GitHub PAT from config (preferred over platform credentials)
 }
 
 export interface WorkflowResult {
@@ -63,16 +64,29 @@ export class WorkflowExecutor {
     taskId: string,
     result: WorkflowResult,
   ): Promise<void> {
-    if (result.success) {
-      await this.pingaClient.notifyCompletion(taskId, {
-        summary: result.summary || "Workflow completed successfully",
-        prUrl: result.prUrl,
-        output: result.output,
-      });
-    } else {
-      await this.pingaClient.notifyError(
-        taskId,
-        result.error || "Workflow failed",
+    console.log(
+      `[WorkflowExecutor] Sending completion for ${taskId}, success: ${result.success}`,
+    );
+    try {
+      if (result.success) {
+        await this.pingaClient.notifyCompletion(taskId, {
+          summary: result.summary || "Workflow completed successfully",
+          prUrl: result.prUrl,
+          output: result.output,
+        });
+        console.log(
+          `[WorkflowExecutor] Completion notification sent for ${taskId}`,
+        );
+      } else {
+        await this.pingaClient.notifyError(
+          taskId,
+          result.error || "Workflow failed",
+        );
+        console.log(`[WorkflowExecutor] Error notification sent for ${taskId}`);
+      }
+    } catch (error) {
+      console.error(
+        `[WorkflowExecutor] Failed to send completion notification: ${error}`,
       );
     }
   }
@@ -117,9 +131,16 @@ Begin by understanding the repository structure.`;
         }
       }
 
-      // Decrypt user credentials if provided (managed SaaS mode)
+      // Determine GitHub token source (Priority: local > platform > env)
       let userGitHubToken: string | undefined;
-      if (context.credentials?.github) {
+
+      // 1. Check local config token (most secure, recommended)
+      if (context.localGitHubToken) {
+        userGitHubToken = context.localGitHubToken;
+        console.log("[Workflow] Using local GitHub token from config");
+      }
+      // 2. Try platform-provided encrypted credentials (legacy/SaaS mode)
+      else if (context.credentials?.github) {
         try {
           const { decryptCredentials } = await import("../../credentials.js");
           const decrypted = decryptCredentials(context.credentials);
@@ -133,6 +154,12 @@ Begin by understanding the repository structure.`;
             error instanceof Error ? error.message : error,
           );
         }
+      }
+      // 3. Fall back to environment variable
+      else {
+        console.log(
+          "[Workflow] No local token or platform credentials. Using GITHUB_TOKEN from environment (if set)",
+        );
       }
 
       const session = await this.copilot.createSession({
