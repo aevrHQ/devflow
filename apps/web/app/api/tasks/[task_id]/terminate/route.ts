@@ -10,12 +10,12 @@ import { NotificationService } from "@/lib/notification/service";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { task_id: string } },
+  { params }: { params: Promise<{ task_id: string }> },
 ) {
   try {
     await connectDB();
 
-    const taskId = params.task_id;
+    const { task_id: taskId } = await params;
 
     // Find the task
     const task = await TaskAssignment.findOne({ taskId });

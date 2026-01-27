@@ -11,12 +11,12 @@ import { NotificationService } from "@/lib/notification/service";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { agent_id: string } },
+  { params }: { params: Promise<{ agent_id: string }> },
 ) {
   try {
     await connectDB();
 
-    const agentId = params.agent_id;
+    const { agent_id: agentId } = await params;
 
     // Find the agent
     const agent = await Agent.findOne({ agentId });
