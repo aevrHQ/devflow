@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/miracleonyenma/devflow/compare/v0.2.4...v0.2.5) (2026-01-27)
+
+
+### Features
+
+* `decrypt` method now returns input directly when encryption key is missing, treating it as pre-decrypted. ([234f41c](https://github.com/miracleonyenma/devflow/commit/234f41c60c1751d0c6360883ac95024d82c16e8e))
+* Add comprehensive logging and error handling for Copilot client session events and requests. ([d5f915f](https://github.com/miracleonyenma/devflow/commit/d5f915f9e6719cdb868a318c5312f47f3d8ab216))
+* add detailed logging for decryption attempts, successes, and failures including key index and hash. ([ccba711](https://github.com/miracleonyenma/devflow/commit/ccba711edd443dd66a119dcd89930589dc5ce9e5))
+* add workingDirectory to agent model and persistent task notifications ([cb26c9d](https://github.com/miracleonyenma/devflow/commit/cb26c9d0231762c0ab6f16d97f090c8390b7c0f7))
+* Allow explicit Pinga API configuration for the progress update tool and standardize Copilot model defaults. ([6b3a114](https://github.com/miracleonyenma/devflow/commit/6b3a1147f48d0a1ede6226973845991d7fab5181))
+* **auth:** Support GitHub Personal Access Token authentication. ([16d78c9](https://github.com/miracleonyenma/devflow/commit/16d78c923614f7ae6812c4d3fa68eb2ae5197ee9))
+* **dashboard:** fix stats, add pagination, use [@aevr](https://github.com/aevr) components ([0c1cf38](https://github.com/miracleonyenma/devflow/commit/0c1cf38642d3d9616392fa01c42edaffe7f896a3))
+* Decrypt and pass GitHub credentials to agent commands, and set `GITHUB_TOKEN` for workflow execution. ([827474b](https://github.com/miracleonyenma/devflow/commit/827474bed44720d3077e4fb9976547efee85d6ef))
+* Differentiate feature implementation workflow steps and guidelines based on local or remote context. ([4608eff](https://github.com/miracleonyenma/devflow/commit/4608effc421a69c70889762db78f0977dd258cf7))
+* Enhance decryption to support both AES-256-GCM and legacy AES-256-CBC algorithms by detecting the algorithm based on IV length. ([c876169](https://github.com/miracleonyenma/devflow/commit/c876169908cec99050f4b99b0b6d74773b2b9994))
+* Enhance decryption to support multiple encryption keys and add authentication failure logging. ([1d74d19](https://github.com/miracleonyenma/devflow/commit/1d74d19e581271c7835e5b50f6f2a7672c222f1c))
+* Expand `deriveKeys` function to include SHA-256 hashing and raw buffer derivation for broader compatibility. ([ee4d308](https://github.com/miracleonyenma/devflow/commit/ee4d3082f07e78244abde67b888cf9f4e688754b))
+* Handle unknown workflow intents by falling back to FeatureWorkflow and logging a message instead of throwing an error. ([d8e2030](https://github.com/miracleonyenma/devflow/commit/d8e20306b64b690c93a6dfbc043b01b785357b88))
+* Implement a new AI agent using the Copilot SDK, introducing various workflows and tools, and updating the web API for agent authentication. ([0bb4e06](https://github.com/miracleonyenma/devflow/commit/0bb4e064aba942f93efe659b5a9326c318b54745))
+* implement managed SaaS credential flow (storage, UI, agent) ([ed0a6b4](https://github.com/miracleonyenma/devflow/commit/ed0a6b4a873b6f894e098820060155e45ad31290))
+* Implement task deletion and enhance Copilot SDK integration with dynamic token support and detailed session events. ([18cd47d](https://github.com/miracleonyenma/devflow/commit/18cd47d70183ff03d0911b3f4c43af78017871bb))
+* Introduce copilot functionality with AI-driven workflows and supporting tools for code generation, review, and explanation. ([779e06f](https://github.com/miracleonyenma/devflow/commit/779e06f14a7f9dd92865ba725f88eba528026f1b))
+* Introduce structured logging for invalid token errors during verification. ([f7e5e75](https://github.com/miracleonyenma/devflow/commit/f7e5e751fd656f7a702b4be58b4abb73e40fabd2))
+* **telegram:** optimize agents command to skip LLM ([5a4c5da](https://github.com/miracleonyenma/devflow/commit/5a4c5da07719a9ca1d26217fdc3db11a7f76884f))
+
+
+### Bug Fixes
+
+* **agent:** propagate workflow errors to pinga platform ([d24c0ba](https://github.com/miracleonyenma/devflow/commit/d24c0baa898f80d22f99f5a1dfc4bf1e15fbe6e9))
+* **agents:** Implement auto-progress tracking for workflow executor. ([5ad4a82](https://github.com/miracleonyenma/devflow/commit/5ad4a82a314ede0ff39d10a32403440cdc74ffef))
+* **auth:** Migrate SaaS mode to fetch GitHub credentials from platform. ([1a77aad](https://github.com/miracleonyenma/devflow/commit/1a77aad530b0b2709382fac25464a52128c439b0))
+* Change default copilot model from gpt-4 to gpt-3.5-turbo. ([51df6a0](https://github.com/miracleonyenma/devflow/commit/51df6a01bb6cabee2ed2f4ed0167d8e1bd7b7f55))
+* Change default Copilot model from gpt-4.1 to gpt-4. ([5476478](https://github.com/miracleonyenma/devflow/commit/54764788ddde562e4ef7ba4ca538b4f402039c91))
+* lint errors and agent command dispatch credentials ([de5d10a](https://github.com/miracleonyenma/devflow/commit/de5d10a565aa48bc8c182e78a75dec4fec1d17a3))
+* repair broken import syntax ([122681a](https://github.com/miracleonyenma/devflow/commit/122681ace9b0a57216325920b659068d6f65c79c))
+* simplify noParamsSchema for Groq tool call compatibility ([f774cd2](https://github.com/miracleonyenma/devflow/commit/f774cd25a105d613c3bbbdc9d5944ba33905302b))
+* syntax error in set-commands route ([161dd3d](https://github.com/miracleonyenma/devflow/commit/161dd3dc1984e5d118429af65e5c96b7352dd28a))
+* **telegram:** restore system bot token fallback for notifications ([09bcba4](https://github.com/miracleonyenma/devflow/commit/09bcba43e6a709ec595c1c9948395d346e13aef9))
+* **verify-full-flow:** Add explicit type annotations to sendLog method. ([5c9db03](https://github.com/miracleonyenma/devflow/commit/5c9db0396a0f9707061fde85f0a16bb6ef8062e9))
+
+
+### Code Refactoring
+
+* remove legacy telegram configuration (user fields, settings, webhooks) ([f3f1319](https://github.com/miracleonyenma/devflow/commit/f3f1319d5bb0a7a12ec26c07b5e6a661f3dd368e))
+* replace `decrypt` with `decryptCredentials` for GitHub token decryption. ([0526edb](https://github.com/miracleonyenma/devflow/commit/0526edb85a99126a988d4a07002f501164af931b))
+
 ### [0.2.4](https://github.com/miracleonyenma/devflow/compare/v0.2.3...v0.2.4) (2026-01-25)
 
 
