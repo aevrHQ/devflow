@@ -38,6 +38,11 @@ export class WorkflowExecutor {
   protected copilot: CopilotClient;
   protected pingaConfig: { url: string; secret: string };
 
+  // Auto-incrementing progress tracking
+  private progressUpdateCount = 0;
+  private readonly ESTIMATED_MAX_UPDATES = 30; // Rough estimate of updates per workflow
+  private readonly MAX_AUTO_PROGRESS = 0.95; // Cap at 95%, leave 5% for completion
+
   constructor(pingaUrl: string, pingaSecret: string) {
     this.pingaConfig = { url: pingaUrl, secret: pingaSecret };
     this.pingaClient = new PingaClient(pingaUrl, pingaSecret);
@@ -50,11 +55,18 @@ export class WorkflowExecutor {
     progress: number,
     details?: string,
   ): Promise<void> {
+    // Auto-increment progress instead of using Copilot's arbitrary values
+    this.progressUpdateCount++;
+    const autoProgress = Math.min(
+      this.MAX_AUTO_PROGRESS,
+      this.progressUpdateCount / this.ESTIMATED_MAX_UPDATES,
+    );
+
     await this.pingaClient.sendProgressUpdate({
       taskId,
       status: "in_progress",
       step,
-      progress: Math.min(progress, 0.99), // Leave 1% for completion
+      progress: autoProgress, // Use calculated progress instead of Copilot's value
       details,
       timestamp: Date.now(),
     });
@@ -200,6 +212,9 @@ Begin by understanding the repository structure.`;
     context: WorkflowContext,
   ): Promise<WorkflowResult> {
     try {
+      // Reset progress counter for this workflow
+      this.progressUpdateCount = 0;
+
       const session = await this.setupSession(context);
 
       this.pingaClient.sendLog(
