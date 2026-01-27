@@ -118,16 +118,26 @@ export async function sendMessage(
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
+    const payload = {
+      chat_id: chatId,
+      text,
+      ...(parseMode && { parse_mode: parseMode }), // Only include if defined
+      disable_web_page_preview: disableWebPagePreview,
+      ...(replyToMessageId && { reply_to_message_id: replyToMessageId }),
+    };
+
+    // Debug logging to see what's actually being sent
+    console.log(`[Telegram Debug] Payload:`, JSON.stringify(payload, null, 2));
+    console.log(`[Telegram Debug] parseMode value:`, parseMode);
+    console.log(
+      `[Telegram Debug] Has parse_mode in payload:`,
+      "parse_mode" in payload,
+    );
+
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        ...(parseMode && { parse_mode: parseMode }), // Only include if defined
-        disable_web_page_preview: disableWebPagePreview,
-        ...(replyToMessageId && { reply_to_message_id: replyToMessageId }),
-      }),
+      body: JSON.stringify(payload),
       signal: controller.signal,
     }).finally(() => clearTimeout(timeoutId));
 

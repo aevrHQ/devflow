@@ -63,6 +63,19 @@ export class TelegramChannel implements NotificationChannel {
     // Strip all markdown formatting to plain text
     const plainTextMessage = stripMarkdown(message);
 
+    // Debug logging
+    console.log(
+      `[Telegram Channel] Original message length: ${message.length}, Stripped length: ${plainTextMessage.length}`,
+    );
+    console.log(
+      `[Telegram Channel] First 200 chars - Original:`,
+      message.substring(0, 200),
+    );
+    console.log(
+      `[Telegram Channel] First 200 chars - Stripped:`,
+      plainTextMessage.substring(0, 200),
+    );
+
     // Send as plain text (no markdown/HTML parsing)
     return sendMessage(plainTextMessage, {}, chatId, botToken);
   }
