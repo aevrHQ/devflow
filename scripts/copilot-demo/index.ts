@@ -23,8 +23,7 @@ async function main() {
     await client.start();
 
     // Define the edit file tool
-    const editFileTool = defineTool({
-      name: "edit_file",
+    const editFileTool = defineTool("edit_file", {
       description:
         "Writes content to a file. Use this to create or update files.",
       parameters: z.object({
