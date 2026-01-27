@@ -21,11 +21,46 @@ export interface TelegramNotification {
  * Escape special characters for Telegram MarkdownV2
  */
 export function escapeMarkdownV2(text: string): string {
-  return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, "\\$&");
+  return text.replace(/[_*[\]()~`>#+=|{}.!\\-]/g, "\\$&");
 }
 
 /**
- * Send a plain text message to Telegram (auto-escaped)
+ * Strip all markdown formatting from text to plain text
+ * Handles: **bold**, *italic*, [links](url), `code`, ```blocks```, headers, etc.
+ */
+export function stripMarkdown(text: string): string {
+  return (
+    text
+      // Remove code blocks (```code```)
+      .replace(/```[\s\S]*?```/g, (match) => {
+        // Extract content between ```
+        return match.replace(/```\w*\n?/g, "").replace(/```/g, "");
+      })
+      // Remove inline code (`code`)
+      .replace(/`([^`]+)`/g, "$1")
+      // Remove bold (**text** or __text__)
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/__([^_]+)__/g, "$1")
+      // Remove italic (*text* or _text_)
+      .replace(/\*([^*]+)\*/g, "$1")
+      .replace(/_([^_]+)_/g, "$1")
+      // Remove links [text](url) -> text
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      // Remove strikethrough (~~text~~)
+      .replace(/~~([^~]+)~~/g, "$1")
+      // Remove headers (# Header)
+      .replace(/^#{1,6}\s+/gm, "")
+      // Remove horizontal rules (---, ***, ___)
+      .replace(/^[-*_]{3,}$/gm, "")
+      // Remove blockquotes (> text)
+      .replace(/^>\s+/gm, "")
+      // Clean up any remaining escape characters
+      .replace(/\\([\\`*_{}[\]()#+\-.!])/g, "$1")
+  );
+}
+
+/**
+ * Send a plain text message to Telegram (auto-converted from markdown)
  */
 import { ChannelResult } from "@/lib/notification/types";
 
@@ -35,9 +70,12 @@ export async function sendPlainMessage(
   botTokenOverride?: string,
   replyToMessageId?: number,
 ): Promise<ChannelResult> {
+  // Strip markdown formatting to plain text
+  const plainText = stripMarkdown(text);
+
   return sendMessage(
-    escapeMarkdownV2(text),
-    { parseMode: "MarkdownV2", replyToMessageId },
+    plainText,
+    { replyToMessageId }, // No parseMode - send as plain text, but allow reply
     chatIdOverride,
     botTokenOverride,
   );

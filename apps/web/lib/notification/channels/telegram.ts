@@ -4,7 +4,7 @@ import {
   NotificationPayload,
   ChannelResult,
 } from "../types";
-import { sendMessage } from "@/lib/webhook/telegram";
+import { sendMessage, stripMarkdown } from "@/lib/webhook/telegram";
 
 export class TelegramChannel implements NotificationChannel {
   name = "Telegram";
@@ -60,8 +60,11 @@ export class TelegramChannel implements NotificationChannel {
 
     const message = lines.join("\n");
 
-    // Send as plain text (no markdown/HTML parsing - removes parseMode entirely)
-    return sendMessage(message, {}, chatId, botToken);
+    // Strip all markdown formatting to plain text
+    const plainTextMessage = stripMarkdown(message);
+
+    // Send as plain text (no markdown/HTML parsing)
+    return sendMessage(plainTextMessage, {}, chatId, botToken);
   }
 }
 
