@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-neutral-900 flex flex-col">
+    <div className="min-h-screen bg-muted/40 dark:bg-background flex flex-col">
       <header className="bg-background border-b border-border sticky top-0 z-10 transition-colors">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">

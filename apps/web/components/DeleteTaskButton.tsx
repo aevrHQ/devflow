@@ -39,7 +39,7 @@ export default function DeleteTaskButton({ taskId }: DeleteTaskButtonProps) {
     <button
       onClick={handleDelete}
       disabled={isDeleting}
-      className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors ${
+      className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors ${
         isDeleting ? "opacity-50 cursor-not-allowed" : ""
       }`}
     >

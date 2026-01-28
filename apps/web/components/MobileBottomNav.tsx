@@ -42,7 +42,7 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 pb-[env(safe-area-inset-bottom)] md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border pb-[env(safe-area-inset-bottom)] md:hidden">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => {
           const active = item.isActive(pathname);
@@ -52,7 +52,9 @@ export default function MobileBottomNav() {
               href={item.href}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full gap-1",
-                active ? "text-black" : "text-gray-400 hover:text-gray-600",
+                active
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <item.icon

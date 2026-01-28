@@ -12,8 +12,8 @@ export default function DashboardNav() {
         href="/dashboard"
         className={`px-4 py-2 rounded-lg transition-colors ${
           pathname === "/dashboard"
-            ? "bg-gray-900 text-white"
-            : "text-gray-700 hover:bg-gray-100"
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground"
         }`}
       >
         Overview
@@ -23,8 +23,8 @@ export default function DashboardNav() {
         className={`px-4 py-2 rounded-lg transition-colors ${
           pathname === "/dashboard/tasks" ||
           pathname?.startsWith("/dashboard/tasks/")
-            ? "bg-gray-900 text-white"
-            : "text-gray-700 hover:bg-gray-100"
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground"
         }`}
       >
         Tasks
@@ -33,8 +33,8 @@ export default function DashboardNav() {
         href="/dashboard/agents"
         className={`px-4 py-2 rounded-lg transition-colors ${
           pathname === "/dashboard/agents"
-            ? "bg-gray-900 text-white"
-            : "text-gray-700 hover:bg-gray-100"
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground"
         }`}
       >
         Agents
@@ -43,8 +43,8 @@ export default function DashboardNav() {
         href="/dashboard/chat"
         className={`px-4 py-2 rounded-lg transition-colors ${
           pathname === "/dashboard/chat"
-            ? "bg-gray-900 text-white"
-            : "text-gray-700 hover:bg-gray-100"
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground"
         }`}
       >
         Chat
@@ -53,8 +53,8 @@ export default function DashboardNav() {
         href="/dashboard/settings"
         className={`px-4 py-2 rounded-lg transition-colors ${
           pathname === "/dashboard/settings"
-            ? "bg-gray-900 text-white"
-            : "text-gray-700 hover:bg-gray-100"
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground"
         }`}
       >
         Settings
