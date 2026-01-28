@@ -23,7 +23,7 @@ export default async function DashboardLayout({
               href="/dashboard"
               className="font-bold text-xl tracking-tight"
             >
-              Pinga
+              Devflow
             </Link>
             <DashboardNav />
           </div>
