@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Send, Loader2 } from "lucide-react"; // Start with standard icons
+import { Send, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { marked } from "marked";
 
 interface Message {
+  _id?: string;
   role: "user" | "assistant";
   content: string;
   createdAt: string;
@@ -16,16 +17,20 @@ export default function WebChatInterface() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [connectionStatus, setConnectionStatus] = useState<
+    "connected" | "connecting" | "error"
+  >("connecting");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isAtBottomRef = useRef(true); // Track if user is at bottom
+  const isAtBottomRef = useRef(true);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchHistory = useCallback(async () => {
     try {
       const res = await fetch("/api/channels/web/history");
       if (res.ok) {
         const data = await res.json();
         setMessages((prev) => {
-          // Deep compare to avoid unnecessary re-renders/effects
+          // Basic merge/dedupe against history fetch
           if (JSON.stringify(prev) === JSON.stringify(data.history))
             return prev;
           return data.history;
@@ -38,18 +43,94 @@ export default function WebChatInterface() {
     }
   }, []);
 
+  // Initial Load & SSE
   useEffect(() => {
+    // Fetch initial history
     fetchHistory();
-    const interval = setInterval(fetchHistory, 3000); // Poll every 3s
-    return () => clearInterval(interval);
+
+    let eventSource: EventSource | null = null;
+    let retryTimeout: NodeJS.Timeout;
+
+    const connect = () => {
+      setConnectionStatus("connecting");
+      eventSource = new EventSource("/api/channels/web/stream");
+
+      eventSource.onopen = () => {
+        setConnectionStatus("connected");
+        // Re-fetch on connect just in case of gap
+        fetchHistory();
+      };
+
+      eventSource.onmessage = (event) => {
+        try {
+          if (event.data === "connected") return;
+
+          const data = JSON.parse(event.data);
+          if (data.type === "message" && data.message) {
+            const newMsg = data.message as Message;
+
+            setMessages((prev) => {
+              // 1. Check if ID already exists
+              if (newMsg._id && prev.some((m) => m._id === newMsg._id)) {
+                return prev;
+              }
+
+              // 2. Check for optimistic match (Same content, Same role, No ID on existing, Recent)
+              const optimisticIndex = prev.findIndex(
+                (m) =>
+                  !m._id &&
+                  m.role === newMsg.role &&
+                  m.content === newMsg.content &&
+                  new Date(newMsg.createdAt).getTime() -
+                    new Date(m.createdAt).getTime() <
+                    10000,
+              );
+
+              if (optimisticIndex !== -1) {
+                const newArr = [...prev];
+                newArr[optimisticIndex] = newMsg;
+                return newArr;
+              }
+
+              // 3. Append if new
+              return [...prev, newMsg];
+            });
+
+            if (data.message.role === "assistant") {
+              setLoading(false);
+            }
+          }
+        } catch (e) {
+          console.error("SSE Parse Error", e);
+        }
+      };
+
+      eventSource.onerror = () => {
+        setConnectionStatus("error");
+        eventSource?.close();
+        // Fallback: Fetch history manually to ensure updates even if stream is broken
+        fetchHistory();
+        retryTimeout = setTimeout(connect, 3000);
+      };
+    };
+
+    connect();
+
+    return () => {
+      if (eventSource) eventSource.close();
+      clearTimeout(retryTimeout);
+    };
   }, [fetchHistory]);
 
-  // Handle auto-scrolling
+  // Auto-scroll effect
   useEffect(() => {
     if (scrollRef.current && isAtBottomRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
-    // If it's the very first load, force scroll
+    // Force scroll on first load
     if (!initialLoad && messages.length > 0 && isAtBottomRef.current) {
       scrollRef.current?.scrollTo({
         top: scrollRef.current.scrollHeight,
@@ -72,8 +153,6 @@ export default function WebChatInterface() {
     const userMsg = input.trim();
     setInput("");
     setLoading(true);
-
-    // Force scroll to bottom when user sends
     isAtBottomRef.current = true;
 
     // Optimistic update
@@ -94,14 +173,11 @@ export default function WebChatInterface() {
       if (!res.ok) {
         throw new Error("Failed to send");
       }
-
-      // Immediate fetch after send
-      fetchHistory();
+      // No explicit fetchHistory needed, anticipating SSE event
     } catch (error) {
       console.error(error);
-      // Ideally revert optimistic update or show error
-    } finally {
       setLoading(false);
+      // Revert optimistic update? For now just log.
     }
   };
 
@@ -115,9 +191,18 @@ export default function WebChatInterface() {
   return (
     <div className="flex flex-col h-full bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-2xl">
       {/* Header */}
-      <div className="p-4 border-b border-neutral-800 bg-neutral-950/50 backdrop-blur flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
-        <h2 className="font-semibold text-neutral-200">DeVFlow Interface</h2>
+      <div className="p-4 border-b border-neutral-800 bg-neutral-950/50 backdrop-blur flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div
+            className={`w-3 h-3 rounded-full ${connectionStatus === "connected" ? "bg-green-500 animate-pulse" : connectionStatus === "connecting" ? "bg-yellow-500 animate-bounce" : "bg-red-500"}`}
+          />
+          <h2 className="font-semibold text-neutral-200">DeVFlow Interface</h2>
+        </div>
+        {connectionStatus === "error" && (
+          <span className="text-xs text-red-500 flex items-center gap-1 font-medium">
+            <AlertCircle className="w-3 h-3" /> Reconnecting...
+          </span>
+        )}
       </div>
 
       {/* Messages Area */}
@@ -139,7 +224,7 @@ export default function WebChatInterface() {
           <AnimatePresence initial={false}>
             {messages.map((msg, idx) => (
               <motion.div
-                key={idx}
+                key={msg._id || idx}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
