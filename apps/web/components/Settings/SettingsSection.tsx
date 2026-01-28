@@ -12,11 +12,11 @@ export default function SettingsSection({
   return (
     <div className="mb-6">
       {title && (
-        <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1">
+        <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">
           {title}
         </h3>
       )}
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100">
+      <div className="bg-card text-card-foreground rounded-2xl overflow-hidden border border-border">
         {children}
       </div>
     </div>

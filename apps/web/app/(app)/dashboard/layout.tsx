@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import DashboardNav from "@/components/DashboardNav";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function DashboardLayout({
   children,
@@ -16,8 +17,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <div className="min-h-screen bg-gray-50 dark:bg-neutral-900 flex flex-col">
+      <header className="bg-background border-b border-border sticky top-0 z-10 transition-colors">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link
@@ -29,7 +30,8 @@ export default async function DashboardLayout({
             <DashboardNav />
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500 hidden sm:inline-block">
+            <ThemeToggle />
+            <span className="text-sm text-muted-foreground hidden sm:inline-block">
               {user.email}
             </span>
             <form
@@ -42,7 +44,7 @@ export default async function DashboardLayout({
             >
               <button
                 type="submit"
-                className="text-sm cursor-pointer font-medium text-red-600 hover:text-red-700 transition-colors"
+                className="text-sm cursor-pointer font-medium text-destructive hover:text-red-700 dark:hover:text-red-500 transition-colors"
               >
                 Sign out
               </button>
@@ -51,7 +53,7 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8 text-foreground">
         {children}
       </main>
       <MobileBottomNav />

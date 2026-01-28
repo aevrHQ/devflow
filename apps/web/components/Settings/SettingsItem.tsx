@@ -23,15 +23,15 @@ export default function SettingsItem({
       variant="ghost"
       onClick={onClick}
       className={cn(
-        "w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 h-auto rounded-none",
+        "w-full flex items-center justify-between p-4 text-left hover:bg-muted/50 transition-colors border-b border-border last:border-0 h-auto rounded-none",
         className,
       )}
     >
       <div className="flex items-center gap-3">
-        <div className="text-gray-900">{icon}</div>
-        <span className="font-medium text-gray-900">{label}</span>
+        <div className="text-foreground">{icon}</div>
+        <span className="font-medium text-foreground">{label}</span>
       </div>
-      <ArrowRight2 size={16} className="text-gray-400" />
+      <ArrowRight2 size={16} className="text-muted-foreground" />
     </Button>
   );
 }

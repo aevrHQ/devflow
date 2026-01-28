@@ -88,13 +88,13 @@ export default async function DashboardPage(props: DashboardPageProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
-          <p className="text-gray-500">Welcome to your dashboard</p>
+          <p className="text-muted-foreground">Welcome to your dashboard</p>
         </div>
         <a
           href={githubInstallUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors "
+          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Repository
@@ -102,14 +102,14 @@ export default async function DashboardPage(props: DashboardPageProps) {
       </div>
 
       {successMessage && (
-        <div className="bg-green-50 text-green-700 p-4 rounded-lg flex items-center gap-2 border border-green-100">
+        <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-lg flex items-center gap-2 border border-green-100 dark:border-green-900">
           <CheckCircle className="w-5 h-5" />
           {successMessage}
         </div>
       )}
 
       {installationId && !successMessage && (
-        <div className="bg-yellow-50 text-yellow-700 p-4 rounded-lg flex items-start gap-2 border border-yellow-100">
+        <div className="bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 p-4 rounded-lg flex items-start gap-2 border border-yellow-100 dark:border-yellow-900">
           <Activity className="w-5 h-5 mt-0.5" />
           <div>
             <p className="font-semibold">Connection Pending...</p>
@@ -136,58 +136,58 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-xl  border border-gray-100">
+        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Events (24h)</h3>
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Events (24h)
+            </h3>
             <Activity className="w-4 h-4 text-blue-500" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
-            {stats.eventsLast24Hours}
-          </p>
+          <p className="text-2xl font-bold">{stats.eventsLast24Hours}</p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl  border border-gray-100">
+        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Success Rate</h3>
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Success Rate
+            </h3>
             <Zap className="w-4 h-4 text-green-500" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
-            {stats.successRate}%
-          </p>
+          <p className="text-2xl font-bold">{stats.successRate}%</p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl  border border-gray-100">
+        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-500">Total Failed</h3>
-            <AlertCircle className="w-4 h-4 text-red-500" />
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Total Failed
+            </h3>
+            <AlertCircle className="w-4 h-4 text-destructive" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
-            {stats.failedEvents}
-          </p>
+          <p className="text-2xl font-bold">{stats.failedEvents}</p>
         </div>
       </div>
 
       {/* Agents / Installations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Agents */}
-        <div className="bg-white p-6 rounded-xl  border border-gray-100">
+        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Zap className="w-5 h-5 text-gray-700" />
+              <Zap className="w-5 h-5 text-muted-foreground" />
               Connected Agents
             </h2>
             <Link
               href="/help/agents"
-              className="text-xs text-blue-600 hover:underline"
+              className="text-xs text-blue-500 hover:underline"
             >
               Setup Guide
             </Link>
           </div>
 
           {agents.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <p className="mb-4">No agents connected yet.</p>
-              <code className="bg-gray-100 px-2 py-1 rounded-sm text-xs">
+              <code className="bg-muted px-2 py-1 rounded-sm text-xs">
                 devflow init
               </code>
             </div>
@@ -213,7 +213,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
                 return (
                   <div
                     key={agent.agentId}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -222,20 +222,18 @@ export default async function DashboardPage(props: DashboardPageProps) {
                             ? "bg-green-500"
                             : displayStatus === "stale"
                               ? "bg-yellow-500"
-                              : "bg-gray-400"
+                              : "bg-neutral-500"
                         }`}
                         title={`${displayStatus} (Last seen: ${Math.round(diffSec)}s ago)`}
                       />
                       <div>
-                        <p className="font-medium text-sm text-gray-900">
-                          {agent.name}
-                        </p>
-                        <p className="text-xs text-gray-500 font-mono">
+                        <p className="font-medium text-sm">{agent.name}</p>
+                        <p className="text-xs text-muted-foreground font-mono">
                           {agent.platform} • {agent.version}
                         </p>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-400 font-mono">
+                    <div className="text-xs text-muted-foreground font-mono">
                       {agent.agentId.substring(0, 12)}...
                     </div>
                   </div>
@@ -247,25 +245,25 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
         {/* Installations / Recent Activity Column */}
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl  border border-gray-100">
+          <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Github className="w-5 h-5 text-gray-700" />
+                <Github className="w-5 h-5 text-muted-foreground" />
                 Connected Accounts
               </h2>
-              <span className="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium">
+              <span className="bg-muted text-muted-foreground px-2.5 py-0.5 rounded-full text-xs font-medium">
                 {installations.length}
               </span>
             </div>
 
             {installations.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <p className="mb-4">No GitHub accounts connected yet.</p>
                 <a
                   href={githubInstallUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm"
+                  className="text-blue-500 hover:underline text-sm"
                 >
                   Install the GitHub App to get started
                 </a>
@@ -275,22 +273,22 @@ export default async function DashboardPage(props: DashboardPageProps) {
                 {installations.map((inst) => (
                   <div
                     key={inst.installationId}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-gray-200 text-xs font-bold">
+                      <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center border border-border text-xs font-bold text-foreground">
                         {(inst.accountLogin[0] || "?").toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-gray-900">
+                        <p className="font-medium text-sm">
                           {inst.accountLogin}
                         </p>
-                        <p className="text-xs text-gray-500 capitalize">
+                        <p className="text-xs text-muted-foreground capitalize">
                           {inst.accountType}
                         </p>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-muted-foreground">
                       ID: {inst.installationId}
                     </div>
                   </div>
@@ -300,21 +298,21 @@ export default async function DashboardPage(props: DashboardPageProps) {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white p-6 rounded-xl  border border-gray-100">
+          <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
             <ActivityFeed />
           </div>
         </div>
       </div>
 
       {/* Help Section */}
-      <div className="bg-linear-to-br from-neutral-50 to-neutral-100 rounded-2xl p-6 border border-neutral-200">
+      <div className="bg-linear-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 rounded-2xl p-6 border border-border">
         <div className="flex items-start gap-4">
           <div className="text-4xl">📚</div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold mb-2">
               Need Help Getting Started?
             </h3>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-muted-foreground text-sm mb-4">
               Check out our guides to make the most of DevFlow
             </p>
             <div className="flex flex-wrap gap-3">

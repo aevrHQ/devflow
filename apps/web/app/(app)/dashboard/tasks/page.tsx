@@ -41,7 +41,7 @@ export default async function TasksPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Agent Tasks</h1>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             History of tasks executed by your connected agents
           </p>
         </div>

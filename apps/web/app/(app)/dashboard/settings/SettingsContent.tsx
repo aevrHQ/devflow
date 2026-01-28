@@ -51,7 +51,7 @@ export default function SettingsContent({
                   size={24}
                   variant="TwoTone"
                   color="currentColor"
-                  className="text-black"
+                  className="text-foreground"
                 />
               }
               label="Credentials"
@@ -78,7 +78,7 @@ export default function SettingsContent({
                   color="currentColor"
                   size={24}
                   variant="TwoTone"
-                  className="text-black"
+                  className="text-foreground"
                 />
               }
               label="Security & PIN"
@@ -104,7 +104,7 @@ export default function SettingsContent({
                   size={24}
                   variant="TwoTone"
                   color="currentColor"
-                  className="text-black"
+                  className="text-foreground"
                 />
               }
               label="Notification Channels"
@@ -131,7 +131,7 @@ export default function SettingsContent({
                   size={24}
                   variant="TwoTone"
                   color="currentColor"
-                  className="text-black"
+                  className="text-foreground"
                 />
               }
               label="Preferences"
@@ -155,7 +155,7 @@ export default function SettingsContent({
                   size={24}
                   variant="TwoTone"
                   color="currentColor"
-                  className="text-black"
+                  className="text-foreground"
                 />
               }
               label="Webhook Info"

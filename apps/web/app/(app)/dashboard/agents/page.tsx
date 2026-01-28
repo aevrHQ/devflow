@@ -30,7 +30,9 @@ export default async function AgentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Agents</h1>
-          <p className="text-gray-500">Manage your connected DevFlow agents</p>
+          <p className="text-muted-foreground">
+            Manage your connected DevFlow agents
+          </p>
         </div>
       </div>
 

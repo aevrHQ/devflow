@@ -78,9 +78,9 @@ export default function ActivityFeed() {
       case "failure":
         return <XCircle className="w-4 h-4 text-red-500" />;
       case "skipped":
-        return <AlertCircle className="w-4 h-4 text-gray-400" />;
+        return <AlertCircle className="w-4 h-4 text-muted-foreground" />;
       default:
-        return <Loader loading className="w-4 h-4 text-gray-400" />;
+        return <Loader loading className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -89,7 +89,7 @@ export default function ActivityFeed() {
       <div className="flex justify-center py-12">
         <Loader
           loading={loading}
-          className="w-6 h-6 animate-spin text-gray-400"
+          className="w-6 h-6 animate-spin text-muted-foreground"
         />
       </div>
     );
@@ -108,14 +108,14 @@ export default function ActivityFeed() {
             setPage(1);
             fetchActivities(1);
           }}
-          className="h-8 w-8 p-0 text-gray-500"
+          className="h-8 w-8 p-0 text-muted-foreground"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
       </div>
 
       {activities.length === 0 ? (
-        <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg border border-gray-100 border-dashed">
+        <div className="text-center py-8 text-muted-foreground bg-muted/30 rounded-lg border border-border border-dashed">
           <p>No processed webhooks yet.</p>
         </div>
       ) : (
@@ -123,15 +123,15 @@ export default function ActivityFeed() {
           {activities.map((log) => (
             <div
               key={log._id}
-              className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg hover:border-blue-100 transition-colors "
+              className="flex items-center justify-between p-3 bg-card border border-border rounded-lg hover:border-primary/50 transition-colors"
             >
               <div className="flex items-start gap-3 overflow-hidden">
                 <div className="mt-1">{getStatusIcon(log.status)}</div>
                 <div className="min-w-0">
-                  <p className="font-medium text-sm text-gray-900 truncate">
+                  <p className="font-medium text-sm truncate">
                     {log.metadata?.title || log.eventType}
                   </p>
-                  <p className="text-xs text-gray-500 flex items-center gap-1">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <span className="capitalize">{log.source}</span> •{" "}
                     <span className="capitalize">{log.channelType}</span>
                     {log.channelName && ` (${log.channelName})`}
@@ -139,7 +139,7 @@ export default function ActivityFeed() {
                 </div>
               </div>
               <div className="flex items-center gap-4 shrink-0">
-                <span className="text-xs text-gray-400 whitespace-nowrap hidden sm:inline-block">
+                <span className="text-xs text-muted-foreground whitespace-nowrap hidden sm:inline-block">
                   {formatDistanceToNow(new Date(log.createdAt), {
                     addSuffix: true,
                   })}
@@ -158,7 +158,7 @@ export default function ActivityFeed() {
                   <div className="p-1 space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500">
+                        <h4 className="text-sm font-medium text-muted-foreground">
                           Source
                         </h4>
                         <p className="text-sm font-semibold capitalize">
@@ -166,23 +166,23 @@ export default function ActivityFeed() {
                         </p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500">
+                        <h4 className="text-sm font-medium text-muted-foreground">
                           Event
                         </h4>
                         <p className="text-sm font-semibold">{log.eventType}</p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500">
+                        <h4 className="text-sm font-medium text-muted-foreground">
                           Status
                         </h4>
                         <p
                           className={`text-sm font-semibold flex items-center gap-1 capitalize
                           ${
                             log.status === "success"
-                              ? "text-green-600"
+                              ? "text-green-600 dark:text-green-400"
                               : log.status === "failure"
-                                ? "text-red-600"
-                                : "text-gray-500"
+                                ? "text-red-600 dark:text-red-400"
+                                : "text-muted-foreground"
                           }`}
                         >
                           {getStatusIcon(log.status)}
@@ -190,7 +190,7 @@ export default function ActivityFeed() {
                         </p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500">
+                        <h4 className="text-sm font-medium text-muted-foreground">
                           Channel
                         </h4>
                         <p className="text-sm">
@@ -200,11 +200,11 @@ export default function ActivityFeed() {
                     </div>
 
                     {log.error && (
-                      <div className="bg-red-50 p-3 rounded-md border border-red-100">
-                        <h4 className="text-xs font-semibold text-red-700 uppercase mb-1">
+                      <div className="bg-red-50 dark:bg-red-900/30 p-3 rounded-md border border-red-100 dark:border-red-900">
+                        <h4 className="text-xs font-semibold text-red-700 dark:text-red-400 uppercase mb-1">
                           Error
                         </h4>
-                        <p className="text-sm text-red-600 font-mono break-all">
+                        <p className="text-sm text-red-600 dark:text-red-300 font-mono break-all">
                           {log.error}
                         </p>
                       </div>
@@ -212,14 +212,14 @@ export default function ActivityFeed() {
 
                     {log.metadata?.payloadUrl && (
                       <div>
-                        <h4 className="text-sm font-medium text-gray-500 mb-1">
+                        <h4 className="text-sm font-medium text-muted-foreground mb-1">
                           Payload
                         </h4>
                         <a
                           href={log.metadata.payloadUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                          className="text-sm text-blue-500 hover:underline flex items-center gap-1"
                         >
                           View processed payload <Eye className="w-3 h-3" />
                         </a>
@@ -239,7 +239,7 @@ export default function ActivityFeed() {
             variant="ghost"
             onClick={loadMore}
             disabled={loadingMore}
-            className="w-full text-gray-500"
+            className="w-full text-muted-foreground"
           >
             {loadingMore ? (
               <Loader loading={loadingMore} className="w-4 h-4 mr-2" />

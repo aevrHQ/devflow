@@ -101,13 +101,13 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div className="w-full max-w-md bg-card text-card-foreground rounded-2xl shadow-xl overflow-hidden border border-border">
       <div className="p-8">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold tracking-tight mb-2">
             Welcome Back
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             {mode === "pin-login"
               ? "Enter your PIN to access your account"
               : "Sign in to manage your Devflow bot"}
@@ -128,30 +128,30 @@ function LoginForm() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-muted-foreground mb-1"
                 >
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="email"
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="name@example.com"
                   />
                 </div>
               </div>
 
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {error && <p className="text-destructive text-sm">{error}</p>}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-black text-white py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-colors"
               >
                 {isLoading ? (
                   <Loader loading className="w-4 h-4" />
@@ -164,7 +164,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setMode("pin-login")}
-                  className="text-sm text-gray-500 hover:text-black transition-colors"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Login with PIN instead
                 </button>
@@ -181,13 +181,15 @@ function LoginForm() {
               exit={{ opacity: 0, scale: 0.95 }}
             >
               <div className="text-center mb-6">
-                <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-3">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <h3 className="font-medium text-gray-900">Check your email</h3>
-                <p className="text-gray-500 text-sm mt-1">
+                <h3 className="font-medium text-foreground">
+                  Check your email
+                </h3>
+                <p className="text-muted-foreground text-sm mt-1">
                   We sent a code to{" "}
-                  <span className="font-medium text-gray-900">{email}</span>
+                  <span className="font-medium text-foreground">{email}</span>
                 </p>
               </div>
 
@@ -195,7 +197,7 @@ function LoginForm() {
                 <div>
                   <label
                     htmlFor="otp"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-muted-foreground mb-1"
                   >
                     Enter 6-digit Code
                   </label>
@@ -206,19 +208,21 @@ function LoginForm() {
                     required
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))} // numbers only
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full px-4 py-2 bg-background border border-border rounded-lg text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
                     placeholder="123456"
                   />
                 </div>
 
                 {error && (
-                  <p className="text-red-500 text-sm text-center">{error}</p>
+                  <p className="text-destructive text-sm text-center">
+                    {error}
+                  </p>
                 )}
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 bg-black text-white py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-colors"
                 >
                   {isLoading ? (
                     <Loader loading className="w-4 h-4" />
@@ -232,7 +236,7 @@ function LoginForm() {
                   onClick={() => {
                     setMode("magic-link");
                   }}
-                  className="w-full text-sm text-gray-500 hover:text-black mt-2"
+                  className="w-full text-sm text-muted-foreground hover:text-foreground mt-2"
                 >
                   Use a different email
                 </button>
@@ -253,19 +257,19 @@ function LoginForm() {
               <div>
                 <label
                   htmlFor="pin-email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-muted-foreground mb-1"
                 >
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="pin-email"
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="name@example.com"
                   />
                 </div>
@@ -274,12 +278,12 @@ function LoginForm() {
               <div>
                 <label
                   htmlFor="pin"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-muted-foreground mb-1"
                 >
                   4-digit PIN
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     id="pin"
                     type="password"
@@ -287,18 +291,18 @@ function LoginForm() {
                     required
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="****"
                   />
                 </div>
               </div>
 
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {error && <p className="text-destructive text-sm">{error}</p>}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-black text-white py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-colors"
               >
                 {isLoading ? (
                   <Loader loading className="w-4 h-4" />
@@ -311,7 +315,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setMode("magic-link")}
-                  className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-black transition-colors"
+                  className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="w-3 h-3" />
                   Back to Magic Link
@@ -321,8 +325,8 @@ function LoginForm() {
           )}
         </AnimatePresence>
       </div>
-      <div className="bg-gray-50 px-8 py-4 text-center border-t border-gray-100">
-        <p className="text-xs text-gray-400">
+      <div className="bg-muted/50 px-8 py-4 text-center border-t border-border">
+        <p className="text-xs text-muted-foreground">
           Secure authentication powered by Devflow
         </p>
       </div>
@@ -332,10 +336,10 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-neutral-900 text-foreground p-4">
       <Suspense
         fallback={
-          <div className="p-8 bg-white rounded-2xl shadow-xl">
+          <div className="p-8 bg-card rounded-2xl shadow-xl">
             <Loader loading className="w-8 h-8 mx-auto" />
           </div>
         }
