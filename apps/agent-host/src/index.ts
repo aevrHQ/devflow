@@ -1,7 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import { CommandRequest, CommandResponse } from "./types.js";
-import PingaClient from "./pinga/client.js";
+import DevflowClient from "./devflow/client.js";
 import JobQueue from "./queue/processor.js";
 import { WorkflowFactory, WorkflowContext } from "./copilot/flows/index.js";
 
@@ -16,9 +16,9 @@ const port = process.env.PORT || 3001;
 app.use(express.json());
 
 // Initialize clients
-const pingaClient = new PingaClient(
-  process.env.PINGA_API_URL || "http://localhost:3000",
-  process.env.PINGA_API_SECRET || "",
+const devflowClient = new DevflowClient(
+  process.env.DEVFLOW_API_URL || "http://localhost:3000",
+  process.env.DEVFLOW_API_SECRET || "",
 );
 
 const jobQueue = new JobQueue();
@@ -92,7 +92,7 @@ app.get("/health", (req: Request, res: Response) => {
   });
 });
 
-// Receive command from Pinga
+// Receive command from DevFlow
 app.post("/command", validateCommand, (req: Request, res: Response) => {
   const command = req.body as CommandRequest;
 
@@ -110,7 +110,7 @@ app.post("/command", validateCommand, (req: Request, res: Response) => {
     // Process asynchronously
     handleCommand(command).catch((error) => {
       console.error(`Error processing command ${command.taskId}:`, error);
-      pingaClient
+      devflowClient
         .notifyError(command.taskId, error.message)
         .catch(console.error);
     });
@@ -246,14 +246,14 @@ async function handleCommand(command: CommandRequest): Promise<void> {
 
     if (result.success) {
       jobQueue.updateJobStatus(command.taskId, "completed");
-      await pingaClient.notifyCompletion(command.taskId, {
+      await devflowClient.notifyCompletion(command.taskId, {
         summary: result.summary || "Workflow completed",
         prUrl: result.prUrl,
         output: result.output,
       });
     } else {
       jobQueue.updateJobStatus(command.taskId, "failed", result.error);
-      await pingaClient.notifyError(
+      await devflowClient.notifyError(
         command.taskId,
         result.error || "Workflow failed",
       );
@@ -262,6 +262,6 @@ async function handleCommand(command: CommandRequest): Promise<void> {
     const errorMsg = error instanceof Error ? error.message : String(error);
     jobQueue.updateJobStatus(command.taskId, "failed", errorMsg);
 
-    await pingaClient.notifyError(command.taskId, errorMsg);
+    await devflowClient.notifyError(command.taskId, errorMsg);
   }
 }

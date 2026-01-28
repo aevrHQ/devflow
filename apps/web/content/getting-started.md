@@ -1,12 +1,12 @@
-# Getting Started with Pinga
+# Getting Started with DevFlow
 
-![Pinga Logo](https://via.placeholder.com/800x200/0ea5e9/ffffff?text=Pinga+Notification+Hub)
+![DevFlow Logo](https://via.placeholder.com/800x200/0ea5e9/ffffff?text=DevFlow+Notification+Hub)
 
-Welcome to **Pinga** - your centralized notification hub for all your developer webhooks! This guide will help you get started in minutes.
+Welcome to **DevFlow** - your centralized notification hub for all your developer webhooks! This guide will help you get started in minutes.
 
-## What is Pinga?
+## What is DevFlow?
 
-Pinga is a powerful notification management system that receives webhooks from your favorite services (GitHub, Render, Vercel, Stripe, and more) and intelligently routes them to your preferred channels like Telegram, Discord, or Slack.
+DevFlow is a powerful notification management system that receives webhooks from your favorite services (GitHub, Render, Vercel, Stripe, and more) and intelligently routes them to your preferred channels like Telegram, Discord, or Slack.
 
 ### Key Features
 
@@ -22,7 +22,7 @@ Pinga is a powerful notification management system that receives webhooks from y
 
 ### Step 1: Create Your Account
 
-1. Visit [https://pinga.yoursite.com](/)
+1. Visit [https://devflow.yoursite.com](/)
 2. Enter your email
 3. Click the magic link sent to your inbox
 4. You're in! 🎉
@@ -66,7 +66,7 @@ Pinga is a powerful notification management system that receives webhooks from y
 
 1. Go to your GitHub repository
 2. Navigate to **Settings** → **Webhooks** → **Add webhook**
-3. **Payload URL**: `https://pinga.yoursite.com/api/webhook/github`
+3. **Payload URL**: `https://devflow.yoursite.com/api/webhook/github`
 4. **Content type**: `application/json`
 5. **Secret**: _(optional)_
 6. **Events**: Choose what triggers notifications

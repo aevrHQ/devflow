@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ProgressUpdate } from "../types.js";
 
-class PingaClient {
+class DevflowClient {
   private apiUrl: string;
   private apiSecret: string;
 
@@ -13,7 +13,7 @@ class PingaClient {
   async sendProgressUpdate(update: ProgressUpdate): Promise<void> {
     try {
       console.log(
-        `[PingaClient] Sending update for task ${update.taskId}: ${update.status} - ${update.step}`,
+        `[DevflowClient] Sending update for task ${update.taskId}: ${update.status} - ${update.step}`,
       );
       const response = await axios.post(
         `${this.apiUrl}/api/copilot/task-update`,
@@ -27,18 +27,18 @@ class PingaClient {
         },
       );
       console.log(
-        `[PingaClient] Update sent successfully (${response.status})`,
+        `[DevflowClient] Update sent successfully (${response.status})`,
       );
     } catch (error) {
       const errorMsg = axios.isAxiosError(error)
         ? `Request failed: ${error.message} (Status: ${error.response?.status}, URL: ${this.apiUrl}/api/copilot/task-update)`
         : String(error);
-      console.error(`[PingaClient] Failed to update progress: ${errorMsg}`);
+      console.error(`[DevflowClient] Failed to update progress: ${errorMsg}`);
 
       // Log response data if available for debugging
       if (axios.isAxiosError(error) && error.response?.data) {
         console.error(
-          `[PingaClient] Response data: ${JSON.stringify(error.response.data)}`,
+          `[DevflowClient] Response data: ${JSON.stringify(error.response.data)}`,
         );
       }
       // throw error; // Optional: rethrow if caller needs to know, but suppressing spam is goal
@@ -53,7 +53,7 @@ class PingaClient {
       summary?: string;
     },
   ): Promise<void> {
-    console.log(`[PingaClient] Notifying completion for task: ${taskId}`);
+    console.log(`[DevflowClient] Notifying completion for task: ${taskId}`);
     await this.sendProgressUpdate({
       taskId,
       status: "completed",
@@ -87,4 +87,4 @@ class PingaClient {
   }
 }
 
-export default PingaClient;
+export default DevflowClient;

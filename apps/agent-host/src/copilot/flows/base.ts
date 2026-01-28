@@ -1,7 +1,7 @@
 // Workflow executor base and orchestration logic
 import { CopilotClient, Session, SessionEvent } from "../client.js";
 import { CommandRequest, ProgressUpdate } from "../../types.js";
-import PingaClient from "../../pinga/client.js";
+import DevflowClient from "../../devflow/client.js";
 import { getAllTools } from "../tools/index.js";
 
 export interface WorkflowContext {
@@ -32,11 +32,11 @@ export interface WorkflowResult {
 }
 
 export class WorkflowExecutor {
-  protected pingaClient: PingaClient;
+  protected devflowClient: DevflowClient;
   protected copilot: CopilotClient;
 
-  constructor(pingaUrl: string, pingaSecret: string) {
-    this.pingaClient = new PingaClient(pingaUrl, pingaSecret);
+  constructor(platformUrl: string, platformSecret: string) {
+    this.devflowClient = new DevflowClient(platformUrl, platformSecret);
     this.copilot = new CopilotClient(); // Will be replaced with actual SDK when available
   }
 
@@ -46,7 +46,7 @@ export class WorkflowExecutor {
     progress: number,
     details?: string,
   ): Promise<void> {
-    await this.pingaClient.sendProgressUpdate({
+    await this.devflowClient.sendProgressUpdate({
       taskId,
       status: "in_progress",
       step,
@@ -61,13 +61,13 @@ export class WorkflowExecutor {
     result: WorkflowResult,
   ): Promise<void> {
     if (result.success) {
-      await this.pingaClient.notifyCompletion(taskId, {
+      await this.devflowClient.notifyCompletion(taskId, {
         summary: result.summary || "Workflow completed successfully",
         prUrl: result.prUrl,
         output: result.output,
       });
     } else {
-      await this.pingaClient.notifyError(
+      await this.devflowClient.notifyError(
         taskId,
         result.error || "Workflow failed",
       );
@@ -152,12 +152,12 @@ Begin by understanding the repository structure.`;
     try {
       const session = await this.setupSession(context);
 
-      this.pingaClient.sendLog(
+      this.devflowClient.sendLog(
         context.taskId,
         "info",
         `Starting workflow execution for task: ${context.intent}`,
       );
-      this.pingaClient.sendLog(
+      this.devflowClient.sendLog(
         context.taskId,
         "info",
         `Context: Repo=${context.repo}, Branch=${context.branch || "default"}, LocalPath=${context.localPath || "N/A"}`,

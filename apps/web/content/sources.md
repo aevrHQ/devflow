@@ -1,6 +1,6 @@
 # Webhook Sources
 
-Pinga supports webhooks from a wide range of services. This guide covers all supported sources and how to set them up.
+DevFlow supports webhooks from a wide range of services. This guide covers all supported sources and how to set them up.
 
 ---
 
@@ -102,7 +102,7 @@ Monitor your Vercel deployments.
 
 1. Go to your Vercel project → **Settings** → **Git**
 2. Scroll to **Deploy Hooks**
-3. **Name**: "Pinga Notifications"
+3. **Name**: "DevFlow Notifications"
 4. **URL**: `https://your-domain.com/api/webhook/vercel`
 5. Click **Add**
 
@@ -162,7 +162,7 @@ Track issues and project updates.
 
 ## Custom Webhooks
 
-Pinga can receive webhooks from ANY service that supports HTTP POST requests.
+DevFlow can receive webhooks from ANY service that supports HTTP POST requests.
 
 ### Generic Webhook URL
 
@@ -201,9 +201,9 @@ For more advanced filtering (per repository, event type, etc.), see the [Filteri
 
 We're constantly adding new integrations!
 
-- 💬 [Request a source](https://github.com/aevrHQ/pinga-mvp/issues/new?labels=feature)
+- 💬 [Request a source](https://github.com/aevrHQ/devflow-mvp/issues/new?labels=feature)
 - 🛠️ [Build your own integration](#custom-webhooks)
-- 📧 Email us: support@pinga.app
+- 📧 Email us: support@devflow.app
 
 ---
 

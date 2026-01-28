@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
             await sendSlackMessage(
               config.slack.botToken,
               channelId,
-              getDevflowHelpText()
+              getDevflowHelpText(),
             );
             return NextResponse.json({ ok: true });
           }
@@ -81,38 +81,43 @@ export async function POST(request: NextRequest) {
             await sendSlackMessage(
               config.slack.botToken,
               channelId,
-              `❌ Please specify a repository!\n\nExample:\n\`!devflow ${devflowCmd.intent} owner/repo ${devflowCmd.description || "description"}\``
+              `❌ Please specify a repository!\n\nExample:\n\`!devflow ${devflowCmd.intent} owner/repo ${devflowCmd.description || "description"}\``,
             );
             return NextResponse.json({ ok: true });
           }
 
-          // Send task to Agent Host via Pinga's copilot endpoint
+          // Send task to Agent Host via DevFlow's copilot endpoint
           const taskId = randomUUID();
-          const pingaBaseUrl = process.env.NEXT_PUBLIC_PINGA_URL || "http://localhost:3000";
+          const devflowBaseUrl =
+            process.env.NEXT_PUBLIC_DEVFLOW_URL || "http://localhost:3000";
 
           try {
-            const response = await fetch(`${pingaBaseUrl}/api/copilot/command`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-API-Secret": process.env.DEVFLOW_API_SECRET || "devflow-secret",
+            const response = await fetch(
+              `${devflowBaseUrl}/api/copilot/command`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-API-Secret":
+                    process.env.DEVFLOW_API_SECRET || "devflow-secret",
+                },
+                body: JSON.stringify({
+                  taskId,
+                  source: {
+                    channel: "slack",
+                    chatId: channelId,
+                    messageId: event.ts,
+                  },
+                  payload: {
+                    intent: devflowCmd.intent,
+                    repo: devflowCmd.repo,
+                    branch: devflowCmd.branch,
+                    naturalLanguage: devflowCmd.description,
+                    context: devflowCmd.context,
+                  },
+                }),
               },
-              body: JSON.stringify({
-                taskId,
-                source: {
-                  channel: "slack",
-                  chatId: channelId,
-                  messageId: event.ts,
-                },
-                payload: {
-                  intent: devflowCmd.intent,
-                  repo: devflowCmd.repo,
-                  branch: devflowCmd.branch,
-                  naturalLanguage: devflowCmd.description,
-                  context: devflowCmd.context,
-                },
-              }),
-            });
+            );
 
             if (response.ok) {
               await sendSlackMessage(
@@ -124,27 +129,30 @@ export async function POST(request: NextRequest) {
                   `${devflowCmd.branch ? `Branch: ${devflowCmd.branch}\n` : ""}` +
                   `Request: ${devflowCmd.description}\n\n` +
                   `⏳ Processing... You'll receive updates here.\n\n` +
-                  `Task ID: \`${taskId}\``
+                  `Task ID: \`${taskId}\``,
               );
               console.log(
-                `[Slack Webhook] Forwarded devflow command to Agent Host: ${taskId}`
+                `[Slack Webhook] Forwarded devflow command to Agent Host: ${taskId}`,
               );
             } else {
               await sendSlackMessage(
                 config.slack.botToken,
                 channelId,
-                `❌ Failed to process Devflow command. Please try again later.`
+                `❌ Failed to process Devflow command. Please try again later.`,
               );
               console.error(
-                `[Slack Webhook] Failed to forward devflow command: ${response.status}`
+                `[Slack Webhook] Failed to forward devflow command: ${response.status}`,
               );
             }
           } catch (error) {
-            console.error("[Slack Webhook] Error forwarding devflow command:", error);
+            console.error(
+              "[Slack Webhook] Error forwarding devflow command:",
+              error,
+            );
             await sendSlackMessage(
               config.slack.botToken,
               channelId,
-              `❌ Error processing Devflow command: ${error instanceof Error ? error.message : "Unknown error"}`
+              `❌ Error processing Devflow command: ${error instanceof Error ? error.message : "Unknown error"}`,
             );
           }
 
@@ -207,7 +215,7 @@ export async function POST(request: NextRequest) {
         await connectToDatabase();
         const { default: Channel } = await import("@/models/Channel");
 
-        // Find Pinga Channel where config.channelId matches this Slack Channel ID
+        // Find DevFlow Channel where config.channelId matches this Slack Channel ID
         const channelDoc = await Channel.findOne({
           "config.channelId": channelId,
         });
@@ -293,7 +301,7 @@ export async function POST(request: NextRequest) {
             await CommonUtils_sendSlackMessageWithLog(
               config.slack.botToken,
               channelId,
-              `👋 I'm here! But I'm not linked to a Pinga channel yet.\n\nTo link me, use the "Connect with Slack" button in your dashboard or type "@Pinga link <your-link-code>".`,
+              `👋 I'm here! But I'm not linked to a DevFlow channel yet.\n\nTo link me, use the "Connect with Slack" button in your dashboard or type "@DevFlow link <your-link-code>".`,
             );
           }
         }

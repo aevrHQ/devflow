@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ProgressUpdate } from "../types.js";
 
-class PingaClient {
+class DevflowClient {
   private apiUrl: string;
   private apiSecret: string;
 
@@ -19,7 +19,7 @@ class PingaClient {
         },
       });
     } catch (error) {
-      console.error("Failed to send progress update to Pinga:", error);
+      console.error("Failed to send progress update to DevFlow:", error);
       throw error;
     }
   }
@@ -65,4 +65,4 @@ class PingaClient {
   }
 }
 
-export default PingaClient;
+export default DevflowClient;

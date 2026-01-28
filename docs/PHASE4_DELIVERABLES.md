@@ -89,6 +89,7 @@ Phase 4 successfully completed the integration of Devflow Agent Host with the Pi
 ## Key Features Implemented
 
 ### Command Parsing
+
 - ✅ Regex-based detection of `!devflow` prefix
 - ✅ Extraction of intent, repo, optional branch, and description
 - ✅ Validation of command format
@@ -96,6 +97,7 @@ Phase 4 successfully completed the integration of Devflow Agent Host with the Pi
 - ✅ Help text generation for users
 
 ### Authentication & Security
+
 - ✅ X-API-Secret header validation on all API calls
 - ✅ Environment variable validation
 - ✅ No hardcoded secrets in code
@@ -103,6 +105,7 @@ Phase 4 successfully completed the integration of Devflow Agent Host with the Pi
 - ✅ HMAC signature verification for webhooks
 
 ### Task Management
+
 - ✅ Unique taskId generation via crypto.randomUUID()
 - ✅ Task mapping storage (taskId → {chatId, channel})
 - ✅ Task metadata forwarding to Agent Host
@@ -110,6 +113,7 @@ Phase 4 successfully completed the integration of Devflow Agent Host with the Pi
 - ✅ Progress update correlation with tasks
 
 ### Progress Tracking
+
 - ✅ Real-time progress bar generation
 - ✅ Progress clamping (0-1 range)
 - ✅ Status-specific message formatting
@@ -117,6 +121,7 @@ Phase 4 successfully completed the integration of Devflow Agent Host with the Pi
 - ✅ Details field for additional information
 
 ### Channel Support
+
 - ✅ Telegram message handling
 - ✅ Slack message handling
 - ✅ Graceful fallback for unsupported channels
@@ -128,6 +133,7 @@ Phase 4 successfully completed the integration of Devflow Agent Host with the Pi
 ### POST /api/copilot/command
 
 **Request:**
+
 ```json
 {
   "taskId": "uuid-string",
@@ -146,12 +152,14 @@ Phase 4 successfully completed the integration of Devflow Agent Host with the Pi
 ```
 
 **Headers:**
+
 ```
 X-API-Secret: <DEVFLOW_API_SECRET>
 Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -163,6 +171,7 @@ Content-Type: application/json
 ### POST /api/copilot/task-update
 
 **Request:**
+
 ```json
 {
   "taskId": "uuid-string",
@@ -174,12 +183,14 @@ Content-Type: application/json
 ```
 
 **Headers:**
+
 ```
 X-API-Secret: <DEVFLOW_API_SECRET>
 Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -192,14 +203,14 @@ Content-Type: application/json
 
 ```typescript
 interface DevflowCommand {
-  intent: 'fix' | 'fix-bug' | 'feature' | 'explain' | 'review-pr' | 'deploy';
+  intent: "fix" | "fix-bug" | "feature" | "explain" | "review-pr" | "deploy";
   repo: string;
   branch?: string;
   description: string;
 }
 
 interface TaskSource {
-  channel: 'telegram' | 'slack';
+  channel: "telegram" | "slack";
   chatId: string;
   messageId: string;
 }
@@ -213,7 +224,7 @@ interface CommandPayload {
 
 interface TaskUpdate {
   taskId: string;
-  status: 'in_progress' | 'completed' | 'failed';
+  status: "in_progress" | "completed" | "failed";
   step: string;
   progress: number;
   details?: string;
@@ -225,40 +236,40 @@ interface TaskUpdate {
 ```
 1. User Input
    └─ "!devflow fix owner/repo Fix auth bug"
-   
+
 2. Webhook Detection
    └─ Telegram/Slack handler receives message
-   
+
 3. Command Parsing
    └─ parseDevflowCommand() extracts intent, repo, description
-   
+
 4. Task Creation
    └─ Generate taskId, store mapping
-   
+
 5. Command Forwarding
    └─ POST to /api/copilot/command
-   
+
 6. Agent Execution
    └─ Agent Host /command endpoint receives task
-   
+
 7. Workflow Routing
    └─ WorkflowFactory routes to appropriate workflow
-   
+
 8. Tool Execution
    └─ Workflow executes with 7 custom tools
-   
+
 9. Progress Updates
    └─ Tools call send_progress_update
-   
+
 10. Progress Relay
     └─ /api/copilot/task-update receives update
-    
+
 11. Message Formatting
     └─ Format message with progress bar
-    
+
 12. Chat Delivery
     └─ Send formatted message to Telegram/Slack
-    
+
 13. User Notification
     └─ User sees real-time progress in chat
 ```
@@ -266,6 +277,7 @@ interface TaskUpdate {
 ## Build Status
 
 ### Pinga Web App
+
 ```
 ✅ npm run build (Pinga)
    Creating an optimized production build...
@@ -277,6 +289,7 @@ interface TaskUpdate {
 ```
 
 ### Agent Host
+
 ```
 ✅ npm run build (Agent Host)
    > agent-host@0.1.0 build
@@ -305,34 +318,39 @@ interface TaskUpdate {
 ## Environment Configuration
 
 ### Required in apps/web/.env.local
+
 ```
 DEVFLOW_API_SECRET=your-strong-secret-here
 AGENT_HOST_URL=http://localhost:3001
-NEXT_PUBLIC_PINGA_URL=http://localhost:3000
+NEXT_PUBLIC_DEVFLOW_URL=http://localhost:3000
 ```
 
 ### Required in apps/agent-host/.env.local
+
 ```
 DEVFLOW_API_SECRET=your-strong-secret-here
-PINGA_API_URL=http://localhost:3000
-PINGA_API_SECRET=your-strong-secret-here
+DEVFLOW_API_URL=http://localhost:3000
+DEVFLOW_API_SECRET=your-strong-secret-here
 GITHUB_TOKEN=ghp_your_token_here
 ```
 
 ## Deployment Notes
 
 ### Prerequisites
+
 - Node.js 20+
 - Both Pinga and Agent Host running
 - GitHub token with repo scope
 - Shared DEVFLOW_API_SECRET
 
 ### Single Instance
+
 - Task mappings stored in-memory
 - Suitable for single deployment
 - Mappings lost on server restart
 
 ### Multi-Instance (Future)
+
 - Requires database (MongoDB recommended)
 - Requires distributed session management
 - Requires load balancer configuration
@@ -340,21 +358,25 @@ GITHUB_TOKEN=ghp_your_token_here
 ## Known Limitations
 
 ⚠️ **In-Memory Storage**
+
 - Task mappings lost when server restarts
 - No persistence between deployments
 - Solution: Move to MongoDB in Phase 5
 
 ⚠️ **Single Instance Only**
+
 - No support for multiple Agent Host instances
 - No load balancing support
 - Solution: Implement database-backed task tracking
 
 ⚠️ **No Error Retry**
+
 - Failed API calls not automatically retried
 - Network errors result in immediate failure
 - Solution: Add retry logic in Phase 5
 
 ⚠️ **No Structured Logging**
+
 - Limited debugging information
 - No audit trail for requests
 - Solution: Add Winston logging in Phase 5
@@ -368,11 +390,12 @@ GITHUB_TOKEN=ghp_your_token_here
 ✅ Type-safe TypeScript implementation  
 ✅ Zero build errors and warnings  
 ✅ Comprehensive documentation  
-✅ All phases 1-4 complete and working  
+✅ All phases 1-4 complete and working
 
 ## Next Phase (Phase 5)
 
 Phase 5 will focus on:
+
 1. **Error Handling** - Implement retry logic with exponential backoff
 2. **Logging** - Add Winston or Pino for structured logging
 3. **Persistence** - Move task mappings to MongoDB
@@ -389,6 +412,6 @@ Phase 4 delivery is **complete and production-ready**. The Devflow system is now
 
 ---
 
-*Session: 6f0af322-662a-4367-bfc6-74cc293c5c28*  
-*Date: Current Session*  
-*Next: Phase 5 - Deployment & Polish*
+_Session: 6f0af322-662a-4367-bfc6-74cc293c5c28_  
+_Date: Current Session_  
+_Next: Phase 5 - Deployment & Polish_

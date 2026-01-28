@@ -1,6 +1,6 @@
 # Render Integration Guide
 
-Learn how to receive deployment notifications from Render in Pinga.
+Learn how to receive deployment notifications from Render in DevFlow.
 
 ---
 
@@ -8,30 +8,31 @@ Learn how to receive deployment notifications from Render in Pinga.
 
 Render currently supports detailed webhooks for job failures but not generic "Deployment Succeeded" events for all service types in a standard format that fits everyone.
 
-The most reliable way to get **instant** notifications for ANY Render event (Deployments, Service Status, billing) is to forward their notification emails to Pinga.
+The most reliable way to get **instant** notifications for ANY Render event (Deployments, Service Status, billing) is to forward their notification emails to DevFlow.
 
-## Step 1: Get Your Pinga Webhook URL
+## Step 1: Get Your DevFlow Webhook URL
 
-1. Go to your **Pinga Dashboard** → **Settings**.
+1. Go to your **DevFlow Dashboard** → **Settings**.
 2. Look for the **Developer Information** section.
 3. Copy your **Render / Custom Webhook URL**.
 
 It should look like this:
-`https://pinga.app/api/webhook/render?userId=YOUR_USER_ID`
+`https://devflow.app/api/webhook/render?userId=YOUR_USER_ID`
 
 ---
 
 ## Step 2: Set up Email Forwarding (Gmail Users)
 
-We will use a simple Google Apps Script to check for emails from Render and forward them to Pinga.
+We will use a simple Google Apps Script to check for emails from Render and forward them to DevFlow.
 
 1. Go to [Google Apps Script](https://script.google.com/) and create a **New Project**.
-2. Name it "Render to Pinga".
+2. Name it "Render to DevFlow".
 3. Replace the code in `Code.gs` with the following:
 
 ```javascript
-// Paste your Pinga Webhook URL here
-const WEBHOOK_URL = "https://pinga.app/api/webhook/render?userId=YOUR_USER_ID";
+// Paste your DevFlow Webhook URL here
+const WEBHOOK_URL =
+  "https://devflow.app/api/webhook/render?userId=YOUR_USER_ID";
 
 function processRenderEmails() {
   // Find unread emails from Render
@@ -47,7 +48,7 @@ function processRenderEmails() {
         const body = message.getPlainBody();
         const date = message.getDate();
 
-        // Send to Pinga
+        // Send to DevFlow
         const payload = {
           subject: subject,
           body: body,
@@ -103,10 +104,10 @@ To make sure it runs automatically:
 
 1. Trigger a manual deploy in Render (or wait for one).
 2. Wait 1-2 minutes.
-3. Check your Telegram/Discord channel connected to Pinga.
+3. Check your Telegram/Discord channel connected to DevFlow.
 4. You should see a notification! 🎉
 
-> **Tip:** Make sure your user preferences in Pinga allow "Render" as a source (or allow all sources).
+> **Tip:** Make sure your user preferences in DevFlow allow "Render" as a source (or allow all sources).
 
 ---
 

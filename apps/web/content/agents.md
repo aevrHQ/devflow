@@ -1,6 +1,6 @@
 # Connected Agents
 
-Pinga allows you to connect **DevFlow Agents** running on your local machine or servers directly to your dashboard. These agents can execute tasks, fix bugs, and run commands on your behalf.
+DevFlow allows you to connect **DevFlow Agents** running on your local machine or servers directly to your dashboard. These agents can execute tasks, fix bugs, and run commands on your behalf.
 
 ## How to Connect an Agent
 
@@ -18,7 +18,7 @@ Pinga allows you to connect **DevFlow Agents** running on your local machine or 
    devflow start
    ```
 
-   This will authenticate the agent with your Pinga account.
+   This will authenticate the agent with your DevFlow account.
 
 3. **Verify Connection**
    Once started, refresh your [Dashboard](/dashboard). You should see your agent listed in the "Connected Agents" card.

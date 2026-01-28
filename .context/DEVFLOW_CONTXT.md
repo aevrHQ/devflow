@@ -498,8 +498,8 @@ GITHUB_TOKEN=ghp_xxx              # Personal access token
 GITHUB_COPILOT_TOKEN=xxx          # If needed separately
 
 # Pinga Integration
-PINGA_API_URL=https://pinga-mvp-web.vercel.app
-PINGA_API_SECRET=xxx              # Shared secret for HMAC
+DEVFLOW_API_URL=https://pinga-mvp-web.vercel.app
+DEVFLOW_API_SECRET=xxx              # Shared secret for HMAC
 
 # Storage
 REPO_STORAGE_PATH=/tmp/devflow-repos

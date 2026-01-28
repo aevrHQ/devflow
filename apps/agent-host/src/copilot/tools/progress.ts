@@ -1,4 +1,4 @@
-import PingaClient from "../../pinga/client.js";
+import DevflowClient from "../../devflow/client.js";
 import { ToolError } from "./utils.js";
 
 export interface ProgressUpdateInput {
@@ -16,15 +16,15 @@ export interface ProgressUpdateResult {
 }
 
 export class ProgressTracker {
-  private pingaClient: PingaClient;
+  private devflowClient: DevflowClient;
 
-  constructor(pingaApiUrl: string, pingaApiSecret: string) {
-    this.pingaClient = new PingaClient(pingaApiUrl, pingaApiSecret);
+  constructor(devflowApiUrl: string, devflowApiSecret: string) {
+    this.devflowClient = new DevflowClient(devflowApiUrl, devflowApiSecret);
   }
 
   async sendUpdate(input: ProgressUpdateInput): Promise<ProgressUpdateResult> {
     try {
-      await this.pingaClient.sendProgressUpdate({
+      await this.devflowClient.sendProgressUpdate({
         taskId: input.taskId,
         status: input.status,
         step: input.step,
@@ -49,23 +49,23 @@ export class ProgressTracker {
 
 // Factory function for Copilot SDK tool definition
 export function createProgressUpdateTool(): any {
-  const pingaUrl = process.env.PINGA_API_URL;
-  const pingaSecret = process.env.PINGA_API_SECRET;
+  const devflowUrl = process.env.DEVFLOW_API_URL;
+  const devflowSecret = process.env.DEVFLOW_API_SECRET;
 
-  if (!pingaUrl || !pingaSecret) {
+  if (!devflowUrl || !devflowSecret) {
     console.warn(
-      "PINGA_API_URL or PINGA_API_SECRET not configured. Progress updates will fail."
+      "DEVFLOW_API_URL or DEVFLOW_API_SECRET not configured. Progress updates will fail.",
     );
   }
 
   const progressTracker = new ProgressTracker(
-    pingaUrl || "http://localhost:3000",
-    pingaSecret || ""
+    devflowUrl || "http://localhost:3000",
+    devflowSecret || "",
   );
 
   return {
     name: "send_progress_update",
-    description: "Send progress update back to Pinga for user notification",
+    description: "Send progress update back to DevFlow for user notification",
     parameters: {
       type: "object",
       properties: {
@@ -100,7 +100,7 @@ export function createProgressUpdateTool(): any {
       required: ["taskId", "status", "step", "progress"],
     },
     handler: async (
-      input: ProgressUpdateInput
+      input: ProgressUpdateInput,
     ): Promise<ProgressUpdateResult> => {
       try {
         return await progressTracker.sendUpdate(input);

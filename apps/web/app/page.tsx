@@ -18,7 +18,7 @@ export default function LandingPage() {
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold tracking-tight">
-            Pinga
+            DevFlow
           </Link>
           <div className="flex items-center gap-6">
             <Link
@@ -28,7 +28,7 @@ export default function LandingPage() {
               Help
             </Link>
             <Link
-              href="https://github.com/aevrHQ/pinga-mvp"
+              href="https://github.com/miracleonyenma/devflow"
               target="_blank"
               className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
             >
@@ -73,7 +73,7 @@ export default function LandingPage() {
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
-                href="https://github.com/aevrHQ/pinga-mvp"
+                href="https://github.com/miracleonyenma/devflow"
                 target="_blank"
                 className="flex items-center gap-2 px-8 py-3.5 rounded-full border border-gray-200 font-medium hover:bg-gray-50 transition-colors"
               >
@@ -188,7 +188,7 @@ export default function LandingPage() {
       <footer className="border-t border-gray-100 py-12">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-sm text-gray-500">
-            © {new Date().getFullYear()} Pinga. All rights reserved.
+            © {new Date().getFullYear()} DevFlow. All rights reserved.
           </div>
           <div className="flex items-center gap-6">
             <Link href="#" className="text-sm text-gray-500 hover:text-black">

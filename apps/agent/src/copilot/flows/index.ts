@@ -16,7 +16,7 @@ export type WorkflowIntent =
 export class WorkflowFactory {
   static getWorkflow(
     intent: WorkflowIntent,
-  ): new (pingaUrl: string, pingaSecret: string) => WorkflowExecutor {
+  ): new (platformUrl: string, platformSecret: string) => WorkflowExecutor {
     switch (intent) {
       case "fix-bug":
         return FixBugWorkflow;
@@ -45,11 +45,11 @@ export class WorkflowFactory {
   ): Promise<WorkflowResult> {
     const WorkflowClass = this.getWorkflow(context.intent as WorkflowIntent);
 
-    const pingaUrl =
-      platformUrl || process.env.PINGA_API_URL || "http://localhost:3000";
-    const pingaToken = token || process.env.PINGA_API_SECRET || "";
+    const devflowUrl =
+      platformUrl || process.env.DEVFLOW_API_URL || "http://localhost:3000";
+    const devflowToken = token || process.env.DEVFLOW_API_SECRET || "";
 
-    const workflow = new WorkflowClass(pingaUrl, pingaToken);
+    const workflow = new WorkflowClass(devflowUrl, devflowToken);
     return await workflow.execute(context);
   }
 }

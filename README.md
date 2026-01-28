@@ -7,8 +7,9 @@ DevFlow is a **complete SaaS platform + self-hosted CLI agent** that orchestrate
 ## 🎯 What is DevFlow?
 
 Unlike traditional CLI tools, DevFlow enables teams to:
+
 - 🌐 Use a cloud-based SaaS dashboard for task management
-- 🔒 Run a self-hosted agent locally for code privacy  
+- 🔒 Run a self-hosted agent locally for code privacy
 - 🤖 Execute complex workflows powered by GitHub Copilot (fix bugs, implement features, explain code, review PRs)
 - 📱 Receive real-time notifications via Slack/Telegram
 - 🔗 Integrate seamlessly with GitHub repositories
@@ -16,28 +17,33 @@ Unlike traditional CLI tools, DevFlow enables teams to:
 ## 🚀 Quick Start
 
 ### Install the CLI
+
 ```bash
 npm install -g @untools/devflow
 ```
 
 ### Initialize
+
 ```bash
 devflow init
 # Authenticate with GitHub
 ```
 
 ### Start the Agent
+
 ```bash
 devflow start
 # Agent polls for tasks every 5 seconds
 ```
 
 ### Create a Task
+
 Visit the web dashboard and create a task. Watch your agent execute AI workflows!
 
 ## 📦 What's Included
 
 ### 1. **Pinga Web Platform** (SaaS Dashboard)
+
 - Next.js 14 + MongoDB
 - OAuth authentication
 - Task creation & monitoring
@@ -45,12 +51,14 @@ Visit the web dashboard and create a task. Watch your agent execute AI workflows
 - 11 REST API endpoints
 
 ### 2. **DevFlow CLI Agent** (`@untools/devflow`)
+
 - 3 simple commands: `init`, `start`, `status`
 - Task polling every 5 seconds
 - Secure JWT token management
 - Runs locally on your machine
 
 ### 3. **Agent-Host** (Copilot SDK Engine)
+
 - Real integration with `@github/copilot-sdk`
 - 4 AI-powered workflows
 - 7 integrated tools (git, files, tests, GitHub API, etc.)
@@ -58,12 +66,12 @@ Visit the web dashboard and create a task. Watch your agent execute AI workflows
 
 ## 💡 Workflows
 
-| Workflow | What It Does |
-|----------|-------------|
-| **fix-bug** | Analyzes issue → implements fix → runs tests → creates PR |
-| **feature** | Implements new feature with tests and documentation |
-| **explain** | Generates documentation for code |
-| **review-pr** | Reviews pull requests for best practices |
+| Workflow      | What It Does                                              |
+| ------------- | --------------------------------------------------------- |
+| **fix-bug**   | Analyzes issue → implements fix → runs tests → creates PR |
+| **feature**   | Implements new feature with tests and documentation       |
+| **explain**   | Generates documentation for code                          |
+| **review-pr** | Reviews pull requests for best practices                  |
 
 ## 🏗 Architecture
 
@@ -120,12 +128,13 @@ Comprehensive guides available:
 Before you begin, ensure you have the following installed:
 
 - **Node.js:** 18.0.0 or later
-- **npm:** 9.0.0 or later  
+- **npm:** 9.0.0 or later
 - **MongoDB:** Local instance or MongoDB Atlas connection
 - **Git:** For repository cloning
 - **Operating System:** macOS, Linux, or Windows (WSL2 recommended for Windows)
 
 Check your versions:
+
 ```bash
 node --version    # Should output v18.0.0 or higher
 npm --version     # Should output 9.0.0 or higher
@@ -145,6 +154,7 @@ npm install
 ```
 
 This installs dependencies for three applications:
+
 - `apps/web` - Next.js SaaS dashboard
 - `apps/agent-host` - Copilot SDK engine
 - `apps/agent` - CLI agent
@@ -154,6 +164,7 @@ This installs dependencies for three applications:
 Create `.env.local` files for each application:
 
 **apps/web/.env.local**
+
 ```bash
 # Database
 MONGODB_URI=mongodb://localhost:27017/devflow
@@ -179,6 +190,7 @@ DEVFLOW_API_SECRET=test-secret-123
 ```
 
 **apps/agent-host/.env.local**
+
 ```bash
 # GitHub
 GITHUB_TOKEN=ghp_your-personal-access-token
@@ -188,7 +200,7 @@ COPILOT_API_KEY=your-copilot-key
 
 # Platform Communication
 DEVFLOW_API_SECRET=test-secret-123
-PINGA_API_URL=http://localhost:3000
+DEVFLOW_API_URL=http://localhost:3000
 
 # Server
 PORT=3001
@@ -196,6 +208,7 @@ NODE_ENV=development
 ```
 
 **apps/agent/.env.local**
+
 ```bash
 # Platform
 DEVFLOW_PLATFORM_URL=http://localhost:3000
@@ -212,6 +225,7 @@ DEVFLOW_API_SECRET=test-secret-123
 #### Step 3: Database Setup
 
 Option A: Local MongoDB
+
 ```bash
 # Install MongoDB via Homebrew (macOS)
 brew tap mongodb/brew
@@ -225,6 +239,7 @@ mongo --eval "db.version()"
 ```
 
 Option B: MongoDB Atlas (Cloud)
+
 1. Create account at https://www.mongodb.com/cloud/atlas
 2. Create a cluster and get connection string
 3. Update `MONGODB_URI` in `apps/web/.env.local`
@@ -234,6 +249,7 @@ Option B: MongoDB Atlas (Cloud)
 DevFlow consists of 3 independent services. Run each in a separate terminal:
 
 **Terminal 1: Web Platform (Next.js)**
+
 ```bash
 npm run dev --workspace=apps/web
 # Runs on http://localhost:3000
@@ -241,6 +257,7 @@ npm run dev --workspace=apps/web
 ```
 
 **Terminal 2: Agent-Host (Copilot Engine)**
+
 ```bash
 npm run dev --workspace=apps/agent-host
 # Runs on http://localhost:3001
@@ -248,6 +265,7 @@ npm run dev --workspace=apps/agent-host
 ```
 
 **Terminal 3: CLI Agent**
+
 ```bash
 npm run dev --workspace=apps/agent -- cli start
 # Polls platform every 5 seconds for tasks
@@ -255,6 +273,7 @@ npm run dev --workspace=apps/agent -- cli start
 ```
 
 Once all three are running, you should see:
+
 - **Web Platform:** "✓ Next.js ready in Xms"
 - **Agent-Host:** "Server running on port 3001"
 - **CLI Agent:** "✓ Connected successfully" and "Waiting for tasks..."
@@ -264,6 +283,7 @@ Once all three are running, you should see:
 #### Option A: Web Dashboard (Easiest)
 
 1. **Open the dashboard**
+
    ```
    http://localhost:3000
    ```
@@ -282,12 +302,14 @@ Once all three are running, you should see:
    - Click "Create Task"
    - Select Intent: **explain**
    - Paste this code:
+
    ```javascript
    function fibonacci(n) {
      if (n <= 1) return n;
      return fibonacci(n - 1) + fibonacci(n - 2);
    }
    ```
+
    - Click "Execute"
 
 5. **Watch the Agent Work**
@@ -328,6 +350,7 @@ curl -X POST http://localhost:3000/api/tasks \
    - Issue description: "Fix authentication error on login"
 
 2. **Create task:**
+
    ```bash
    devflow task create \
      --intent fix-bug \
@@ -348,6 +371,7 @@ curl -X POST http://localhost:3000/api/tasks \
    - Specification: "Add dark mode toggle"
 
 2. **Create task:**
+
    ```bash
    devflow task create \
      --intent feature \
@@ -385,6 +409,7 @@ devflow task create \
 ### 6. Troubleshooting Common Issues
 
 #### Issue: "Cannot connect to MongoDB"
+
 ```bash
 # Verify MongoDB is running
 ps aux | grep mongod
@@ -394,6 +419,7 @@ brew services start mongodb-community
 ```
 
 #### Issue: "Agent won't start - ECONNREFUSED"
+
 ```bash
 # Ensure all 3 services are running
 curl http://localhost:3000/health  # Web platform
@@ -403,6 +429,7 @@ curl http://localhost:3001/health  # Agent-Host
 ```
 
 #### Issue: "Authentication failed - Invalid token"
+
 ```bash
 # Re-initialize with fresh credentials
 devflow init
@@ -412,6 +439,7 @@ cat ~/.devflow/config.json  # View config
 ```
 
 #### Issue: "Tasks not completing"
+
 ```bash
 # Check service logs for errors
 # View CLI Agent terminal for error messages
@@ -429,6 +457,7 @@ curl -I http://localhost:3001
 **Live Reload:** All services support hot-reload during development.
 
 **Debugging:** View detailed logs:
+
 ```bash
 # In CLI agent terminal
 devflow start --log-level debug
@@ -438,6 +467,7 @@ npm run dev --workspace=apps/web -- --debug
 ```
 
 **Testing Your Changes:**
+
 ```bash
 # Run linter across all apps
 npm run lint
@@ -450,6 +480,7 @@ npm run build
 ```
 
 **Database Reset:**
+
 ```bash
 # Connect to MongoDB and drop database
 mongo
@@ -485,6 +516,7 @@ Once you're familiar with the basics:
 ## 🛠 Development Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - MongoDB (local or Atlas)
 - GitHub account
@@ -533,20 +565,26 @@ GITHUB_OAUTH_CLIENT_SECRET=<your-github-app-secret>
 ## 📦 Applications
 
 ### apps/web
+
 Next.js 14 SaaS platform with MongoDB
+
 - User authentication
 - Agent management
 - Task creation & monitoring
 - Real-time notifications
 
 ### apps/agent
+
 npm package `@untools/devflow`
+
 - CLI: `devflow init`, `devflow start`, `devflow status`
 - Task polling from platform
 - Secure configuration management
 
 ### apps/agent-host
+
 Express.js server with Copilot SDK
+
 - Real `@github/copilot-sdk` integration
 - Workflow execution engine
 - Tool definitions and execution
@@ -561,6 +599,7 @@ npm publish --access public
 ```
 
 Users can then install globally:
+
 ```bash
 npm install -g @untools/devflow
 ```

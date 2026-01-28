@@ -28,7 +28,10 @@ npm install @github/copilot-sdk
 Replace the stub in `src/copilot/client.ts`:
 
 ```typescript
-import { CopilotClient as SDKCopilotClient, defineTool } from "@github/copilot-sdk";
+import {
+  CopilotClient as SDKCopilotClient,
+  defineTool,
+} from "@github/copilot-sdk";
 
 export class CopilotClient {
   private sdkClient: SDKCopilotClient;
@@ -81,7 +84,7 @@ const session = await client.createSession({
     runTestsTool,
     fileManagerTool,
     githubPRTool,
-    progressUpdateTool
+    progressUpdateTool,
   ],
 });
 ```
@@ -94,23 +97,23 @@ session.on((event: SessionEvent) => {
     // Handle streaming response chunks
     process.stdout.write(event.data?.deltaContent || "");
   }
-  
+
   if (event.type === "tool.start") {
     // Tool execution started
     console.log(`Tool starting: ${event.data?.toolName}`);
   }
-  
+
   if (event.type === "tool.end") {
     // Tool execution completed
     const result = event.data?.result;
     console.log(`Tool result:`, result);
   }
-  
+
   if (event.type === "session.idle") {
     // Session completed
     console.log("Session idle");
   }
-  
+
   if (event.type === "error") {
     // Error occurred
     console.error(`Error: ${event.data?.message}`);
@@ -122,7 +125,7 @@ session.on((event: SessionEvent) => {
 
 ```typescript
 const response = await session.sendAndWait({
-  prompt: "Clone the repository and identify the bug in the auth module"
+  prompt: "Clone the repository and identify the bug in the auth module",
 });
 
 console.log(response?.data.content);
@@ -136,25 +139,29 @@ All tools in Devflow follow the SDK-compatible pattern:
 export function getGitTool() {
   return {
     name: "git_operations",
-    description: "Execute git operations (clone, branch, commit, push, pull, status)",
+    description:
+      "Execute git operations (clone, branch, commit, push, pull, status)",
     parameters: {
       type: "object",
       properties: {
         operation: {
           type: "string",
           enum: ["clone", "branch", "commit", "push", "pull", "status"],
-          description: "The git operation to perform"
+          description: "The git operation to perform",
         },
-        repo: { type: "string", description: "Repository in owner/repo format" },
+        repo: {
+          type: "string",
+          description: "Repository in owner/repo format",
+        },
         branch: { type: "string", description: "Branch name" },
         message: { type: "string", description: "Commit message" },
       },
-      required: ["operation", "repo"]
+      required: ["operation", "repo"],
     },
     async handler(args: any) {
       // Tool implementation
       return { success: true, output: "..." };
-    }
+    },
   };
 }
 ```
@@ -166,8 +173,12 @@ import { defineTool } from "@github/copilot-sdk";
 
 const gitTool = defineTool("git_operations", {
   description: "Execute git operations",
-  parameters: { /* ... */ },
-  handler: async (args) => { /* ... */ }
+  parameters: {
+    /* ... */
+  },
+  handler: async (args) => {
+    /* ... */
+  },
 });
 ```
 
@@ -183,13 +194,14 @@ const session = await client.createSession({
   mcpServers: {
     github: {
       type: "http",
-      url: "https://api.githubcopilot.com/mcp/"
-    }
-  }
+      url: "https://api.githubcopilot.com/mcp/",
+    },
+  },
 });
 ```
 
 This gives Copilot access to:
+
 - GitHub repositories and issues
 - Pull request management
 - Code search and analysis
@@ -207,25 +219,25 @@ describe("CopilotClient", () => {
     const client = getCopilotClient();
     const session = await client.createSession({
       model: "gpt-4.1",
-      tools: [myTool]
+      tools: [myTool],
     });
-    
+
     expect(session).toBeDefined();
   });
 
   it("should handle streaming events", async () => {
     const client = getCopilotClient();
     const session = await client.createSession({
-      streaming: true
+      streaming: true,
     });
-    
+
     const events: SessionEvent[] = [];
     session.on((event) => {
       events.push(event);
     });
-    
+
     await session.sendAndWait({ prompt: "test" });
-    
+
     expect(events.length).toBeGreaterThan(0);
   });
 });
@@ -240,11 +252,11 @@ describe("FixBugWorkflow with Copilot", () => {
       taskId: "test-123",
       intent: "fix-bug",
       repo: "owner/repo",
-      naturalLanguage: "Fix authentication bug"
+      naturalLanguage: "Fix authentication bug",
     };
 
     const result = await executeWorkflow(context);
-    
+
     expect(result.success).toBe(true);
     expect(result.prUrl).toBeDefined();
   });
@@ -294,8 +306,8 @@ GITHUB_TOKEN=ghp_your_token
 GITHUB_OWNER=your-username
 
 # Pinga Integration
-PINGA_API_URL=http://localhost:3000
-PINGA_API_SECRET=your-secret
+DEVFLOW_API_URL=http://localhost:3000
+DEVFLOW_API_SECRET=your-secret
 
 # Devflow
 DEVFLOW_API_SECRET=your-secret
@@ -331,32 +343,41 @@ Once real SDK is available:
 ## Troubleshooting SDK Integration
 
 ### Session Creation Fails
+
 ```typescript
 // Check if client is initialized
 const client = getCopilotClient();
 const session = await client.createSession({ model: "gpt-4.1" });
 
 if (!session) {
-  console.error("Failed to create session. Check GITHUB_TOKEN and model availability");
+  console.error(
+    "Failed to create session. Check GITHUB_TOKEN and model availability",
+  );
 }
 ```
 
 ### Tools Not Being Called
+
 ```typescript
 // Ensure tools are properly defined with required fields
 const tool = {
-  name: "tool_name",  // REQUIRED
-  description: "...",  // REQUIRED
-  parameters: { /* ... */ },  // RECOMMENDED
-  handler: async (args) => { /* ... */ }  // REQUIRED
+  name: "tool_name", // REQUIRED
+  description: "...", // REQUIRED
+  parameters: {
+    /* ... */
+  }, // RECOMMENDED
+  handler: async (args) => {
+    /* ... */
+  }, // REQUIRED
 };
 ```
 
 ### Event Streaming Not Working
+
 ```typescript
 // Ensure streaming is enabled
 const session = await client.createSession({
-  streaming: true  // Must be true
+  streaming: true, // Must be true
 });
 
 session.on((event) => {

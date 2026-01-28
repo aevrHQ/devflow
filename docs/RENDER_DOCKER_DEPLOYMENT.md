@@ -33,14 +33,14 @@ git push origin main
 
 Fill in the deployment settings:
 
-| Field | Value |
-|-------|-------|
-| **Name** | `devflow-agent-host` |
-| **Root Directory** | `apps/agent-host` |
-| **Environment** | `Docker` |
-| **Branch** | `main` |
-| **Build Command** | *(leave empty - Docker handles it)* |
-| **Start Command** | *(leave empty - Docker handles it)* |
+| Field              | Value                               |
+| ------------------ | ----------------------------------- |
+| **Name**           | `devflow-agent-host`                |
+| **Root Directory** | `apps/agent-host`                   |
+| **Environment**    | `Docker`                            |
+| **Branch**         | `main`                              |
+| **Build Command**  | _(leave empty - Docker handles it)_ |
+| **Start Command**  | _(leave empty - Docker handles it)_ |
 
 ### Step 5: Add Environment Variables
 
@@ -49,11 +49,12 @@ Click **"Advanced"** → **"Add Environment Variable"** for each:
 ```
 PORT=3001
 NODE_ENV=production
-PINGA_API_URL=https://devflow-web.vercel.app
+DEVFLOW_API_URL=https://devflow-web.vercel.app
 MONGODB_URI=mongodb+srv://YOUR_USER:YOUR_PASS@cluster.mongodb.net/devflow
 ```
 
 **Getting MONGODB_URI:**
+
 1. Go to https://cloud.mongodb.com
 2. Select your cluster → Click "Connect"
 3. Choose "Drivers" → Node.js
@@ -92,6 +93,7 @@ curl https://devflow-agent-host.onrender.com/health
 ```
 
 Should return:
+
 ```json
 {
   "status": "healthy",
@@ -122,31 +124,33 @@ The provided `Dockerfile` includes:
 ### Deployment Fails During Build
 
 **Check logs:**
+
 1. Go to Render dashboard → Your service
 2. Click "Logs" tab
 3. Look for error messages
 
 **Common issues:**
 
-| Error | Solution |
-|-------|----------|
-| "Can't find root Dockerfile" | Ensure "Root Directory" is set to `apps/agent-host` |
-| "Build failed: npm ERR" | Check package.json syntax, verify all dependencies listed |
+| Error                        | Solution                                                   |
+| ---------------------------- | ---------------------------------------------------------- |
+| "Can't find root Dockerfile" | Ensure "Root Directory" is set to `apps/agent-host`        |
+| "Build failed: npm ERR"      | Check package.json syntax, verify all dependencies listed  |
 | "Out of memory during build" | Render free tier has 0.5GB RAM; may fail on large installs |
 
 ### Service Won't Stay Running
 
 **Check:**
+
 1. Are environment variables set? (All 4 required)
 2. Is MongoDB connection string correct?
 3. Look at logs for specific errors
 
 **Common issues:**
 
-| Issue | Solution |
-|-------|----------|
-| Crashes immediately | MONGODB_URI is invalid or incomplete |
-| Health check fails | Check PORT (must be 3001) and PINGA_API_URL |
+| Issue                  | Solution                                                  |
+| ---------------------- | --------------------------------------------------------- |
+| Crashes immediately    | MONGODB_URI is invalid or incomplete                      |
+| Health check fails     | Check PORT (must be 3001) and DEVFLOW_API_URL             |
 | Can't connect from CLI | Verify AGENT_HOST_URL in web app is exact URL from Render |
 
 ### Health Check Fails
@@ -154,6 +158,7 @@ The provided `Dockerfile` includes:
 The health endpoint is `GET /health` on port 3001.
 
 **Test locally:**
+
 ```bash
 cd apps/agent-host
 npm run dev
@@ -162,11 +167,13 @@ curl http://localhost:3001/health
 ```
 
 **Test on Render:**
+
 ```bash
 curl https://your-render-url/health
 ```
 
 If it fails:
+
 1. Check environment variables in Render dashboard
 2. Check logs for startup errors
 3. Verify MONGODB_URI is correct
@@ -184,11 +191,11 @@ If it fails:
 
 For production use, consider upgrading to:
 
-| Tier | Price | CPU | Memory | Uptime |
-|------|-------|-----|--------|--------|
-| Free | $0 | 0.5 vCPU | 512MB | 50% (sleeps) |
-| Starter | $7/mo | 0.5 vCPU | 512MB | 100% |
-| Standard | $25/mo | 1 vCPU | 2GB | 100% |
+| Tier     | Price  | CPU      | Memory | Uptime       |
+| -------- | ------ | -------- | ------ | ------------ |
+| Free     | $0     | 0.5 vCPU | 512MB  | 50% (sleeps) |
+| Starter  | $7/mo  | 0.5 vCPU | 512MB  | 100%         |
+| Standard | $25/mo | 1 vCPU   | 2GB    | 100%         |
 
 **Recommendation:** Use free tier for testing, upgrade to Starter ($7/mo) for production.
 
@@ -196,16 +203,17 @@ For production use, consider upgrading to:
 
 ### Compared to Railway
 
-| Aspect | Railway | Render |
-|--------|---------|--------|
-| **Setup time** | 3-5 min | 5-10 min |
-| **Docker support** | Yes | Yes |
-| **Free tier** | Yes | Yes |
-| **Pricing** | $5/mo starter | $7/mo starter |
-| **UI/UX** | Very intuitive | Very intuitive |
-| **Performance** | Excellent | Excellent |
+| Aspect             | Railway        | Render         |
+| ------------------ | -------------- | -------------- |
+| **Setup time**     | 3-5 min        | 5-10 min       |
+| **Docker support** | Yes            | Yes            |
+| **Free tier**      | Yes            | Yes            |
+| **Pricing**        | $5/mo starter  | $7/mo starter  |
+| **UI/UX**          | Very intuitive | Very intuitive |
+| **Performance**    | Excellent      | Excellent      |
 
 Both are excellent choices. Docker on Render is best if you:
+
 - Prefer Docker-first deployments
 - Want containerization practice
 - Plan to scale infrastructure later
@@ -214,6 +222,7 @@ Both are excellent choices. Docker on Render is best if you:
 ### Compared to Vercel
 
 Vercel is **NOT recommended** for agent-host because:
+
 - ❌ Serverless architecture (agent-host needs persistent process)
 - ❌ 10-second function timeout (agent needs longer to execute)
 - ❌ No background job support
@@ -232,6 +241,7 @@ Use Render or Railway instead.
 ### Common Log Messages
 
 **Normal startup:**
+
 ```
 Loading environment variables...
 Starting DevFlow Agent Host...
@@ -239,6 +249,7 @@ Starting DevFlow Agent Host...
 ```
 
 **Error during task execution:**
+
 ```
 [ERROR] Task 123 failed: MongoDB connection lost
 Retrying in 30 seconds...
@@ -247,6 +258,7 @@ Retrying in 30 seconds...
 ### Enable Debug Logging
 
 Add environment variable:
+
 ```
 DEBUG=devflow:*
 ```
@@ -282,18 +294,20 @@ The provided Dockerfile follows production best practices:
 ✅ **Health checks** - Automatic monitoring  
 ✅ **Signal handling** - Graceful shutdown with dumb-init  
 ✅ **Non-root user** - Security best practice (implied by Alpine defaults)  
-✅ **Layer caching** - Optimizes rebuild speed  
+✅ **Layer caching** - Optimizes rebuild speed
 
 ## Security Considerations
 
 ### Secrets Management
 
 **DO NOT:**
+
 - ❌ Commit `.env` file to Git
 - ❌ Put secrets in Dockerfile
 - ❌ Log sensitive values
 
 **DO:**
+
 - ✅ Use Render's environment variable UI
 - ✅ Use `.env.example` template only (no secrets)
 - ✅ Keep MongoDB credentials in Render dashboard
@@ -322,10 +336,12 @@ After deployment:
 ## Support
 
 For Render-specific questions:
+
 - https://docs.render.com
 - https://render.com/support
 
 For DevFlow questions:
+
 - Check docs/ folder
 - Review TROUBLESHOOTING.md
 
@@ -334,6 +350,7 @@ For DevFlow questions:
 **You're ready to deploy!** 🚀
 
 This Docker configuration works on:
+
 - ✅ Render
 - ✅ Railway
 - ✅ Fly.io

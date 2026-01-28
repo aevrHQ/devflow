@@ -1,6 +1,6 @@
 # Telegram Group Chat Setup
 
-Learn how to connect Pinga to your Telegram group chats for team notifications.
+Learn how to connect DevFlow to your Telegram group chats for team notifications.
 
 ## Why Use Group Chats?
 
@@ -17,7 +17,7 @@ Group chats are perfect for:
 Before you begin:
 
 - ✅ Admin access to your Telegram group
-- ✅ Pinga account set up
+- ✅ DevFlow account set up
 - ✅ Basic understanding of [notification channels](/help/channels)
 
 ---
@@ -33,7 +33,7 @@ Before you begin:
 
 > 💡 **Tip**: You need admin rights to add bots
 
-### Step 2: Configure in Pinga Dashboard
+### Step 2: Configure in DevFlow Dashboard
 
 1. Go to **Settings** → **Notification Channels**
 2. Click **"Add Channel"** → Select **Telegram**
@@ -98,7 +98,7 @@ The bot will respond:
 
 **Telegram Limitation**: Deep links (`t.me/bot?start=...`) always open in **personal DMs**, never in groups.
 
-That's why we provide the copy-paste flow for groups. It's a Telegram platform restriction, not a Pinga limitation.
+That's why we provide the copy-paste flow for groups. It's a Telegram platform restriction, not a DevFlow limitation.
 
 ---
 
@@ -190,7 +190,7 @@ The bot responds to these commands:
 
 ### Who Can Connect Groups?
 
-Only Telegram group **administrators** can connect groups to Pinga.
+Only Telegram group **administrators** can connect groups to DevFlow.
 
 ### Can the Bot Read Messages?
 
@@ -238,11 +238,11 @@ Keep a note of which group receives what, especially if you have many channels.
 
 ## Advanced: Multiple Bots
 
-For enterprise teams, you can run multiple Pinga instances with different bots:
+For enterprise teams, you can run multiple DevFlow instances with different bots:
 
-- `@pinga-dev-bot` - Development notifications
-- `@pinga-prod-bot` - Production alerts
-- `@pinga-finance-bot` - Payment webhooks
+- `@devflow-dev-bot` - Development notifications
+- `@devflow-prod-bot` - Production alerts
+- `@devflow-finance-bot` - Payment webhooks
 
 Each can have separate configurations and access controls.
 
@@ -256,4 +256,4 @@ Each can have separate configurations and access controls.
 
 ---
 
-**Questions?** [Contact Support](mailto:support@pinga.app)
+**Questions?** [Contact Support](mailto:support@devflow.app)

@@ -4,14 +4,14 @@ DevFlow supports two deployment models: **Managed SaaS** and **Self-Hosted**. Th
 
 ## Quick Comparison
 
-| Aspect | Managed SaaS | Self-Hosted |
-|--------|-------------|------------|
-| **User Experience** | Sign up, connect GitHub, done | Run infrastructure yourself |
-| **GitHub Credentials** | Platform manages securely | You manage your own token |
-| **Scalability** | Shared infrastructure | Single machine/cluster |
-| **Cost** | Per-user subscription | Your infrastructure costs |
-| **Privacy** | Some data stored on platform | All data stays on your infrastructure |
-| **Best For** | Teams wanting ease of use | Organizations wanting full control |
+| Aspect                 | Managed SaaS                  | Self-Hosted                           |
+| ---------------------- | ----------------------------- | ------------------------------------- |
+| **User Experience**    | Sign up, connect GitHub, done | Run infrastructure yourself           |
+| **GitHub Credentials** | Platform manages securely     | You manage your own token             |
+| **Scalability**        | Shared infrastructure         | Single machine/cluster                |
+| **Cost**               | Per-user subscription         | Your infrastructure costs             |
+| **Privacy**            | Some data stored on platform  | All data stays on your infrastructure |
+| **Best For**           | Teams wanting ease of use     | Organizations wanting full control    |
 
 ## Architecture Diagrams
 
@@ -110,7 +110,7 @@ await fetch(`${AGENT_HOST_URL}/command`, {
 // apps/agent-host/src/credentials.ts
 const credentials = decryptCredentials(
   devflowRequest.credentials,
-  process.env.CREDENTIAL_ENCRYPTION_KEY
+  process.env.CREDENTIAL_ENCRYPTION_KEY,
 );
 
 const userGitHubToken = credentials.github;
@@ -140,7 +140,7 @@ AGENT_HOST_URL=https://your-agent-host-url
 # apps/agent-host/.env (deployed to Railway/Render/Fly.io)
 NODE_ENV=production
 PORT=3001
-PINGA_API_URL=https://devflow-web.vercel.app
+DEVFLOW_API_URL=https://devflow-web.vercel.app
 MONGODB_URI=your-mongodb-connection-string
 CREDENTIAL_ENCRYPTION_KEY=same-key-as-platform
 COPILOT_MODEL=gpt-4.1
@@ -165,7 +165,7 @@ AGENT_HOST_URL=http://localhost:3001
 # apps/agent-host/.env (self-hosted)
 NODE_ENV=production
 PORT=3001
-PINGA_API_URL=http://localhost:3000 (your platform)
+DEVFLOW_API_URL=http://localhost:3000 (your platform)
 MONGODB_URI=your-mongodb-connection-string
 COPILOT_MODEL=gpt-4.1
 
@@ -185,6 +185,7 @@ vercel deploy
 ```
 
 Set environment variables in Vercel dashboard:
+
 - `JWT_SECRET` - Generate with: `openssl rand -base64 32`
 - `DEVFLOW_API_SECRET` - Generate with: `openssl rand -base64 32`
 - `CREDENTIAL_ENCRYPTION_KEY` - Generate 32-byte key with: `openssl rand -base64 32`
@@ -197,7 +198,8 @@ Set environment variables in Vercel dashboard:
 See `RENDER_DOCKER_DEPLOYMENT.md` or `AGENT_HOST_DEPLOYMENT.md`
 
 Set environment variables:
-- `PINGA_API_URL` = `https://your-vercel-url`
+
+- `DEVFLOW_API_URL` = `https://your-vercel-url`
 - `CREDENTIAL_ENCRYPTION_KEY` = Same key as platform!
 - `MONGODB_URI` = Same as platform
 - `COPILOT_MODEL` = `gpt-4.1`
@@ -254,7 +256,7 @@ cd apps/agent-host
 cat > .env << EOF
 NODE_ENV=production
 PORT=3001
-PINGA_API_URL=http://your-platform-url
+DEVFLOW_API_URL=http://your-platform-url
 MONGODB_URI=your-mongodb-uri
 COPILOT_MODEL=gpt-4.1
 GITHUB_TOKEN=ghp_your_personal_access_token
@@ -274,7 +276,7 @@ docker build -t devflow-agent-host .
 # Run
 docker run \
   -p 3001:3001 \
-  -e PINGA_API_URL=http://your-platform-url \
+  -e DEVFLOW_API_URL=http://your-platform-url \
   -e GITHUB_TOKEN=ghp_your_personal_access_token \
   -e MONGODB_URI=your-mongodb-uri \
   devflow-agent-host
@@ -305,7 +307,7 @@ Managed SaaS Users
 devflow-web.vercel.app
     ├─ Public facing
     └─ Provides managed option
-    
+
 Self-Hosted Users
     ↓ (Self-installed)
 Their own devflow-web instance
@@ -314,6 +316,7 @@ Their own devflow-web instance
 ```
 
 Platform code supports both automatically:
+
 - If credentials are provided (managed): use them
 - If no credentials (self-hosted): fall back to GITHUB_TOKEN env var
 
@@ -338,11 +341,13 @@ Platform code supports both automatically:
 ### "Invalid credentials" Error
 
 **Managed SaaS:**
+
 - Check CREDENTIAL_ENCRYPTION_KEY is identical on platform and agent-host
 - Verify user's GitHub token is valid (might have expired)
 - Check MongoDB connection
 
 **Self-Hosted:**
+
 - Verify GITHUB_TOKEN is set and valid
 - Check GitHub API access scopes
 
@@ -351,6 +356,7 @@ Platform code supports both automatically:
 **Cause:** Encryption key mismatch between platform and agent-host
 
 **Solution:**
+
 ```bash
 # Verify both have same key
 echo $CREDENTIAL_ENCRYPTION_KEY  # On platform

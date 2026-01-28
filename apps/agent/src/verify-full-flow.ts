@@ -1,33 +1,33 @@
 import { FeatureWorkflow } from "./copilot/flows/feature.js";
 import { WorkflowContext } from "./copilot/flows/base.js";
-import PingaClient from "./pinga/client.js";
+import DevflowClient from "./devflow/client.js";
 
-// Mock PingaClient
-const originalSendProgressUpdate = PingaClient.prototype.sendProgressUpdate;
-const originalNotifyCompletion = PingaClient.prototype.notifyCompletion;
-const originalNotifyError = PingaClient.prototype.notifyError;
-const originalSendLog = PingaClient.prototype.sendLog;
+// Mock DevflowClient
+const originalSendProgressUpdate = DevflowClient.prototype.sendProgressUpdate;
+const originalNotifyCompletion = DevflowClient.prototype.notifyCompletion;
+const originalNotifyError = DevflowClient.prototype.notifyError;
+const originalSendLog = DevflowClient.prototype.sendLog;
 
-PingaClient.prototype.sendProgressUpdate = async (update) => {
+DevflowClient.prototype.sendProgressUpdate = async (update) => {
   console.log(
-    `[Pinga Mock] Progress: ${update.step} (${(update.progress * 100).toFixed(0)}%)`,
+    `[DevFlow Mock] Progress: ${update.step} (${(update.progress * 100).toFixed(0)}%)`,
   );
 };
 
-PingaClient.prototype.notifyCompletion = async (taskId, result) => {
-  console.log(`[Pinga Mock] Completion: ${JSON.stringify(result, null, 2)}`);
+DevflowClient.prototype.notifyCompletion = async (taskId, result) => {
+  console.log(`[DevFlow Mock] Completion: ${JSON.stringify(result, null, 2)}`);
 };
 
-PingaClient.prototype.notifyError = async (taskId, error) => {
-  console.error(`[Pinga Mock] Error: ${error}`);
+DevflowClient.prototype.notifyError = async (taskId, error) => {
+  console.error(`[DevFlow Mock] Error: ${error}`);
 };
 
-PingaClient.prototype.sendLog = async (
+DevflowClient.prototype.sendLog = async (
   taskId: string,
   level: "info" | "warn" | "error",
   message: string,
 ) => {
-  console.log(`[Pinga Mock] Log [${level}]: ${message}`);
+  console.log(`[DevFlow Mock] Log [${level}]: ${message}`);
 };
 
 async function main() {
@@ -87,7 +87,7 @@ async function main() {
 
   // This confirms the logic: Dynamic token requires valid key + matched encrypted string.
 
-  const workflow = new FeatureWorkflow("http://mock-pinga", "mock-token");
+  const workflow = new FeatureWorkflow("http://mock-devflow", "mock-token");
 
   try {
     // This expects to fail auth since we don't have a valid token (decryption returns empty -> undefined -> SDK uses env if any -> or fails)

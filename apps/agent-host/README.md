@@ -33,8 +33,8 @@ cp .env.example .env.local
 Fill in the required values:
 
 - `GITHUB_TOKEN` - Your GitHub PAT with repo access
-- `PINGA_API_URL` - URL to Pinga instance (e.g., https://pinga-mvp-web.vercel.app)
-- `PINGA_API_SECRET` - Shared secret for API authentication
+- `DEVFLOW_API_URL` - URL to Pinga instance (e.g., https://pinga-mvp-web.vercel.app)
+- `DEVFLOW_API_SECRET` - Shared secret for API authentication
 - `PORT` - Server port (default: 3001)
 
 ### Development

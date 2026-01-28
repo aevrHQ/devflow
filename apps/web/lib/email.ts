@@ -5,7 +5,7 @@ const MAIL_USER = process.env.MAIL_USER;
 const MAIL_PASS = process.env.MAIL_PASS;
 // const MAIL_HOST = process.env.MAIL_HOST || "smtp.gmail.com";
 // const MAIL_PORT = parseInt(process.env.MAIL_PORT || "587");
-const MAIL_FROM = process.env.MAIL_FROM || "notifications@pinga.local";
+const MAIL_FROM = process.env.MAIL_FROM || "notifications@devflow.local";
 
 export interface EmailOptions {
   to: string;
@@ -76,7 +76,7 @@ export function generateEmailHtml(
       </div>
       ${buttonHtml}
       <hr style="border: 0; border-top: 1px solid #eee; margin-top: 40px;" />
-      <p style="color: #666; font-size: 14px;">Pinga Notifications</p>
+      <p style="color: #666; font-size: 14px;">DevFlow Notifications</p>
     </body>
     </html>
   `;
@@ -93,7 +93,7 @@ export async function sendMagicLink(email: string, link: string, otp?: string) {
   `;
 
   const html = generateEmailHtml(
-    otp ? `Your Login Code: ${otp}` : "Sign in to Pinga",
+    otp ? `Your Login Code: ${otp}` : "Sign in to DevFlow",
     content,
     link,
     "Sign In",
@@ -101,7 +101,7 @@ export async function sendMagicLink(email: string, link: string, otp?: string) {
 
   await sendEmail({
     to: email,
-    subject: otp ? `Your Login Code: ${otp}` : "Sign in to Pinga",
+    subject: otp ? `Your Login Code: ${otp}` : "Sign in to DevFlow",
     html,
   });
 }

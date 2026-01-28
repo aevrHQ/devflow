@@ -68,7 +68,7 @@ Edit `apps/web/.env.local`:
 # Devflow Integration
 DEVFLOW_API_SECRET=your-secret-here
 AGENT_HOST_URL=http://localhost:3001
-NEXT_PUBLIC_PINGA_URL=http://localhost:3000
+NEXT_PUBLIC_DEVFLOW_URL=http://localhost:3000
 ```
 
 ### 3. Configure Agent Host
@@ -81,8 +81,8 @@ GITHUB_TOKEN=ghp_your_token_here
 GITHUB_OWNER=your-github-username
 
 # Pinga Integration
-PINGA_API_URL=http://localhost:3000
-PINGA_API_SECRET=your-secret-here
+DEVFLOW_API_URL=http://localhost:3000
+DEVFLOW_API_SECRET=your-secret-here
 
 # Server Configuration
 PORT=3001
@@ -241,6 +241,7 @@ User receives: `✅ Task completed! PR created: https://github.com/owner/repo/pu
 **Issue**: User sends `!devflow fix ...` but nothing happens
 
 **Solution**:
+
 1. Check that Pinga webhook is receiving messages
 2. Verify DEVFLOW_API_SECRET is set correctly in both apps
 3. Check Pinga logs for errors
@@ -250,6 +251,7 @@ User receives: `✅ Task completed! PR created: https://github.com/owner/repo/pu
 **Issue**: Task takes too long or doesn't complete
 
 **Solution**:
+
 1. Check Agent Host logs for tool errors
 2. Verify GitHub token has proper permissions
 3. Check network connectivity between services
@@ -259,6 +261,7 @@ User receives: `✅ Task completed! PR created: https://github.com/owner/repo/pu
 **Issue**: User doesn't see progress updates in chat
 
 **Solution**:
+
 1. Verify `send_progress_update` tool is being called
 2. Check Pinga `/api/copilot/task-update` logs
 3. Ensure X-API-Secret header matches
@@ -416,6 +419,7 @@ DEBUG=*
 ## Support
 
 For issues or questions:
+
 1. Check logs in both applications
 2. Review error messages in chat
 3. Verify environment variables

@@ -5,6 +5,7 @@
 ### What's Accomplished
 
 **Full end-to-end integration** of Devflow Agent Host with Pinga notification system:
+
 - ✅ Command parsing in Telegram/Slack (`!devflow fix owner/repo bug`)
 - ✅ Task forwarding to Agent Host
 - ✅ Workflow execution (4 types: fix, feature, explain, review-pr)
@@ -14,9 +15,11 @@
 ### Files Modified/Created
 
 **Agent Host** - Updated CopilotClient with real SDK integration ready
+
 - `src/copilot/client.ts` - Enhanced with @github/copilot-sdk integration wrapper
 
 **Pinga** - 5 files changed:
+
 1. `apps/web/lib/webhook/devflow.ts` - Command parser (NEW)
 2. `apps/web/app/api/copilot/command/route.ts` - Command receiver (NEW)
 3. `apps/web/app/api/copilot/task-update/route.ts` - Progress relay (NEW)
@@ -43,9 +46,9 @@ npm install --workspaces
 DEVFLOW_API_SECRET=test-secret-123
 AGENT_HOST_URL=http://localhost:3001
 
-# apps/agent-host/.env.local  
+# apps/agent-host/.env.local
 DEVFLOW_API_SECRET=test-secret-123
-PINGA_API_URL=http://localhost:3000
+DEVFLOW_API_URL=http://localhost:3000
 GITHUB_TOKEN=ghp_your_token
 
 # 3. Start servers in separate terminals
@@ -87,6 +90,7 @@ User sees real-time progress in chat
 ### Testing
 
 **Manual curl test:**
+
 ```bash
 curl -X POST http://localhost:3000/api/copilot/task-update \
   -H "X-API-Secret: test-secret-123" \
@@ -100,6 +104,7 @@ curl -X POST http://localhost:3000/api/copilot/task-update \
 ```
 
 **Integration test:**
+
 1. Send: `!devflow fix owner/repo Fix bug in auth`
 2. Watch progress in Telegram/Slack
 3. Verify PR created on GitHub

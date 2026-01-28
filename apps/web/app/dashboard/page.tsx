@@ -77,7 +77,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
   // Note: Activity feed is now fetched client-side via ActivityFeed component
 
-  const githubAppName = process.env.GITHUB_APP_NAME || "trypinga";
+  const githubAppName = process.env.GITHUB_APP_NAME || "trydevflow";
   const githubInstallUrl = `https://github.com/apps/${githubAppName}/installations/new`;
 
   return (
@@ -291,7 +291,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
               Need Help Getting Started?
             </h3>
             <p className="text-gray-600 text-sm mb-4">
-              Check out our guides to make the most of Pinga
+              Check out our guides to make the most of DevFlow
             </p>
             <div className="flex flex-wrap gap-3">
               <Link

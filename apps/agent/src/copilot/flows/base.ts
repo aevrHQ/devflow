@@ -1,7 +1,7 @@
 // Workflow executor base and orchestration logic
 import { CopilotClient, Session, SessionEvent } from "../client.js";
 import { CommandRequest, ProgressUpdate } from "../../types.js";
-import PingaClient from "../../pinga/client.js";
+import DevflowClient from "../../devflow/client.js";
 import { getAllTools } from "../tools/index.js";
 
 export interface WorkflowContext {
@@ -34,18 +34,18 @@ export interface WorkflowResult {
 }
 
 export class WorkflowExecutor {
-  protected pingaClient: PingaClient;
+  protected devflowClient: DevflowClient;
   protected copilot: CopilotClient;
-  protected pingaConfig: { url: string; secret: string };
+  protected devflowConfig: { url: string; secret: string };
 
   // Auto-incrementing progress tracking
   private progressUpdateCount = 0;
   private readonly ESTIMATED_MAX_UPDATES = 30; // Rough estimate of updates per workflow
   private readonly MAX_AUTO_PROGRESS = 0.95; // Cap at 95%, leave 5% for completion
 
-  constructor(pingaUrl: string, pingaSecret: string) {
-    this.pingaConfig = { url: pingaUrl, secret: pingaSecret };
-    this.pingaClient = new PingaClient(pingaUrl, pingaSecret);
+  constructor(devflowUrl: string, devflowSecret: string) {
+    this.devflowConfig = { url: devflowUrl, secret: devflowSecret };
+    this.devflowClient = new DevflowClient(devflowUrl, devflowSecret);
     this.copilot = new CopilotClient(); // Will be replaced with actual SDK when available
   }
 
@@ -62,7 +62,7 @@ export class WorkflowExecutor {
       this.progressUpdateCount / this.ESTIMATED_MAX_UPDATES,
     );
 
-    await this.pingaClient.sendProgressUpdate({
+    await this.devflowClient.sendProgressUpdate({
       taskId,
       status: "in_progress",
       step,
@@ -81,7 +81,7 @@ export class WorkflowExecutor {
     );
     try {
       if (result.success) {
-        await this.pingaClient.notifyCompletion(taskId, {
+        await this.devflowClient.notifyCompletion(taskId, {
           summary: result.summary || "Workflow completed successfully",
           prUrl: result.prUrl,
           output: result.output,
@@ -90,7 +90,7 @@ export class WorkflowExecutor {
           `[WorkflowExecutor] Completion notification sent for ${taskId}`,
         );
       } else {
-        await this.pingaClient.notifyError(
+        await this.devflowClient.notifyError(
           taskId,
           result.error || "Workflow failed",
         );
@@ -180,8 +180,8 @@ Begin by understanding the repository structure.`;
         tools: getAllTools({
           githubToken: userGitHubToken,
           localPath: context.localPath,
-          pingaUrl: this.pingaConfig.url,
-          pingaSecret: this.pingaConfig.secret,
+          devflowUrl: this.devflowConfig.url,
+          devflowSecret: this.devflowConfig.secret,
         }),
         githubToken: userGitHubToken,
         mcpServers:
@@ -217,12 +217,12 @@ Begin by understanding the repository structure.`;
 
       const session = await this.setupSession(context);
 
-      this.pingaClient.sendLog(
+      this.devflowClient.sendLog(
         context.taskId,
         "info",
         `Starting workflow execution for task: ${context.intent}`,
       );
-      this.pingaClient.sendLog(
+      this.devflowClient.sendLog(
         context.taskId,
         "info",
         `Context: Repo=${context.repo}, Branch=${context.branch || "default"}, LocalPath=${context.localPath || "N/A"}`,

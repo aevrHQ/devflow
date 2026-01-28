@@ -168,14 +168,14 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: true });
           }
 
-          // Send task to Agent Host via Pinga's copilot endpoint
+          // Send task to Agent Host via DevFlow's copilot endpoint
           const taskId = randomUUID();
-          const pingaBaseUrl =
-            process.env.NEXT_PUBLIC_PINGA_URL || "http://localhost:3000";
+          const devflowBaseUrl =
+            process.env.NEXT_PUBLIC_DEVFLOW_URL || "http://localhost:3000";
 
           try {
             const response = await fetch(
-              `${pingaBaseUrl}/api/copilot/command`,
+              `${devflowBaseUrl}/api/copilot/command`,
               {
                 method: "POST",
                 headers: {
@@ -673,7 +673,7 @@ export async function POST(request: NextRequest) {
                   await user.save();
 
                   await sendPlainMessage(
-                    "✅ Successfully connected your Telegram account to Pinga! You will now receive notifications here.\n\n💡 Tip: Use /help for more information.",
+                    "✅ Successfully connected your Telegram account to DevFlow! You will now receive notifications here.\n\n💡 Tip: Use /help for more information.",
                     chat.id.toString(),
                   );
                   console.log(
@@ -697,16 +697,16 @@ export async function POST(request: NextRequest) {
             // No parameter - show welcome message
             const isGroup = chat.type === "group" || chat.type === "supergroup";
             const welcomeMessage = isGroup
-              ? `👋 *Welcome to Pinga!*\n\n` +
+              ? `👋 *Welcome to DevFlow!*\n\n` +
                 `I'm your developer notification bot.\n\n` +
                 `To get started:\n` +
-                `1. Visit your Pinga Dashboard\n` +
+                `1. Visit your DevFlow Dashboard\n` +
                 `2. Go to Settings → Notification Channels\n` +
                 `3. Add a Telegram channel and click "Connect"\n\n` +
                 `Use /help to see all available commands.`
-              : `👋 *Welcome to Pinga!*\n\n` +
+              : `👋 *Welcome to DevFlow!*\n\n` +
                 `I help you receive developer notifications from GitHub, Vercel, Render, and more!\n\n` +
-                `To get started, visit your Pinga Dashboard and connect your Telegram account.\n\n` +
+                `To get started, visit your DevFlow Dashboard and connect your Telegram account.\n\n` +
                 `Use /help to see all available commands.`;
 
             await sendPlainMessage(welcomeMessage, chat.id.toString());
