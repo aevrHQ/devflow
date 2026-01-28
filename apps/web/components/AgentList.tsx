@@ -2,7 +2,7 @@
 
 import { useAgentStatus } from "@/hooks/useAgentStatus";
 import Link from "next/link";
-import { Activity, Power, Terminal, Clock } from "lucide-react";
+import { Activity, Power, Terminal, Clock, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 interface Agent {
@@ -42,6 +42,32 @@ export default function AgentList({ initialAgents }: AgentListProps) {
     } catch (error) {
       console.error("Failed to disconnect agent:", error);
       alert("An error occurred while disconnecting the agent.");
+    } finally {
+      setDisconnecting(null);
+    }
+  };
+
+  const handleDelete = async (agentId: string, agentName: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to PERMANENTLY delete "${agentName}"? This action cannot be undone.`,
+    );
+
+    if (!confirmed) return;
+
+    setDisconnecting(agentId); // Reusing state for loading
+    try {
+      const response = await fetch(`/api/agents/${agentId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert("Failed to delete agent. Please try again.");
+      }
+    } catch (error) {
+      console.error("Failed to delete agent:", error);
+      alert("An error occurred while deleting the agent.");
     } finally {
       setDisconnecting(null);
     }
@@ -176,6 +202,17 @@ export default function AgentList({ initialAgents }: AgentListProps) {
                         {disconnecting === agent.id
                           ? "Disconnecting..."
                           : "Disconnect"}
+                      </button>
+                    )}
+                    {agent.status === "offline" && (
+                      <button
+                        onClick={() => handleDelete(agent.id, agent.name)}
+                        disabled={disconnecting === agent.id}
+                        className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-red-600 hover:border-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        title="Delete Agent"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span className="sr-only">Delete</span>
                       </button>
                     )}
                   </div>
