@@ -19,6 +19,9 @@ export default function LandingPage() {
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold tracking-tight">
             DevFlow
+            <span className="ml-2 text-[10px] uppercase font-bold tracking-wider bg-black text-white px-2 py-0.5 rounded-full bg-gradient-to-r from-orange-400 to-amber-400">
+              Beta
+            </span>
           </Link>
           <div className="flex items-center gap-6">
             <Link
@@ -53,9 +56,9 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-medium text-gray-600 mb-8">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              v1.0 is now live
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-200 text-xs font-medium text-orange-700 mb-8">
+              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+              Public Beta
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
               Your centralized <br className="hidden md:block" /> webhook hub.
