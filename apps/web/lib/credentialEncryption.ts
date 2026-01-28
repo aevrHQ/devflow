@@ -12,7 +12,7 @@ export class CredentialEncryption {
       const envKey = process.env.CREDENTIAL_ENCRYPTION_KEY;
       if (!envKey) {
         throw new Error(
-          "CREDENTIAL_ENCRYPTION_KEY environment variable is required"
+          "CREDENTIAL_ENCRYPTION_KEY environment variable is required",
         );
       }
       key = envKey;
@@ -57,7 +57,7 @@ export class CredentialEncryption {
     const decipher = crypto.createDecipheriv(
       "aes-256-gcm",
       this.encryptionKey,
-      iv
+      iv,
     );
     decipher.setAuthTag(authTag);
 
@@ -73,6 +73,7 @@ export class CredentialEncryption {
  */
 export interface UserCredentials {
   github?: string; // GitHub PAT or OAuth access token
+  groqApiKeys?: string[]; // Array of Groq API Keys for rotation
   // Future: slack?: string, telegram?: string, etc.
 }
 
@@ -81,6 +82,7 @@ export interface UserCredentials {
  */
 export interface EncryptedCredentials {
   github?: string; // Encrypted GitHub token
+  groqApiKeys?: string[]; // Array of Encrypted Groq tokens
   // Future: slack?: string, telegram?: string, etc.
 }
 
@@ -89,13 +91,19 @@ export interface EncryptedCredentials {
  */
 export function encryptCredentials(
   credentials: UserCredentials,
-  key?: string
+  key?: string,
 ): EncryptedCredentials {
   const encryptor = new CredentialEncryption(key);
   const encrypted: EncryptedCredentials = {};
 
   if (credentials.github) {
     encrypted.github = encryptor.encrypt(credentials.github);
+  }
+
+  if (credentials.groqApiKeys && credentials.groqApiKeys.length > 0) {
+    encrypted.groqApiKeys = credentials.groqApiKeys.map((k) =>
+      encryptor.encrypt(k),
+    );
   }
 
   return encrypted;
@@ -106,13 +114,19 @@ export function encryptCredentials(
  */
 export function decryptCredentials(
   encrypted: EncryptedCredentials,
-  key?: string
+  key?: string,
 ): UserCredentials {
   const decryptor = new CredentialEncryption(key);
   const credentials: UserCredentials = {};
 
   if (encrypted.github) {
     credentials.github = decryptor.decrypt(encrypted.github);
+  }
+
+  if (encrypted.groqApiKeys && encrypted.groqApiKeys.length > 0) {
+    credentials.groqApiKeys = encrypted.groqApiKeys.map((k) =>
+      decryptor.decrypt(k),
+    );
   }
 
   return credentials;

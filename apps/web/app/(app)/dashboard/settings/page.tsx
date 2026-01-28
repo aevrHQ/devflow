@@ -23,6 +23,7 @@ export default async function SettingsPage() {
     : { aiSummary: false, allowedSources: [] };
 
   const hasGithubToken = !!dbUser?.credentials?.github;
+  const groqKeysCount = dbUser?.credentials?.groqApiKeys?.length || 0;
 
   // Fetch stats
   const { default: TaskAssignment } = await import("@/models/TaskAssignment");
@@ -53,6 +54,7 @@ export default async function SettingsPage() {
       channels={channels}
       preferences={preferences}
       hasGithubToken={hasGithubToken}
+      groqKeysCount={groqKeysCount}
       header={
         <ProfileHeader
           stats={{

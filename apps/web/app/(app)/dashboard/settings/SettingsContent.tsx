@@ -21,6 +21,7 @@ interface SettingsContentProps {
   channels: Channel[];
   preferences: { aiSummary: boolean; allowedSources: string[] };
   hasGithubToken: boolean;
+  groqKeysCount?: number;
   header: React.ReactNode;
 }
 
@@ -29,6 +30,7 @@ export default function SettingsContent({
   channels,
   preferences,
   hasGithubToken,
+  groqKeysCount = 0,
   header,
 }: SettingsContentProps) {
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
@@ -58,7 +60,10 @@ export default function SettingsContent({
           }
         >
           <div className="overflow-y-auto max-h-[70vh] pb-8">
-            <CredentialsForm initialHasGithubToken={hasGithubToken} />
+            <CredentialsForm
+              initialHasGithubToken={hasGithubToken}
+              initialGroqKeysCount={groqKeysCount}
+            />
           </div>
         </SettingsDrawer>
 

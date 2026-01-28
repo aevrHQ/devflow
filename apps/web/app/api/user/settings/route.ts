@@ -20,6 +20,7 @@ const preferencesSchema = z.object({
 
 const credentialsSchema = z.object({
   github: z.string().optional(),
+  groqApiKeys: z.array(z.string()).optional(),
 });
 
 const settingsSchema = z.object({
@@ -51,22 +52,16 @@ export async function POST(request: Request) {
 
     if (result.data.credentials) {
       const { encryptCredentials } = await import("@/lib/credentialEncryption");
-      // Only update provided credentials (merge logic optional, but simple set is fine for now)
-      // Since the form sends all keys or singular updates, we need to be careful not to overwrite with empty
-      // But the schema is github optional.
-
-      // We should probably merge with existing credentials if partial update?
-      // For now, let's just encrypt what's valid.
 
       const encrypted = encryptCredentials(result.data.credentials);
 
-      // For deep update we might need dot notation or merge
-      // Using simple assignment replaces the whole object if we are not careful
-      // But Mongoose update with object does replace nested unless using dots.
-
-      // Let's use dot notation for safer partial updates
       if (encrypted.github) {
         updateData["credentials.github"] = encrypted.github;
+      }
+
+      // Handle Groq API Keys array
+      if (encrypted.groqApiKeys) {
+        updateData["credentials.groqApiKeys"] = encrypted.groqApiKeys;
       }
     }
 

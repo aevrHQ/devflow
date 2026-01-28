@@ -25,6 +25,7 @@ export interface IUser {
   // Encrypted Credentials (SaaS)
   credentials?: {
     github?: string; // Encrypted
+    groqApiKeys?: string[]; // Encrypted
   };
 }
 
@@ -56,6 +57,7 @@ const UserSchema = new Schema<UserDocument>(
 
     credentials: {
       github: { type: String }, // Encrypted
+      groqApiKeys: { type: [String], default: [] }, // Encrypted
     },
   },
   {
