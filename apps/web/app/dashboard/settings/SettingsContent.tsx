@@ -36,7 +36,7 @@ export default function SettingsContent({
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
 
   return (
-    <div className="max-w-md mx-auto pb-20">
+    <div className="max-w-md md:max-w-3xl mx-auto pb-20">
       {header}
 
       <SettingsSection title="Profile & Account">

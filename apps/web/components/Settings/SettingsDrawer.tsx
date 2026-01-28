@@ -1,7 +1,15 @@
 "use client";
 
 import { Drawer } from "vaul";
-import { ReactNode } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ReactNode, useState, useEffect } from "react";
+import { useMediaQuery } from "@/hooks/aevr/use-media-query";
 
 interface SettingsDrawerProps {
   trigger: ReactNode;
@@ -18,6 +26,29 @@ export default function SettingsDrawer({
   open,
   onOpenChange,
 }: SettingsDrawerProps) {
+  // Always start with false to match server-side rendering (mobile-first approach or safe default)
+  // But wait for hydration to check media query to avoid hydration mismatch
+  const [isDesktop, setIsDesktop] = useState(false);
+  const isDesktopQuery = useMediaQuery("(min-width: 768px)");
+
+  useEffect(() => {
+    setIsDesktop(isDesktopQuery);
+  }, [isDesktopQuery]);
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+        <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+          </DialogHeader>
+          <div className="pt-2">{children}</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Trigger asChild>{trigger}</Drawer.Trigger>
