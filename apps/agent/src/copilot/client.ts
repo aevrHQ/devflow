@@ -238,13 +238,34 @@ export class CopilotClient {
             `[CopilotClient] Sending Prompt: ${request.prompt.substring(0, 50)}...`,
           );
           try {
-            const response = await realSession.sendAndWait(request);
+            // Increase timeout to 10 minutes for complex workflows
+            // The SDK's default 60s is too short for comprehensive tasks
+            const response = await realSession.sendAndWait(request, 600000); // 10 min timeout
             console.log(
               `[CopilotClient] Final Response:`,
               JSON.stringify(response, null, 2),
             );
             return response;
           } catch (err) {
+            // Check if it's a timeout error
+            const isTimeout =
+              err instanceof Error &&
+              err.message.includes("Timeout after") &&
+              err.message.includes("waiting for session.idle");
+
+            if (isTimeout) {
+              console.warn(
+                `[CopilotClient] Session timed out after 10 minutes, but workflow may still` +
+                  ` be running. The session will continue in the background.`,
+              );
+              // Don't throw - allow the workflow to continue and send completion when done
+              // The `send_progress_update` tool will handle final status
+              return {
+                output,
+                warning: "Workflow timed out but may still complete",
+              };
+            }
+
             console.error(`[CopilotClient] sendAndWait failed:`, err);
             throw err;
           }
