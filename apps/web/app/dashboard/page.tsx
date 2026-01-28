@@ -76,7 +76,8 @@ export default async function DashboardPage(props: DashboardPageProps) {
   // Fetch stats (now uses NotificationLog)
   const stats = await getUserStats(user.userId);
 
-  // Note: Activity feed is now fetched client-side via ActivityFeed component
+  // Fetch agents
+  const agents = await Agent.find({ userId: new Types.ObjectId(user.userId) });
 
   const githubAppName = process.env.GITHUB_APP_NAME || "trydevflow";
   const githubInstallUrl = `https://github.com/apps/${githubAppName}/installations/new`;
@@ -183,8 +184,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
             </Link>
           </div>
 
-          {(await Agent.find({ userId: new Types.ObjectId(user.userId) }))
-            .length === 0 ? (
+          {agents.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <p className="mb-4">No agents connected yet.</p>
               <code className="bg-gray-100 px-2 py-1 rounded-sm text-xs">
@@ -193,31 +193,54 @@ export default async function DashboardPage(props: DashboardPageProps) {
             </div>
           ) : (
             <div className="space-y-3">
-              {(
-                await Agent.find({ userId: new Types.ObjectId(user.userId) })
-              ).map((agent) => (
-                <div
-                  key={agent.agentId}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-2 h-2 rounded-full ${agent.status === "online" ? "bg-green-500" : "bg-gray-400"}`}
-                    />
-                    <div>
-                      <p className="font-medium text-sm text-gray-900">
-                        {agent.name}
-                      </p>
-                      <p className="text-xs text-gray-500 font-mono">
-                        {agent.platform} • {agent.version}
-                      </p>
+              {agents.map((agent) => {
+                const now = new Date().getTime();
+                const lastSeen = new Date(agent.lastHeartbeat).getTime();
+                const diffSec = (now - lastSeen) / 1000;
+
+                let displayStatus = "offline";
+                if (diffSec < 45) {
+                  // 45s buffer for network latency
+                  displayStatus = "online";
+                } else if (diffSec < 5 * 60) {
+                  // 5 minutes
+                  displayStatus = "stale";
+                }
+
+                // If the DB explicitly says offline, respect it
+                if (agent.status === "offline") displayStatus = "offline";
+
+                return (
+                  <div
+                    key={agent.agentId}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          displayStatus === "online"
+                            ? "bg-green-500"
+                            : displayStatus === "stale"
+                              ? "bg-yellow-500"
+                              : "bg-gray-400"
+                        }`}
+                        title={`${displayStatus} (Last seen: ${Math.round(diffSec)}s ago)`}
+                      />
+                      <div>
+                        <p className="font-medium text-sm text-gray-900">
+                          {agent.name}
+                        </p>
+                        <p className="text-xs text-gray-500 font-mono">
+                          {agent.platform} • {agent.version}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-400 font-mono">
+                      {agent.agentId.substring(0, 12)}...
                     </div>
                   </div>
-                  <div className="text-xs text-gray-400 font-mono">
-                    {agent.agentId.substring(0, 12)}...
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
