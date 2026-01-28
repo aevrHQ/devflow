@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft, GitBranch, Terminal } from "lucide-react";
 
 import DeleteTaskButton from "@/components/DeleteTaskButton";
+import StopTaskButton from "@/components/StopTaskButton";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,32 @@ export default async function TaskDetailsPage({
 
   const agent = await Agent.findOne({ agentId: task.agentId });
 
+  // Check for offline agent on in_progress tasks
+  let isOffline = false;
+  if (
+    task.status === "in_progress" &&
+    agent &&
+    new Date().getTime() - new Date(agent.lastHeartbeat).getTime() >
+      5 * 60 * 1000 // 5 minutes
+  ) {
+    isOffline = true;
+
+    // Auto-fail task
+    task.status = "failed";
+    task.result = {
+      success: false,
+      output: task.result?.output,
+      prUrl: task.result?.prUrl,
+      error: "Agent went offline unexpectedly (heartbeat timeout)",
+    };
+    task.completedAt = new Date();
+    await task.save();
+  }
+
+  // Fetch sessions
+  const { default: Session } = await import("@/models/Session");
+  const sessions = await Session.find({ taskId }).sort({ createdAt: -1 });
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
@@ -48,7 +75,10 @@ export default async function TaskDetailsPage({
             <ArrowLeft className="w-4 h-4" />
             Back to Tasks
           </Link>
-          <DeleteTaskButton taskId={taskId} />
+          <div className="flex items-center gap-2">
+            <StopTaskButton taskId={taskId} status={task.status} />
+            <DeleteTaskButton taskId={taskId} />
+          </div>
         </div>
 
         <div className="flex items-start justify-between gap-4">
@@ -114,6 +144,44 @@ export default async function TaskDetailsPage({
               </div>
             )}
           </div>
+
+          {/* Sessions */}
+          {sessions.length > 0 && (
+            <div className="bg-white rounded-xl  border border-gray-100 p-6">
+              <h2 className="text-lg font-semibold mb-4">Sessions</h2>
+              <div className="space-y-4">
+                {sessions.map((session) => (
+                  <div
+                    key={session.sessionId}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-sm text-gray-900">
+                          Session {session.sessionId.substring(0, 8)}...
+                        </p>
+                        <span
+                          className={`text-xs px-1.5 py-0.5 rounded uppercase font-medium ${
+                            session.status === "active"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          {session.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Last active:{" "}
+                        {new Date(session.lastActiveAt).toLocaleString()}
+                      </p>
+                    </div>
+                    {/* Placeholder for Restart Session button - future implementation */}
+                    {/* <button className="text-xs text-blue-600 hover:underline">Restart</button> */}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Output / Result */}
           {(task.result?.output || task.result?.error) && (
@@ -215,6 +283,13 @@ export default async function TaskDetailsPage({
                   {agent?.platform || "unknown"}
                 </div>
               </div>
+
+              {isOffline && (
+                <div className="bg-red-50 text-red-700 p-3 rounded-lg text-xs border border-red-200 mt-2">
+                  <strong>Agent Offline</strong>
+                  <p>Agent hasn&apos;t reported in for &gt; 5 minutes.</p>
+                </div>
+              )}
             </div>
           </div>
 

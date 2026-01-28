@@ -4,6 +4,8 @@ import { useAgentStatus } from "@/hooks/useAgentStatus";
 import Link from "next/link";
 import { Activity, Power, Terminal, Clock, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { Button } from "./ui/aevr/button";
+import { Trash } from "iconsax-react";
 
 interface Agent {
   id: string;
@@ -149,7 +151,7 @@ export default function AgentList({ initialAgents }: AgentListProps) {
                   {/* Agent Info */}
                   <div className="flex-1 space-y-3">
                     <div className="flex items-start gap-3">
-                      {getStatusIcon(agent.status)}
+                      <div className="my-2">{getStatusIcon(agent.status)}</div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-gray-900">
@@ -185,35 +187,40 @@ export default function AgentList({ initialAgents }: AgentListProps) {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2">
-                    <Link
-                      href={`/dashboard/tasks?agent=${agent.id}`}
-                      className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Activity className="w-4 h-4" />
-                      View Tasks
-                    </Link>
+                    <Button asChild variant={"secondary"}>
+                      <Link href={`/dashboard/tasks?agent=${agent.id}`}>
+                        <Activity className="w-4 h-4" />
+                        View Tasks
+                      </Link>
+                    </Button>
                     {agent.status !== "offline" && (
-                      <button
+                      <Button
                         onClick={() => handleDisconnect(agent.id, agent.name)}
                         disabled={disconnecting === agent.id}
-                        className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        variant={"danger"}
+                        title="Disconnect Agent"
                       >
                         <Power className="w-4 h-4" />
                         {disconnecting === agent.id
                           ? "Disconnecting..."
                           : "Disconnect"}
-                      </button>
+                      </Button>
                     )}
                     {agent.status === "offline" && (
-                      <button
+                      <Button
                         onClick={() => handleDelete(agent.id, agent.name)}
                         disabled={disconnecting === agent.id}
-                        className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-red-600 hover:border-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        variant={"error-variant"}
                         title="Delete Agent"
+                        className="py-3"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash
+                          className="w-4 h-4"
+                          variant="TwoTone"
+                          color="currentColor"
+                        />
                         <span className="sr-only">Delete</span>
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

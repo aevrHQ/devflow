@@ -6,7 +6,6 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Loader2,
   GitBranch,
   Terminal,
   ChevronRight,

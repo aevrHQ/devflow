@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Loader2, Mail, CheckCircle2, Lock, ArrowLeft } from "lucide-react";
+import { Mail, CheckCircle2, Lock, ArrowLeft } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Loader from "@/components/ui/aevr/loader";
 

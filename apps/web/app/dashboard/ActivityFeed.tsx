@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/aevr/button";
 import ResponsiveDialog from "@/components/ui/aevr/responsive-dialog";
 import {
-  Loader2,
   RefreshCw,
   Eye,
   CheckCircle,

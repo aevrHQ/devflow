@@ -20,7 +20,7 @@ const buttonVariants = cva(
         ghost:
           "bg-transparent text-red-600 hover:bg-neutral-50 focus:ring-neutral-500 dark:text-red-400 dark:hover:bg-neutral-950/50 dark:focus:ring-neutral-600",
         danger:
-          "bg-neutral-500 text-red-50 hover:bg-neutral-600 focus:ring-neutral-500 dark:bg-neutral-600 dark:hover:bg-neutral-700 dark:focus:ring-neutral-600",
+          "bg-red-500 text-red-50 hover:bg-red-600 focus:ring-red-500 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-600",
         "warning-variant":
           "bg-yellow-500 text-yellow-50 hover:bg-yellow-600 focus:ring-yellow-500 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-600",
         "success-variant":
@@ -28,7 +28,7 @@ const buttonVariants = cva(
         "info-variant":
           "bg-sky-500 text-sky-50 hover:bg-sky-600 focus:ring-sky-500 dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-600",
         "error-variant":
-          "bg-neutral-500 text-red-50 hover:bg-neutral-600 focus:ring-neutral-500 dark:bg-neutral-600 dark:hover:bg-neutral-700 dark:focus:ring-neutral-600",
+          "bg-red-100 text-red-600 hover:bg-red-200 focus:ring-red-200 dark:bg-red-200 dark:hover:bg-red-300 dark:focus:ring-red-300",
       },
       size: {
         sm: "px-2 py-1.5 text-sm rounded-lg",
