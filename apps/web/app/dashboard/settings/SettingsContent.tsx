@@ -46,7 +46,14 @@ export default function SettingsContent({
           onOpenChange={(open) => setOpenDrawer(open ? "credentials" : null)}
           trigger={
             <SettingsItem
-              icon={<Key size={24} variant="TwoTone" className="text-black" />}
+              icon={
+                <Key
+                  size={24}
+                  variant="TwoTone"
+                  color="currentColor"
+                  className="text-black"
+                />
+              }
               label="Credentials"
               onClick={() => setOpenDrawer("credentials")}
             />
@@ -65,6 +72,7 @@ export default function SettingsContent({
             <SettingsItem
               icon={
                 <ShieldSecurity
+                  color="currentColor"
                   size={24}
                   variant="TwoTone"
                   className="text-black"
@@ -92,6 +100,7 @@ export default function SettingsContent({
                 <Notification
                   size={24}
                   variant="TwoTone"
+                  color="currentColor"
                   className="text-black"
                 />
               }
@@ -115,7 +124,12 @@ export default function SettingsContent({
           trigger={
             <SettingsItem
               icon={
-                <Setting4 size={24} variant="TwoTone" className="text-black" />
+                <Setting4
+                  size={24}
+                  variant="TwoTone"
+                  color="currentColor"
+                  className="text-black"
+                />
               }
               label="Preferences"
               onClick={() => setOpenDrawer("preferences")}
@@ -137,6 +151,7 @@ export default function SettingsContent({
                 <InfoCircle
                   size={24}
                   variant="TwoTone"
+                  color="currentColor"
                   className="text-black"
                 />
               }
