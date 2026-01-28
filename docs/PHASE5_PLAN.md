@@ -148,7 +148,7 @@ apps/agent/
 {
   "version": "1.0",
   "platform": {
-    "url": "https://devflow-web.vercel.app",
+    "url": "https://devflow.aevr.space",
     "api_key": "devflow_sk_live_xxxxx"
   },
   "agent": {
@@ -231,7 +231,7 @@ $ npm install -g devflow-agent
 $ devflow-agent init
 
 ✓ Welcome to DevFlow Agent!
-✓ Opening browser to https://devflow-web.vercel.app/auth/agent
+✓ Opening browser to https://devflow.aevr.space/auth/agent
 
 [Browser opens, user logs in]
 
@@ -243,7 +243,7 @@ $ devflow-agent init
 $ devflow-agent start
 
 ✓ DevFlow Agent v0.1.0 starting...
-✓ Platform: https://devflow-web.vercel.app
+✓ Platform: https://devflow.aevr.space
 ✓ Agent ID: agent_abc123
 ✓ Polling for commands every 5s...
 ✓ Press Ctrl+C to stop

@@ -31,7 +31,7 @@ async function initCommand(options: InitOptions): Promise<void> {
   const platformUrl =
     options.platformUrl ||
     process.env.PLATFORM_URL ||
-    "https://devflow-web.vercel.app";
+    "https://devflow.aevr.space";
 
   console.log("📍 Platform URL:", platformUrl);
   console.log("⏳ Starting authentication flow...\n");
@@ -422,7 +422,7 @@ export async function runCLI(): Promise<void> {
             alias: "p",
             describe: "Platform URL",
             type: "string",
-            default: "https://devflow-web.vercel.app",
+            default: "https://devflow.aevr.space",
           })
           .option("agent-host-url", {
             describe:

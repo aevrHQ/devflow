@@ -27,13 +27,29 @@ export default function LandingPage() {
             Public Beta
           </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
-            The centralized hub for your <br className="hidden md:block" />{" "}
-            Webhooks & Agents.
+            The intelligent agent for your <br className="hidden md:block" />{" "}
+            Webhooks & Infrastructure.
           </h1>
           <p className="text-lg md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Turn noisy payloads into structured notifications. Connect local
-            agents to control your infrastructure securely from Telegram or
-            Slack.
+            Powered by the new{" "}
+            <Link
+              href="https://github.com/features/copilot/cli"
+              target="_blank"
+              className="underline hover:text-black transition-colors"
+            >
+              <strong>GitHub Copilot CLI</strong>{" "}
+            </Link>
+            and{" "}
+            <Link
+              href="https://github.com/github/copilot-sdk"
+              target="_blank"
+              className="underline hover:text-black transition-colors"
+            >
+              <strong> SDK</strong>
+            </Link>{" "}
+            . <br className="hidden md:block" />
+            Connect local agents to control your infrastructure securely from
+            Telegram or Slack.
           </p>
           <div className="flex items-center flex-wrap justify-center gap-4">
             <Link
@@ -60,13 +76,13 @@ export default function LandingPage() {
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <FeatureCard
             icon={<Github className="w-6 h-6" />}
-            title="GitHub Integration"
-            description="Track stars, issues, PRs, and deployments in real-time. Never miss a contribution."
+            title="Powered by Copilot"
+            description="Built on the new GitHub Copilot SDK. Leveraging the intelligence of Copilot CLI for complex dev tasks."
           />
           <FeatureCard
             icon={<Terminal className="w-6 h-6" />}
             title="Remote Agent Control"
-            description="Securely connect your local machine or servers. Execute scripts and tools via a secure tunnel."
+            description="Securely connect your local machine or servers using the @untools/devflow CLI."
           />
           <FeatureCard
             icon={<Bot className="w-6 h-6" />}
@@ -76,54 +92,101 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Agent Capabilities Section */}
+      {/* Powered by Copilot Section */}
       <section className="bg-black text-white py-24">
         <div className="container mx-auto px-6">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold mb-6">CLI for power users</h2>
-              <p className="text-gray-400 mb-8 text-lg leading-relaxed">
-                Install the DevFlow CLI to connect any machine in seconds.
-                Securely tunnel traffic, forward webhooks to localhost, and
-                execute remote commands without SSH.
-              </p>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>Secure WebSocket Tunnels</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>Localhost Webhook Forwarding</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>Remote Script Execution</span>
+          <div className="max-w-5xl mx-auto">
+            <div className="flex flex-col md:flex-row items-center gap-12 mb-16">
+              <div className="flex-1">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                  Powered by <br />
+                  <span className="">GitHub Copilot</span>
+                </h2>
+                <p className="text-gray-400 text-lg leading-relaxed mb-8">
+                  DevFlow leverages the new{" "}
+                  <Link
+                    href="https://github.com/github/copilot-sdk"
+                    target="_blank"
+                    className="text-white hover:underline decoration-blue-400 decoration-2 underline-offset-4"
+                  >
+                    GitHub Copilot SDK
+                  </Link>{" "}
+                  (released Jan 2026) to give you an agent that truly
+                  understands your code.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-lg bg-gray-900 border border-gray-800">
+                      <Terminal className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold mb-1">Copilot CLI Engine</h3>
+                      <p className="text-sm text-gray-500">
+                        Uses{" "}
+                        <Link
+                          href="https://github.com/features/copilot/cli"
+                          target="_blank"
+                          className="hover:text-blue-400 transition-colors"
+                        >
+                          gh copilot
+                        </Link>{" "}
+                        to translate natural language into complex
+                        infrastructure commands.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-lg bg-gray-900 border border-gray-800">
+                      <Bot className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold mb-1">Agentic Workflows</h3>
+                      <p className="text-sm text-gray-500">
+                        Execute multi-step tasks like &quot;fix this bug&quot;
+                        or &quot;optimize my dockerfile&quot; directly from
+                        Slack.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex-1 w-full">
-              <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 font-mono text-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-8 bg-gray-800/50 flex items-center px-4 gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
-                </div>
-                <div className="mt-6 space-y-4">
-                  <div>
-                    <span className="text-green-400">$</span> npx devflow login
+              <div className="flex-1 w-full">
+                <div className="bg-[#0d1117] rounded-xl border border-gray-800 p-1 font-mono text-sm shadow-2xl">
+                  <div className="bg-[#161b22] rounded-t-lg p-3 flex items-center gap-2 border-b border-gray-800">
+                    <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                    <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                    <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+                    <div className="ml-2 text-gray-500 text-xs">
+                      miracleio@devflow:~/project
+                    </div>
                   </div>
-                  <div className="text-gray-400">
-                    authenticating... done! <br />
-                    logged in as miracleio
-                  </div>
-                  <div>
-                    <span className="text-green-400">$</span> npx devflow init
-                  </div>
-                  <div className="text-gray-400">
-                    → Agent Name: production-server <br />
-                    → Connect to: standard <br />
-                    Agent connected! Listening for jobs...
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-400">➜</span>
+                      <span className="text-blue-400">~</span>
+                      <span className="text-gray-300">npm install</span>
+                      <span className="text-yellow-300">@untools/devflow</span>
+                    </div>
+                    <div className="text-gray-500 pl-4 border-l-2 border-gray-800">
+                      <div>+ @untools/devflow@0.2.7</div>
+                      <div>added 1 package and audited 42 packages in 2s</div>
+                      <div className="text-green-500">
+                        found 0 vulnerabilities
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-400">➜</span>
+                      <span className="text-blue-400">~</span>
+                      <span className="text-gray-300">npx devflow init</span>
+                    </div>
+                    <div className="text-gray-400">
+                      <span className="text-green-400">✓</span> Authenticated
+                      with GitHub Copilot <br />
+                      <span className="text-green-400">✓</span> Connected to
+                      agent hub <br />
+                      <span className="text-blue-400">ℹ</span> Listening for
+                      commands...
+                    </div>
                   </div>
                 </div>
               </div>
@@ -194,20 +257,34 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="container mx-auto px-6 pb-20">
-        <div className="bg-black text-white rounded-2xl p-12 text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-6">
-            Ready to tame your notifications?
+        <div className="bg-black text-white rounded-2xl p-12 text-center max-w-4xl mx-auto relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-12 opacity-10">
+            <Terminal className="w-64 h-64" />
+          </div>
+
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 relative z-10">
+            Start your AI-powered <br /> DevOps journey
           </h2>
-          <p className="text-gray-400 mb-8 max-w-lg mx-auto">
-            Join developers who are switching to a quieter, more organized way
-            of tracking their projects.
+          <p className="text-gray-400 mb-8 max-w-lg mx-auto text-lg relative z-10">
+            Join developers who are using DevFlow and GitHub Copilot to automate
+            their infrastructure.
           </p>
-          <Link
-            href="/login"
-            className="inline-block bg-white text-black px-8 py-3.5 rounded-full font-medium hover:bg-gray-100 transition-colors"
-          >
-            Get Started for Free
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-4 relative z-10">
+            <Link
+              href="/dashboard"
+              className="inline-block bg-white text-black px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-colors"
+            >
+              Get Started for Free
+            </Link>
+            <Link
+              href="https://github.com/miracleonyenma/devflow"
+              target="_blank"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-gray-700 font-medium hover:bg-gray-900 transition-colors"
+            >
+              <Github className="w-5 h-5" />
+              Star on GitHub
+            </Link>
+          </div>
         </div>
       </section>
     </>

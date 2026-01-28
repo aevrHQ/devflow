@@ -49,7 +49,7 @@ Click **"Advanced"** → **"Add Environment Variable"** for each:
 ```
 PORT=3001
 NODE_ENV=production
-DEVFLOW_API_URL=https://devflow-web.vercel.app
+DEVFLOW_API_URL=https://devflow.aevr.space
 MONGODB_URI=mongodb+srv://YOUR_USER:YOUR_PASS@cluster.mongodb.net/devflow
 ```
 

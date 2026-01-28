@@ -113,8 +113,8 @@ export function getDevflowHelpText(): string {
   return `🤖 *Devflow Agent*
 
 *Dashboard & Tasks*
-🔗 [Dashboard](https://devflow-web.vercel.app/dashboard)
-📋 [View Tasks](https://devflow-web.vercel.app/dashboard/tasks)
+🔗 [Dashboard](https://devflow.aevr.space/dashboard)
+📋 [View Tasks](https://devflow.aevr.space/dashboard/tasks)
 
 *Available Commands*
 

@@ -140,7 +140,7 @@ AGENT_HOST_URL=https://your-agent-host-url
 # apps/agent-host/.env (deployed to Railway/Render/Fly.io)
 NODE_ENV=production
 PORT=3001
-DEVFLOW_API_URL=https://devflow-web.vercel.app
+DEVFLOW_API_URL=https://devflow.aevr.space
 MONGODB_URI=your-mongodb-connection-string
 CREDENTIAL_ENCRYPTION_KEY=same-key-as-platform
 COPILOT_MODEL=gpt-4.1

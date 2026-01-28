@@ -303,7 +303,7 @@ Instead of `.env.local` in project directory:
 ~/.devflow/config.json
 {
   "version": "1",
-  "platform_url": "https://devflow-web.vercel.app",
+  "platform_url": "https://devflow.aevr.space",
   "agent_id": "agent_abc123def456",
   "auth_token": "devflow_sk_live_abc123...",
   "log_level": "info",

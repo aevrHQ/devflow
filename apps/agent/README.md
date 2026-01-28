@@ -1,20 +1,25 @@
-# @untools/devflow
+# @untools/devflow - Copilot-Powered DevOps Agent
 
-The self-hosted CLI agent for **DevFlow** - an AI-powered DevOps platform powered by GitHub Copilot.
+The self-hosted CLI agent for **DevFlow** - powered by the **GitHub Copilot CLI** and **GitHub Copilot SDK** (released Jan 2026).
 
-Install this CLI tool on your local machine or server to execute AI-driven development tasks securely on your own infrastructure.
+Install this CLI tool on your local machine or server to execute AI-driven development tasks securely on your own infrastructure, leveraging the full power of GitHub Copilot.
 
 ## What is DevFlow?
 
 DevFlow is a production SaaS platform that orchestrates AI-powered development workflows. Create a DevFlow account, connect your GitHub repositories and communication channels (Slack, Telegram), then use the **@untools/devflow** CLI to execute complex development tasks right from your machine.
 
+It acts as a bridge between your infrastructure and the AI, utilizing:
+
+- [GitHub Copilot CLI](https://github.com/features/copilot/cli) for intelligent command understanding.
+- [GitHub Copilot SDK](https://github.com/github/copilot-sdk) for agentic workflows.
+
 **Key Features:**
-- 🤖 AI-powered development workflows (fix bugs, implement features, write documentation, review PRs)
-- 🔒 Self-hosted - code never leaves your machine
-- 📱 Multi-channel notifications (Slack, Telegram)
-- 🔗 GitHub integration for repositories, issues, and pull requests
-- ⚡ Real-time task execution with progress updates
-- 🛠️ Built on GitHub Copilot SDK
+
+- 🤖 **Copilot-Powered Workflows**: Fix bugs, implement features, and explain code using GitHub Copilot's intelligence.
+- 🔒 **Self-hosted & Secure**: Code never leaves your machine. Secure tunneling for remote control.
+- 📱 **ChatOps**: Control your dev environment from Slack or Telegram.
+- 🔗 **GitHub Integration**: Deep integration with repositories, issues, and PRs.
+- ⚡ **Real-time Tasks**: Execute long-running tasks with live progress updates.
 
 ## Installation
 
@@ -41,6 +46,7 @@ devflow init
 ```
 
 This command will:
+
 - Prompt you for your DevFlow account credentials
 - Open a browser for OAuth authentication if needed
 - Save a secure JWT token to `~/.devflow/config.json`
@@ -55,6 +61,7 @@ devflow start
 ```
 
 The agent will:
+
 - Connect to the DevFlow platform
 - Poll for pending tasks every 5 seconds
 - Execute workflows using GitHub Copilot
@@ -64,6 +71,7 @@ The agent will:
 ### 3. Execute Tasks
 
 Tasks are created through the DevFlow web dashboard or API. Once you start the agent, it will automatically:
+
 1. Receive task assignments
 2. Execute workflows (fix-bug, feature, explain, review-pr)
 3. Update task progress in real-time
@@ -132,7 +140,7 @@ Initialize and authenticate with the DevFlow platform.
 ```bash
 devflow init
 # ? Platform URL: https://devflow.dev
-# ? Authenticate with DevFlow? (Y/n) 
+# ? Authenticate with DevFlow? (Y/n)
 # ✓ Configuration saved to ~/.devflow/config.json
 ```
 
@@ -149,6 +157,7 @@ devflow start
 ```
 
 The agent will display:
+
 - Incoming task assignments
 - Execution progress
 - Completion status
@@ -180,12 +189,12 @@ devflow help
 
 The agent can execute these AI-powered workflows:
 
-| Workflow | Description | Input |
-|----------|-------------|-------|
-| `fix-bug` | Analyze issue, fix code, run tests, create PR | Issue description, repo URL |
-| `feature` | Implement new feature with tests and documentation | Feature requirements, repo URL |
-| `explain` | Generate documentation for code | Code snippet, documentation type |
-| `review-pr` | Review pull request for best practices | PR URL, focus areas |
+| Workflow    | Description                                        | Input                            |
+| ----------- | -------------------------------------------------- | -------------------------------- |
+| `fix-bug`   | Analyze issue, fix code, run tests, create PR      | Issue description, repo URL      |
+| `feature`   | Implement new feature with tests and documentation | Feature requirements, repo URL   |
+| `explain`   | Generate documentation for code                    | Code snippet, documentation type |
+| `review-pr` | Review pull request for best practices             | PR URL, focus areas              |
 
 ## Task Execution Flow
 
@@ -299,6 +308,7 @@ The DevFlow system consists of three components:
 3. **Agent-Host** - Local service that runs Copilot SDK workflows
 
 Communication flow:
+
 ```
 Web Platform → Agent CLI (polls) → Agent-Host (executes)
                                   ↓

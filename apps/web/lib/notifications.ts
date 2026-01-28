@@ -27,7 +27,7 @@ export async function notifyTaskUpdate(
         message += `Wrapper Output: ${task.result.output.substring(0, 100)}...\n\n`;
       if (task.result?.prUrl)
         message += `🔗 [View Pull Request](${task.result.prUrl})\n`;
-      message += `📊 [View in Dashboard](${process.env.NEXT_PUBLIC_APP_URL || "https://devflow-web.vercel.app"}/dashboard/tasks/${task.taskId})`;
+      message += `📊 [View in Dashboard](${process.env.NEXT_PUBLIC_APP_URL || "https://devflow.aevr.space"}/dashboard/tasks/${task.taskId})`;
     } else if (type === "failure") {
       message = `❌ *Task Failed*\n\nError: ${details || task.result?.error || "Unknown error"}`;
     }

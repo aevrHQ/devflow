@@ -7,6 +7,7 @@ This guide explains how to configure your Telegram bot to send webhook events to
 ### Step 1: Get Your Bot Token
 
 If you don't have a Telegram bot token yet:
+
 1. Open Telegram and search for **@BotFather**
 2. Send `/start` and follow the instructions
 3. Send `/newbot` and choose a name and username
@@ -18,12 +19,13 @@ If you don't have a Telegram bot token yet:
 
 ```bash
 # Using the script
-node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow-web.vercel.app
+node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow.aevr.space
 
 # Or manually (see below for manual methods)
 ```
 
 You should see:
+
 ```
 ✅ Webhook set successfully!
    Description: Webhook was set
@@ -37,9 +39,10 @@ node tools/telegram-webhook.js get YOUR_BOT_TOKEN
 ```
 
 Output:
+
 ```
 📋 Current Webhook Configuration:
-   URL: https://devflow-web.vercel.app/api/webhook/telegram
+   URL: https://devflow.aevr.space/api/webhook/telegram
    Has Custom Certificate: No
    Pending Update Count: 0
    Max Allowed Connections: 40
@@ -57,7 +60,7 @@ User sends message to bot
            ↓
     (look up webhook URL)
            ↓
-    POST to: https://devflow-web.vercel.app/api/webhook/telegram
+    POST to: https://devflow.aevr.space/api/webhook/telegram
            ↓
     Your app processes update
            ↓
@@ -65,12 +68,14 @@ User sends message to bot
 ```
 
 **Benefits:**
+
 - Real-time updates (no polling needed)
 - Lower latency
 - More efficient than polling
 - Fewer API calls
 
 **How it's different from polling:**
+
 - ❌ Polling: App constantly asks "Any new messages?" → many API calls
 - ✅ Webhook: Telegram tells you immediately → zero unnecessary calls
 
@@ -94,7 +99,7 @@ node tools/telegram-webhook.js --help
 #### Set Webhook
 
 ```bash
-node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow-web.vercel.app
+node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow.aevr.space
 ```
 
 #### Get Current Configuration
@@ -120,7 +125,7 @@ node tools/telegram-webhook.js delete YOUR_BOT_TOKEN
 ```bash
 # Set environment variables
 export TELEGRAM_BOT_TOKEN=YOUR_BOT_TOKEN
-export TELEGRAM_WEBHOOK_DOMAIN=https://devflow-web.vercel.app
+export TELEGRAM_WEBHOOK_DOMAIN=https://devflow.aevr.space
 
 # Then run without arguments
 node tools/telegram-webhook.js set
@@ -133,7 +138,7 @@ If you prefer to set the webhook manually:
 
 ```bash
 # Set webhook
-curl -X GET "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook?url=https://devflow-web.vercel.app/api/webhook/telegram"
+curl -X GET "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook?url=https://devflow.aevr.space/api/webhook/telegram"
 
 # Get webhook info
 curl -X GET "https://api.telegram.org/botYOUR_BOT_TOKEN/getWebhookInfo"
@@ -149,16 +154,16 @@ Use Telegram's official API directly in your browser or application:
 ```javascript
 // Set webhook
 const response = await fetch(
-  'https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook',
+  "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook",
   {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      url: 'https://devflow-web.vercel.app/api/webhook/telegram',
-      allowed_updates: ['message', 'callback_query'],
+      url: "https://devflow.aevr.space/api/webhook/telegram",
+      allowed_updates: ["message", "callback_query"],
       max_connections: 40,
     }),
-  }
+  },
 );
 
 const result = await response.json();
@@ -174,6 +179,7 @@ console.log(result);
 ⚠️ **Note:** Telegram webhooks require HTTPS with a valid certificate. Localhost doesn't work!
 
 **Solutions:**
+
 1. Use a tunneling service (ngrok, localtunnel)
 2. Deploy to staging and test there
 3. Use polling with `getUpdates` for local testing
@@ -199,7 +205,7 @@ node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://staging.devflow.dev
 
 ```bash
 # Set production webhook
-node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow-web.vercel.app
+node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow.aevr.space
 ```
 
 ---
@@ -209,12 +215,13 @@ node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow-web.vercel.app
 Your app receives webhook updates at:
 
 ```
-POST https://devflow-web.vercel.app/api/webhook/telegram
+POST https://devflow.aevr.space/api/webhook/telegram
 ```
 
 **Location:** `apps/web/app/api/webhook/telegram/route.ts`
 
 **What it does:**
+
 - Receives message updates from Telegram
 - Processes text and voice messages
 - Handles DevFlow commands
@@ -229,16 +236,17 @@ POST https://devflow-web.vercel.app/api/webhook/telegram
 **Cause:** Invalid domain or API error
 
 **Solutions:**
+
 ```bash
 # 1. Verify your domain is HTTPS
-https://devflow-web.vercel.app  # ✅ Good
+https://devflow.aevr.space  # ✅ Good
 http://devflow-web.vercel.app   # ❌ Bad (must be HTTPS)
 
 # 2. Verify your bot token is correct
 node tools/telegram-webhook.js get YOUR_BOT_TOKEN
 
 # 3. Check if the endpoint is accessible
-curl -v https://devflow-web.vercel.app/api/webhook/telegram
+curl -v https://devflow.aevr.space/api/webhook/telegram
 # Should return 405 (POST method required) or other response
 ```
 
@@ -247,9 +255,10 @@ curl -v https://devflow-web.vercel.app/api/webhook/telegram
 **Cause:** Your server is unreachable or not responding
 
 **Solutions:**
+
 ```bash
 # 1. Check if your app is running
-curl https://devflow-web.vercel.app/health
+curl https://devflow.aevr.space/health
 # Should return healthy status
 
 # 2. Verify the webhook URL is correct
@@ -260,7 +269,7 @@ node tools/telegram-webhook.js get YOUR_BOT_TOKEN
 
 # 4. Restart the bot (delete and recreate webhook)
 node tools/telegram-webhook.js delete YOUR_BOT_TOKEN
-node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow-web.vercel.app
+node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow.aevr.space
 ```
 
 ### "Pending Update Count: high number"
@@ -268,10 +277,11 @@ node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow-web.vercel.app
 **Cause:** Updates are queued because webhook isn't being processed
 
 **Solutions:**
+
 ```bash
 # Option 1: Delete and recreate webhook (drops pending updates)
 node tools/telegram-webhook.js delete YOUR_BOT_TOKEN --drop-pending
-node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow-web.vercel.app
+node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://devflow.aevr.space
 
 # Option 2: Just drop pending updates without recreating
 node tools/telegram-webhook.js delete YOUR_BOT_TOKEN --drop-pending
@@ -280,13 +290,15 @@ node tools/telegram-webhook.js delete YOUR_BOT_TOKEN --drop-pending
 ### Not Receiving Messages
 
 **Check list:**
-1. Webhook URL is correct: `https://devflow-web.vercel.app/api/webhook/telegram`
+
+1. Webhook URL is correct: `https://devflow.aevr.space/api/webhook/telegram`
 2. Bot token is correct
 3. Your app is running and accessible
 4. No pending errors: `node tools/telegram-webhook.js get YOUR_BOT_TOKEN`
 5. Send a test message to your bot
 
 **Debug:**
+
 ```bash
 # Enable debug logs in your app
 NODE_ENV=development npm run dev
@@ -307,7 +319,7 @@ Create environment-specific scripts:
 set -e
 
 BOT_TOKEN=$TELEGRAM_BOT_TOKEN
-DOMAIN="https://devflow-web.vercel.app"
+DOMAIN="https://devflow.aevr.space"
 
 echo "Setting up Telegram webhook for PRODUCTION"
 node tools/telegram-webhook.js set "$BOT_TOKEN" "$DOMAIN"
@@ -328,6 +340,7 @@ echo "✅ Staging webhook configured"
 ```
 
 Run setup:
+
 ```bash
 # Production
 TELEGRAM_BOT_TOKEN=prod_token bash scripts/telegram-setup-prod.sh
@@ -347,7 +360,7 @@ TELEGRAM_BOT_TOKEN=staging_token bash scripts/telegram-setup-staging.sh
 name: Configure Telegram Webhook
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch: # Manual trigger
   push:
     branches: [main]
 
@@ -356,15 +369,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set Telegram webhook
         run: |
           node tools/telegram-webhook.js \
             set "${{ secrets.TELEGRAM_BOT_TOKEN }}" \
-            https://devflow-web.vercel.app
+            https://devflow.aevr.space
 ```
 
 Use it:
+
 ```bash
 # Manually trigger in GitHub Actions
 # Or push to main branch to auto-configure
@@ -373,6 +387,7 @@ Use it:
 ### Vercel Post-Deployment
 
 Add to `vercel.json`:
+
 ```json
 {
   "buildCommand": "npm run build",
@@ -389,12 +404,14 @@ Add to `vercel.json`:
 ### Security
 
 ✅ **DO:**
+
 - Keep bot token secure (use environment variables)
 - Use HTTPS for webhook domain
 - Validate incoming requests
 - Regenerate token if compromised
 
 ❌ **DON'T:**
+
 - Commit token to git
 - Share token in logs
 - Use HTTP (must be HTTPS)
@@ -403,6 +420,7 @@ Add to `vercel.json`:
 ### Webhook Management
 
 ✅ **DO:**
+
 - Use the management script for consistency
 - Check webhook status regularly
 - Test after domain changes
@@ -410,6 +428,7 @@ Add to `vercel.json`:
 - Document your setup
 
 ❌ **DON'T:**
+
 - Manually edit webhook config in code
 - Use multiple webhook URLs for same bot
 - Leave old webhooks active
@@ -418,6 +437,7 @@ Add to `vercel.json`:
 ### Reliability
 
 ✅ **DO:**
+
 - Monitor pending update count
 - Set appropriate timeout values
 - Handle network failures gracefully
@@ -425,6 +445,7 @@ Add to `vercel.json`:
 - Monitor application logs
 
 ❌ **DON'T:**
+
 - Assume webhook is always working
 - Ignore "last error" messages
 - Deploy without testing
@@ -435,6 +456,7 @@ Add to `vercel.json`:
 ## Webhook Update Types
 
 By default, your bot receives these update types:
+
 - `message` - Text and voice messages
 - `callback_query` - Button clicks
 
@@ -443,16 +465,17 @@ By default, your bot receives these update types:
 ```bash
 # All updates
 node tools/telegram-webhook.js set YOUR_BOT_TOKEN \
-  https://devflow-web.vercel.app \
+  https://devflow.aevr.space \
   --allowed-updates message,callback_query,edited_message,channel_post
 
 # Only messages (no callbacks)
 node tools/telegram-webhook.js set YOUR_BOT_TOKEN \
-  https://devflow-web.vercel.app \
+  https://devflow.aevr.space \
   --allowed-updates message
 ```
 
 **Common update types:**
+
 - `message` - New messages
 - `callback_query` - Button clicks
 - `edited_message` - Edited messages
@@ -468,12 +491,13 @@ For advanced setups with custom certificates:
 
 ```bash
 # Set webhook with certificate (rarely needed)
-curl -F "url=https://devflow-web.vercel.app/api/webhook/telegram" \
+curl -F "url=https://devflow.aevr.space/api/webhook/telegram" \
      -F "certificate=@/path/to/cert.pem" \
      https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook
 ```
 
 **When needed:**
+
 - Custom domains with self-signed certificates
 - Private infrastructure
 - Enterprise setups
@@ -498,7 +522,7 @@ curl -F "url=https://devflow-web.vercel.app/api/webhook/telegram" \
 
 ```bash
 # Send test webhook payload
-curl -X POST https://devflow-web.vercel.app/api/webhook/telegram \
+curl -X POST https://devflow.aevr.space/api/webhook/telegram \
   -H "Content-Type: application/json" \
   -d '{
     "update_id": 123456,
@@ -517,7 +541,7 @@ curl -X POST https://devflow-web.vercel.app/api/webhook/telegram \
 
 ```bash
 # Set production webhook
-node tools/telegram-webhook.js set $TELEGRAM_BOT_TOKEN https://devflow-web.vercel.app
+node tools/telegram-webhook.js set $TELEGRAM_BOT_TOKEN https://devflow.aevr.space
 
 # Get current webhook info
 node tools/telegram-webhook.js get $TELEGRAM_BOT_TOKEN
@@ -550,7 +574,7 @@ Your webhook integrates with DevFlow's command system:
    - Parses commands
    - Queries database
    - Calls Copilot agent
-   ↓
+     ↓
 4. **DevFlow sends response back via Telegram API**
    ↓
 5. **User sees response in Telegram**
@@ -564,12 +588,14 @@ A: Yes! Just set the new webhook URL. Telegram will route messages to the new do
 
 **Q: What if I deploy to a new domain?**
 A: Update the webhook with the new domain:
+
 ```bash
 node tools/telegram-webhook.js set YOUR_BOT_TOKEN https://new-domain.com
 ```
 
 **Q: How often should I check webhook status?**
 A: Monitor key metrics regularly:
+
 - Last error (should be empty)
 - Pending update count (should be low)
 - Response status
