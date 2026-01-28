@@ -51,7 +51,7 @@ devflow init
 
 This command will:
 
-- Prompt you for your DevFlow account credentials
+- Prompt you for your DevFlow account credentials.
 - Open a browser for OAuth authentication if needed
 - Save a secure JWT token to `~/.devflow/config.json`
 - Create your local agent registration
