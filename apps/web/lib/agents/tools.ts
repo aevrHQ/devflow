@@ -28,7 +28,7 @@ export const createDashboardTools = (
   context: {
     userId?: string;
     source?: {
-      channel: "telegram" | "slack" | "dashboard" | "cli";
+      channel: "telegram" | "slack" | "dashboard" | "cli" | "web";
       chatId?: string;
       messageId?: string;
     };

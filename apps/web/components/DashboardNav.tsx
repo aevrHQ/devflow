@@ -40,6 +40,16 @@ export default function DashboardNav() {
         Agents
       </Link>
       <Link
+        href="/dashboard/chat"
+        className={`px-4 py-2 rounded-lg transition-colors ${
+          pathname === "/dashboard/chat"
+            ? "bg-gray-900 text-white"
+            : "text-gray-700 hover:bg-gray-100"
+        }`}
+      >
+        Chat
+      </Link>
+      <Link
         href="/dashboard/settings"
         className={`px-4 py-2 rounded-lg transition-colors ${
           pathname === "/dashboard/settings"

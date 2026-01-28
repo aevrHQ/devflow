@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Category, TaskSquare, Cpu, Setting2 } from "iconsax-react";
+import { Category, TaskSquare, Cpu, Setting2, Message } from "iconsax-react";
 import { cn } from "@/lib/utils";
 
 export default function MobileBottomNav() {
@@ -26,6 +26,12 @@ export default function MobileBottomNav() {
       href: "/dashboard/agents",
       icon: Cpu,
       isActive: (path: string) => path.startsWith("/dashboard/agents"),
+    },
+    {
+      name: "Chat",
+      href: "/dashboard/chat",
+      icon: Message,
+      isActive: (path: string) => path.startsWith("/dashboard/chat"),
     },
     {
       name: "Settings",
