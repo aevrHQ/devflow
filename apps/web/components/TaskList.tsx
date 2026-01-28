@@ -13,6 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import Loader from "@/components/ui/aevr/loader";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Task {
   _id: string;
@@ -235,14 +236,12 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
           <>
             {/* Header with select all */}
             <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={
                   selectedTasks.size === sortedTasks.length &&
                   sortedTasks.length > 0
                 }
-                onChange={toggleAll}
-                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+                onCheckedChange={toggleAll}
               />
               <span className="text-sm font-medium text-gray-700">
                 {selectedTasks.size === sortedTasks.length &&
@@ -260,11 +259,9 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
                   className="flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors"
                 >
                   {/* Checkbox */}
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={selectedTasks.has(task.taskId)}
-                    onChange={() => toggleTask(task.taskId)}
-                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+                    onCheckedChange={() => toggleTask(task.taskId)}
                     onClick={(e) => e.stopPropagation()}
                   />
 
