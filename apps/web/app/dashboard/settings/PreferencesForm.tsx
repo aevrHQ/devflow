@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Save } from "lucide-react";
 import Loader from "@/components/ui/aevr/loader";
+import { Save2 } from "iconsax-react";
 
 interface Preferences {
   aiSummary: boolean;
@@ -117,13 +117,13 @@ export default function PreferencesForm({
               </div>
             )}
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={newSource}
                 onChange={(e) => setNewSource(e.target.value)}
                 placeholder="e.g., github, vercel, render"
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 w-full"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -134,7 +134,7 @@ export default function PreferencesForm({
               <button
                 type="button"
                 onClick={addSource}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50"
+                className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 w-full sm:w-auto"
               >
                 Add
               </button>
@@ -152,7 +152,7 @@ export default function PreferencesForm({
           {isLoading ? (
             <Loader loading className="w-4 h-4" />
           ) : (
-            <Save className="w-4 h-4" />
+            <Save2 variant="Bulk" color="currentColor" className="w-4 h-4" />
           )}
           Save Preferences
         </button>

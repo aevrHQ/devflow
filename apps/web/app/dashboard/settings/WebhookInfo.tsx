@@ -22,7 +22,7 @@ export default function WebhookInfo({ userId }: { userId: string }) {
     : "...";
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    <div className="bg-white p-6 rounded-xl  border border-gray-100">
       <h2 className="text-lg font-semibold mb-4">Developer Information</h2>
       <p className="text-sm text-gray-500 mb-4">
         Use these details to set up custom integrations or connect services like

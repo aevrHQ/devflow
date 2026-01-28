@@ -92,7 +92,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
           href={githubInstallUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors "
         >
           <Plus className="w-4 h-4" />
           Add Repository
@@ -134,7 +134,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-6 rounded-xl  border border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-500">Events (24h)</h3>
             <Activity className="w-4 h-4 text-blue-500" />
@@ -144,7 +144,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-6 rounded-xl  border border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-500">Success Rate</h3>
             <Zap className="w-4 h-4 text-green-500" />
@@ -154,7 +154,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-6 rounded-xl  border border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-500">Total Failed</h3>
             <AlertCircle className="w-4 h-4 text-red-500" />
@@ -168,7 +168,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
       {/* Agents / Installations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Agents */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-6 rounded-xl  border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Zap className="w-5 h-5 text-gray-700" />
@@ -223,7 +223,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
         {/* Installations / Recent Activity Column */}
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-6 rounded-xl  border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <Github className="w-5 h-5 text-gray-700" />
@@ -276,7 +276,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-6 rounded-xl  border border-gray-100">
             <ActivityFeed />
           </div>
         </div>

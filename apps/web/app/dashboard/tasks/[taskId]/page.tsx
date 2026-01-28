@@ -97,7 +97,7 @@ export default async function TaskDetailsPage({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-xl  border border-gray-100 p-6">
             <h2 className="text-lg font-semibold mb-4">Request</h2>
             <div className="prose prose-sm max-w-none text-gray-600">
               {task.description || task.intent}
@@ -117,7 +117,7 @@ export default async function TaskDetailsPage({
 
           {/* Output / Result */}
           {(task.result?.output || task.result?.error) && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-xl  border border-gray-100 overflow-hidden">
               <div className="bg-gray-900 px-4 py-3 flex items-center justify-between">
                 <h3 className="text-gray-200 text-sm font-mono flex items-center gap-2">
                   <Terminal className="w-4 h-4" />
@@ -137,7 +137,7 @@ export default async function TaskDetailsPage({
           )}
 
           {/* Execution Logs */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl  border border-gray-100 overflow-hidden">
             <div className="bg-gray-50 px-4 py-3 border-b border-gray-100">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                 <Terminal className="w-4 h-4 text-gray-500" />
@@ -182,7 +182,7 @@ export default async function TaskDetailsPage({
 
         {/* Sidebar */}
         <div className="space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-xl  border border-gray-100 p-6">
             <h3 className="text-sm font-semibold text-gray-900 mb-4">
               Agent Details
             </h3>
@@ -218,13 +218,13 @@ export default async function TaskDetailsPage({
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-xl  border border-gray-100 p-6">
             <h3 className="text-sm font-semibold text-gray-900 mb-4">
               Timeline
             </h3>
             <div className="space-y-4 relative before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
               <div className="relative pl-6">
-                <div className="absolute left-0 top-1 w-3.5 h-3.5 bg-blue-500 rounded-full border-2 border-white shadow-sm" />
+                <div className="absolute left-0 top-1 w-3.5 h-3.5 bg-blue-500 rounded-full border-2 border-white " />
                 <p className="text-sm font-medium text-gray-900">
                   Task Created
                 </p>
@@ -235,7 +235,7 @@ export default async function TaskDetailsPage({
 
               {task.startedAt && (
                 <div className="relative pl-6">
-                  <div className="absolute left-0 top-1 w-3.5 h-3.5 bg-yellow-500 rounded-full border-2 border-white shadow-sm" />
+                  <div className="absolute left-0 top-1 w-3.5 h-3.5 bg-yellow-500 rounded-full border-2 border-white " />
                   <p className="text-sm font-medium text-gray-900">
                     Execution Started
                   </p>
@@ -248,7 +248,7 @@ export default async function TaskDetailsPage({
               {task.completedAt && (
                 <div className="relative pl-6">
                   <div
-                    className={`absolute left-0 top-1 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm ${task.status === "completed" ? "bg-green-500" : "bg-red-500"}`}
+                    className={`absolute left-0 top-1 w-3.5 h-3.5 rounded-full border-2 border-white  ${task.status === "completed" ? "bg-green-500" : "bg-red-500"}`}
                   />
                   <p className="text-sm font-medium text-gray-900">
                     {task.status === "completed" ? "Completed" : "Failed"}

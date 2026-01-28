@@ -217,7 +217,7 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="p-6 rounded-2xl bg-white border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all">
+    <div className="p-6 rounded-2xl bg-white border border-gray-100 hover:border-gray-200 hover: transition-all">
       <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-6 text-black">
         {icon}
       </div>

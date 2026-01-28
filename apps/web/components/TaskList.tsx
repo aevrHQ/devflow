@@ -208,7 +208,7 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
       </div>
 
       {/* Task List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl  border border-gray-100 overflow-hidden">
         {sortedTasks.length === 0 ? (
           <div className="text-center py-12 px-4">
             <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">

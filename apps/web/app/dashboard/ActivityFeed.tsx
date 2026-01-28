@@ -124,7 +124,7 @@ export default function ActivityFeed() {
           {activities.map((log) => (
             <div
               key={log._id}
-              className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg hover:border-blue-100 transition-colors shadow-sm"
+              className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg hover:border-blue-100 transition-colors "
             >
               <div className="flex items-start gap-3 overflow-hidden">
                 <div className="mt-1">{getStatusIcon(log.status)}</div>

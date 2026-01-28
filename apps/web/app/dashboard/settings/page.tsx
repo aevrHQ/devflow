@@ -34,12 +34,12 @@ export default async function SettingsPage() {
       </div>
 
       <div className="grid gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
           <CredentialsForm initialHasGithubToken={hasGithubToken} />
         </div>
 
         <WebhookInfo userId={user.userId.toString()} />
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
           <h2 className="text-lg font-semibold mb-4">Notification Channels</h2>
           <p className="text-sm text-gray-500 mb-4">
             Configure where you want to receive notifications
@@ -50,7 +50,7 @@ export default async function SettingsPage() {
           />
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
           <h2 className="text-lg font-semibold mb-4">Preferences</h2>
           <p className="text-sm text-gray-500 mb-4">
             Customize how you receive notifications
@@ -58,7 +58,7 @@ export default async function SettingsPage() {
           <PreferencesForm initialPreferences={preferences} />
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
           <h2 className="text-lg font-semibold mb-4">Security</h2>
           <PinSettingsForm />
         </div>

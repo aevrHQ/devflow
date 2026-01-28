@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import DashboardNav from "@/components/DashboardNav";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 export default async function DashboardLayout({
   children,
@@ -50,9 +51,10 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
         {children}
       </main>
+      <MobileBottomNav />
     </div>
   );
 }
