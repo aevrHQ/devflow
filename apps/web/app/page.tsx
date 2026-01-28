@@ -6,9 +6,9 @@ import {
   ArrowRight,
   Github,
   CheckCircle2,
-  Server,
-  MessageCircle,
   Lock,
+  Terminal,
+  Bot,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -19,7 +19,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold tracking-tight">
             DevFlow
-            <span className="ml-2 text-[10px] uppercase font-bold tracking-wider bg-black text-white px-2 py-0.5 rounded-full bg-gradient-to-r from-orange-400 to-amber-400">
+            <span className="ml-2 text-[10px] uppercase font-bold tracking-wider bg-black text-white px-2 py-0.5 rounded-full bg-linear-to-r from-orange-400 to-amber-400">
               Beta
             </span>
           </Link>
@@ -38,10 +38,10 @@ export default function LandingPage() {
               GitHub
             </Link>
             <Link
-              href="/login"
+              href="/dashboard"
               className="text-sm font-medium bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-colors"
             >
-              Login
+              Dashboard
             </Link>
           </div>
         </div>
@@ -61,15 +61,17 @@ export default function LandingPage() {
               Public Beta
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
-              Your centralized <br className="hidden md:block" /> webhook hub.
+              The centralized hub for your <br className="hidden md:block" />{" "}
+              Webhooks & Agents.
             </h1>
             <p className="text-lg md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Turn noisy JSON payloads into structured, actionable Telegram
-              notifications. Built for developers who want clarity, not clutter.
+              Turn noisy payloads into structured notifications. Connect local
+              agents to control your infrastructure securely from Telegram or
+              Slack.
             </p>
             <div className="flex items-center justify-center gap-4">
               <Link
-                href="/login"
+                href="/dashboard"
                 className="group flex items-center gap-2 bg-black text-white px-8 py-3.5 rounded-full font-medium hover:bg-gray-800 transition-all hover:pr-6"
               >
                 Get Started
@@ -96,15 +98,72 @@ export default function LandingPage() {
               description="Track stars, issues, PRs, and deployments in real-time. Never miss a contribution."
             />
             <FeatureCard
-              icon={<Server className="w-6 h-6" />}
-              title="Render Support"
-              description="Get instant alerts for your deployments. Forward emails to receive status updates."
+              icon={<Terminal className="w-6 h-6" />}
+              title="Remote Agent Control"
+              description="Securely connect your local machine or servers. Execute scripts and tools via a secure tunnel."
             />
             <FeatureCard
-              icon={<MessageCircle className="w-6 h-6" />}
-              title="Multi-Channel Support"
-              description="Notifications delivered where you work. Support for Telegram, Slack, and Discord."
+              icon={<Bot className="w-6 h-6" />}
+              title="Two-way ChatOps"
+              description="Don't just receive alerts. Talk back to your infrastructure. Trigger workflows from chat."
             />
+          </div>
+        </section>
+
+        {/* Agent Capabilities Section */}
+        <section className="bg-black text-white py-24">
+          <div className="container mx-auto px-6">
+            <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold mb-6">CLI for power users</h2>
+                <p className="text-gray-400 mb-8 text-lg leading-relaxed">
+                  Install the DevFlow CLI to connect any machine in seconds.
+                  Securely tunnel traffic, forward webhooks to localhost, and
+                  execute remote commands without SSH.
+                </p>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <span>Secure WebSocket Tunnels</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <span>Localhost Webhook Forwarding</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <span>Remote Script Execution</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 w-full">
+                <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 font-mono text-sm relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-8 bg-gray-800/50 flex items-center px-4 gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                  </div>
+                  <div className="mt-6 space-y-4">
+                    <div>
+                      <span className="text-green-400">$</span> npx devflow
+                      login
+                    </div>
+                    <div className="text-gray-400">
+                      authenticating... done! <br />
+                      logged in as miracleio
+                    </div>
+                    <div>
+                      <span className="text-green-400">$</span> npx devflow init
+                    </div>
+                    <div className="text-gray-400">
+                      → Agent Name: production-server <br />
+                      → Connect to: standard <br />
+                      Agent connected! Listening for jobs...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
