@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.6](https://github.com/miracleonyenma/devflow/compare/v0.2.5...v0.2.6) (2026-01-28)
+
+
+### Features
+
+* Add remote agent disconnection, task termination, Telegram task management, and project description. ([eac4f8d](https://github.com/miracleonyenma/devflow/commit/eac4f8dbf7cda8210e00f2fbd8250c7ee346e866))
+* Increase copilot session timeout to 10 minutes and gracefully handle timeout errors by returning a warning. ([3e61a4b](https://github.com/miracleonyenma/devflow/commit/3e61a4b49194ae4729e331fd4e53b984c98cd54d))
+* Synchronize user channels by deleting those not present in the update request. ([805df04](https://github.com/miracleonyenma/devflow/commit/805df041a9971926930645a603949705e1775aa7))
+
+
+### Bug Fixes
+
+* await route parameters in API handlers to correctly extract IDs. ([b7cf527](https://github.com/miracleonyenma/devflow/commit/b7cf52757b38cad3b284900d0f29e9d5c240a879))
+* **lib/notification:** Strip markdown formatting from messages sent to Telegram. ([79dbc78](https://github.com/miracleonyenma/devflow/commit/79dbc78f332b1aa3ba844bcaee360956c4f80778))
+* **models:** Add support for task assignment status of 'cancelled'. ([af0797e](https://github.com/miracleonyenma/devflow/commit/af0797e9426bcdbad4521128689855650e2f7619))
+
+
+### Documentation
+
+* **api:** Remove markdown from telegram webhook messages. ([6eec6e1](https://github.com/miracleonyenma/devflow/commit/6eec6e1fc9ecab99c35679a32854f6f96ce09031))
+* **telegram-apis:** Remove markdown/HTML parsing for plain text messages. ([4cda446](https://github.com/miracleonyenma/devflow/commit/4cda4463646f6c48edd30353996527ccadc08c38))
+
+
+### Code Refactoring
+
+* enhance Telegram missing credentials warning message to specify which credential is missing. ([c9a5b97](https://github.com/miracleonyenma/devflow/commit/c9a5b97f5e13ee79c201fb0edbb31ebeea290721))
+
 ### [0.2.5](https://github.com/miracleonyenma/devflow/compare/v0.2.4...v0.2.5) (2026-01-27)
 
 
