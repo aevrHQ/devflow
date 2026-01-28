@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Send, Loader2 } from "lucide-react"; // Start with standard icons
 import { motion, AnimatePresence } from "motion/react";
 import { marked } from "marked";
@@ -17,32 +17,54 @@ export default function WebChatInterface() {
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isAtBottomRef = useRef(true); // Track if user is at bottom
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
       const res = await fetch("/api/channels/web/history");
       if (res.ok) {
         const data = await res.json();
-        setMessages(data.history);
+        setMessages((prev) => {
+          // Deep compare to avoid unnecessary re-renders/effects
+          if (JSON.stringify(prev) === JSON.stringify(data.history))
+            return prev;
+          return data.history;
+        });
       }
     } catch (error) {
       console.error("Failed to fetch history", error);
     } finally {
       setInitialLoad(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchHistory();
     const interval = setInterval(fetchHistory, 3000); // Poll every 3s
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchHistory]);
 
+  // Handle auto-scrolling
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && isAtBottomRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+    // If it's the very first load, force scroll
+    if (!initialLoad && messages.length > 0 && isAtBottomRef.current) {
+      scrollRef.current?.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages, initialLoad]);
+
+  const onScroll = () => {
+    if (scrollRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      isAtBottomRef.current = isNearBottom;
+    }
+  };
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -50,6 +72,9 @@ export default function WebChatInterface() {
     const userMsg = input.trim();
     setInput("");
     setLoading(true);
+
+    // Force scroll to bottom when user sends
+    isAtBottomRef.current = true;
 
     // Optimistic update
     const newMsg: Message = {
@@ -96,7 +121,11 @@ export default function WebChatInterface() {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={scrollRef}>
+      <div
+        className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
+        ref={scrollRef}
+        onScroll={onScroll}
+      >
         {initialLoad ? (
           <div className="flex justify-center items-center h-full text-neutral-500">
             <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading history...
