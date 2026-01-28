@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import DashboardNav from "@/components/DashboardNav";
 
 export default async function DashboardLayout({
   children,
@@ -24,26 +25,7 @@ export default async function DashboardLayout({
             >
               Pinga
             </Link>
-            <nav className="hidden md:flex gap-6 text-sm font-medium">
-              <Link
-                href="/dashboard"
-                className="text-gray-600 hover:text-black transition-colors"
-              >
-                Overview
-              </Link>
-              <Link
-                href="/dashboard/tasks"
-                className="text-gray-600 hover:text-black transition-colors"
-              >
-                Tasks
-              </Link>
-              <Link
-                href="/dashboard/settings"
-                className="text-gray-600 hover:text-black transition-colors"
-              >
-                Settings
-              </Link>
-            </nav>
+            <DashboardNav />
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-500 hidden sm:inline-block">
