@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import ProfileHeader from "@/components/Settings/ProfileHeader";
 import SettingsSection from "@/components/Settings/SettingsSection";
 import SettingsItem from "@/components/Settings/SettingsItem";
 import SettingsDrawer from "@/components/Settings/SettingsDrawer";
-import CredentialsForm from "./CredentialsForm";
-import NotificationChannelsForm from "./NotificationChannelsForm";
-import PreferencesForm from "./PreferencesForm";
-import PinSettingsForm from "./PinSettingsForm";
-import WebhookInfo from "./WebhookInfo";
+import CredentialsForm from "@/app/dashboard/settings/CredentialsForm";
+import NotificationChannelsForm, {
+  Channel,
+} from "@/app/dashboard/settings/NotificationChannelsForm";
+import PreferencesForm from "@/app/dashboard/settings/PreferencesForm";
+import PinSettingsForm from "@/app/dashboard/settings/PinSettingsForm";
+import WebhookInfo from "@/app/dashboard/settings/WebhookInfo";
 import {
   ShieldSecurity,
   Key,
@@ -17,12 +18,12 @@ import {
   Setting4,
   InfoCircle,
 } from "iconsax-react";
-
 interface SettingsContentProps {
   user: { userId: string; email?: string | null };
-  channels: any[]; // Keeping any for complex db objects for now, or define strict shape if possible
+  channels: Channel[];
   preferences: { aiSummary: boolean; allowedSources: string[] };
   hasGithubToken: boolean;
+  header: React.ReactNode;
 }
 
 export default function SettingsContent({
@@ -30,12 +31,13 @@ export default function SettingsContent({
   channels,
   preferences,
   hasGithubToken,
+  header,
 }: SettingsContentProps) {
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
 
   return (
     <div className="max-w-md mx-auto pb-20">
-      <ProfileHeader />
+      {header}
 
       <SettingsSection title="Profile & Account">
         <SettingsDrawer

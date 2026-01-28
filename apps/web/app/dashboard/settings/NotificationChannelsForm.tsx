@@ -5,7 +5,7 @@ import { Loader2, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import WebhookFilterForm from "./WebhookFilterForm";
 import Loader from "@/components/ui/aevr/loader";
 
-interface Channel {
+export interface Channel {
   type: string;
   config: Record<string, unknown>;
   enabled: boolean;

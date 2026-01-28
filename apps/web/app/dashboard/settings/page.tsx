@@ -3,6 +3,8 @@ import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
 import SettingsContent from "./SettingsContent";
 
+import ProfileHeader from "@/components/Settings/ProfileHeader";
+
 export default async function SettingsPage() {
   const user = await getCurrentUser();
   if (!user) return null;
@@ -28,6 +30,7 @@ export default async function SettingsPage() {
       channels={channels}
       preferences={preferences}
       hasGithubToken={hasGithubToken}
+      header={<ProfileHeader />}
     />
   );
 }
