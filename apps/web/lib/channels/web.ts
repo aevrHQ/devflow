@@ -2,7 +2,7 @@ import { BaseChannelHandler } from "./base";
 import { StandardEvent, StandardMessage } from "./types";
 import { UserDocument } from "@/models/User";
 import User from "@/models/User";
-import { verifyToken } from "@/lib/auth";
+import { verifyToken, getCurrentUser } from "@/lib/auth";
 import { NotificationPayload } from "@/lib/notification/types";
 import connectToDatabase from "@/lib/mongodb";
 
@@ -13,14 +13,21 @@ export class WebChannelHandler extends BaseChannelHandler {
   async parseRequest(request: Request): Promise<StandardEvent | null> {
     try {
       const body = await request.json();
+      let userId = "";
+
+      // 1. Try Authorization Header
       const token = request.headers
         .get("Authorization")
         ?.replace("Bearer ", "");
-
-      let userId = "";
       if (token) {
         const payload = verifyToken(token);
         if (payload) userId = payload.userId;
+      }
+
+      // 2. Try Cookie Session (if no header or invalid)
+      if (!userId) {
+        const session = await getCurrentUser();
+        if (session) userId = session.userId;
       }
 
       // If called from server-side context where we trust the input (e.g. internal API),
@@ -45,10 +52,13 @@ export class WebChannelHandler extends BaseChannelHandler {
   }
 
   async validateRequest(request: Request): Promise<boolean> {
-    // Validation happens in parseRequest via token verification essentially or middleware
-    // but here we can double check logic.
+    // 1. Check Header
     const token = request.headers.get("Authorization")?.replace("Bearer ", "");
-    return !!token && !!verifyToken(token);
+    if (token && verifyToken(token)) return true;
+
+    // 2. Check Cookie
+    const session = await getCurrentUser();
+    return !!session;
   }
 
   async resolveUser(event: StandardEvent): Promise<UserDocument | null> {
