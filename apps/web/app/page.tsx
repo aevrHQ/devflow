@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowRight,
   Github,
@@ -9,9 +10,13 @@ import {
   Lock,
   Terminal,
   Bot,
+  Menu,
+  X,
 } from "lucide-react";
 
 export default function LandingPage() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="flex flex-col min-h-screen bg-white text-black selection:bg-gray-200">
       {/* Navbar */}
@@ -23,7 +28,9 @@ export default function LandingPage() {
               Beta
             </span>
           </Link>
-          <div className="flex items-center gap-6">
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
             <Link
               href="/help"
               className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
@@ -44,7 +51,56 @@ export default function LandingPage() {
               Dashboard
             </Link>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 -mr-2 text-gray-600 hover:text-black"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-b border-gray-100 bg-white overflow-hidden"
+            >
+              <div className="container mx-auto px-6 py-4 flex flex-col gap-4">
+                <Link
+                  href="/help"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-lg font-medium text-gray-600 hover:text-black py-2"
+                >
+                  Help
+                </Link>
+                <Link
+                  href="https://github.com/miracleonyenma/devflow"
+                  target="_blank"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-lg font-medium text-gray-600 hover:text-black py-2"
+                >
+                  GitHub
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-lg font-medium bg-black text-white px-4 py-3 rounded-xl text-center hover:bg-gray-800 transition-colors"
+                >
+                  Dashboard
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <main className="flex-1 pt-32 pb-20">
@@ -69,7 +125,7 @@ export default function LandingPage() {
               agents to control your infrastructure securely from Telegram or
               Slack.
             </p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center flex-wrap justify-center gap-4">
               <Link
                 href="/dashboard"
                 className="group flex items-center gap-2 bg-black text-white px-8 py-3.5 rounded-full font-medium hover:bg-gray-800 transition-all hover:pr-6"
