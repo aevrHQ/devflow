@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.10](https://github.com/miracleonyenma/devflow/compare/v0.2.9...v0.2.10) (2026-01-28)
+
+
+### Documentation
+
+* **README:** Update documentation after GitHub Copilot CLI Challenge announcement. ([2bd604a](https://github.com/miracleonyenma/devflow/commit/2bd604ad88ef46055b6b44a86ce7cd5e99834dd6))
+
 ### [0.2.9](https://github.com/miracleonyenma/devflow/compare/v0.2.8...v0.2.9) (2026-01-28)
 
 ### [0.2.8](https://github.com/miracleonyenma/devflow/compare/v0.2.7...v0.2.8) (2026-01-28)
