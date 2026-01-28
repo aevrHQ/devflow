@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.8](https://github.com/miracleonyenma/devflow/compare/v0.2.7...v0.2.8) (2026-01-28)
+
+
+### Features
+
+* **api/user/settings:** Add groq api key management to user settings. ([aa8ac6b](https://github.com/miracleonyenma/devflow/commit/aa8ac6be1955f22102252202fbe8d71027eac5d2))
+* Display dynamic user statistics in settings and integrate Next.js top loader, alongside refactoring UI colors to a neutral palette. ([1435303](https://github.com/miracleonyenma/devflow/commit/1435303c37ab71ffab7ec234a394c2e066506a04))
+* **emails:** Add email sending infrastructure and templates. ([61b7581](https://github.com/miracleonyenma/devflow/commit/61b7581139b7fa1bbdb18c8cad91a613b0313250))
+* Implement agent deletion functionality with a new API route and a delete button in the agent list. ([b8389f1](https://github.com/miracleonyenma/devflow/commit/b8389f182a546a1f68ea7013225d705451ce8394))
+* Implement dynamic agent status (online, stale, offline) based on last heartbeat and refactor agent data fetching. ([dd84b08](https://github.com/miracleonyenma/devflow/commit/dd84b08527c2b169119c372a91da7c8bab207780))
+* Implement mobile bottom navigation, integrate Iconsax for icons, and refine UI styling by removing unnecessary shadows. ([a863fae](https://github.com/miracleonyenma/devflow/commit/a863faece1805ca9ec2356fa0841339edc9d40c8))
+* Implement responsive settings display using a Dialog for desktop and a Drawer for mobile, and adjust settings content maximum width. ([8fa3cea](https://github.com/miracleonyenma/devflow/commit/8fa3ceaf2d39fd310e91059b49f651bf41789452))
+* Implement session management, add task stopping functionality, and introduce agent offline detection with auto-fail. ([8a833d4](https://github.com/miracleonyenma/devflow/commit/8a833d415bacd1b3a986b6f63a4291bccde88f77))
+* Introduce a custom animated `Loader` component and replace all `lucide-react` `Loader2` instances throughout the application. ([eb303c8](https://github.com/miracleonyenma/devflow/commit/eb303c8e1dd70e5114cdc0224da20dc7eeb4b1cc))
+* Introduce and integrate Radix UI Checkbox component into TaskList. ([7234bef](https://github.com/miracleonyenma/devflow/commit/7234beff2afcd441f0f44fb36b286e3df97969be))
+* Rename "Pinga" to "Devflow" in the dashboard navigation and update package-lock.json. ([08805e6](https://github.com/miracleonyenma/devflow/commit/08805e68ba0c0aeb34c7f8b79c35a2edc4767cd0))
+* **settings:** Reorder and flatten imports. ([c65a57b](https://github.com/miracleonyenma/devflow/commit/c65a57be5aad666803598a18451a1e6a5705be43))
+* Update agent README and web marketing page to emphasize GitHub Copilot CLI and SDK integration. ([5e9bf1c](https://github.com/miracleonyenma/devflow/commit/5e9bf1c840afa7bb3141bdd6c2f16e801d0035de))
+* **web/app:** Update landing page metadata and UI. ([437c388](https://github.com/miracleonyenma/devflow/commit/437c38860510b3c2cdc282bacfb91afd56d8587d))
+
+
+### Bug Fixes
+
+* **auth:** Update dashboard and page layouts to use SiteLayout component. ([9b6dd54](https://github.com/miracleonyenma/devflow/commit/9b6dd547b9432b98091cfd9bd399058cebc09a4c))
+* **web:** Add mobile menu and desktop navigation. ([f4d2ab4](https://github.com/miracleonyenma/devflow/commit/f4d2ab4b0be8bfd2fb876b3c9bce2417dee369e4))
+* **web:** Update landing page UI and add agent capabilities. ([c9d6504](https://github.com/miracleonyenma/devflow/commit/c9d650462756a9aa12e88655a482dd9a1b3ea273))
+
+
+### Code Refactoring
+
+* Decouple `ProfileHeader` from `SettingsContent` via a prop, standardize settings component imports, and update the `next` dependency. ([e201f07](https://github.com/miracleonyenma/devflow/commit/e201f07f98578faa8761e3ef0e223731ade303ca))
+* Migrate settings drawers to a new `ResponsiveDialog` component and standardize button usage across settings forms. ([608ecc5](https://github.com/miracleonyenma/devflow/commit/608ecc56797ec0e4f795fd1639a39a903857b0bb))
+* Reimplemented the settings page using modular components and a drawer-based UI. ([c3612a1](https://github.com/miracleonyenma/devflow/commit/c3612a13a72a6c54aab2e614483badb2d8ac0748))
+
+
+### Documentation
+
+* **assets:** Add web app icons. ([87d1877](https://github.com/miracleonyenma/devflow/commit/87d1877a7b27e34e72c17efe55564ce7da390005))
+* Update project branding to Devflow. ([25787dd](https://github.com/miracleonyenma/devflow/commit/25787dd2fb9a6e1c4c9664e5411406accec33816))
+
 ### [0.2.7](https://github.com/miracleonyenma/devflow/compare/v0.2.6...v0.2.7) (2026-01-28)
 
 ### Features
