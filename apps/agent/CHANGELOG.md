@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.7](https://github.com/miracleonyenma/devflow/compare/v0.2.6...v0.2.7) (2026-01-28)
+
+
+### Features
+
+* Add comprehensive task management with filtering, sorting, and bulk actions, alongside agent listing and status tracking. ([64571aa](https://github.com/miracleonyenma/devflow/commit/64571aa8a09391c6195d8f9ea295cee6232c197a))
+* Extract dashboard navigation into a new component with active link styling and an added Agents link. ([010012a](https://github.com/miracleonyenma/devflow/commit/010012a95fea086b298cdab8607458b3dd4eb891))
+* hide disconnect button for offline agents ([f37bd02](https://github.com/miracleonyenma/devflow/commit/f37bd0226f3bd5dea94fc00609730fc5b325d42b))
+* rename product from Pinga to DevFlow across documentation and code. ([a850c4b](https://github.com/miracleonyenma/devflow/commit/a850c4b8b477ca97284c0abf0cee7a9b986d3305))
+
 ### [0.2.6](https://github.com/miracleonyenma/devflow/compare/v0.2.5...v0.2.6) (2026-01-28)
 
 
