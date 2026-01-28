@@ -16,7 +16,7 @@ export default function SettingsSection({
           {title}
         </h3>
       )}
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100">
         {children}
       </div>
     </div>

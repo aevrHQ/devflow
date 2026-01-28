@@ -1,6 +1,10 @@
 import { getCurrentUser } from "@/lib/auth";
 
-export default async function ProfileHeader() {
+export default async function ProfileHeader({
+  stats,
+}: {
+  stats?: { tasks: number; agents: number; hours: number };
+}) {
   const user = await getCurrentUser();
   if (!user) return null;
 
@@ -19,19 +23,25 @@ export default async function ProfileHeader() {
 
       <div className="flex items-center justify-center gap-12 w-full text-center">
         <div>
-          <div className="font-bold text-lg text-gray-900">0</div>
+          <div className="font-bold text-lg text-gray-900">
+            {stats?.tasks || 0}
+          </div>
           <div className="text-xs text-gray-500 uppercase tracking-wide">
             Tasks
           </div>
         </div>
         <div>
-          <div className="font-bold text-lg text-gray-900">0</div>
+          <div className="font-bold text-lg text-gray-900">
+            {stats?.agents || 0}
+          </div>
           <div className="text-xs text-gray-500 uppercase tracking-wide">
             Agents
           </div>
         </div>
         <div>
-          <div className="font-bold text-lg text-gray-900">0</div>
+          <div className="font-bold text-lg text-gray-900">
+            {stats?.hours || 0}
+          </div>
           <div className="text-xs text-gray-500 uppercase tracking-wide">
             Hours
           </div>

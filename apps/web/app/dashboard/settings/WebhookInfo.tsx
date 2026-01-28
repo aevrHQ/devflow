@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function WebhookInfo({ userId }: { userId: string }) {
@@ -67,12 +68,12 @@ export default function WebhookInfo({ userId }: { userId: string }) {
           </div>
           <p className="text-xs text-gray-400 mt-2">
             Use this URL for{" "}
-            <a
+            <Link
               href="/help/render"
               className="text-black underline underline-offset-2 hover:text-gray-600"
             >
               Render email forwarding
-            </a>{" "}
+            </Link>{" "}
             or generic webhooks.
           </p>
         </div>

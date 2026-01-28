@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Types } from "mongoose";
 import Link from "next/link";
+import { Button } from "@/components/ui/aevr/button";
 
 interface DashboardPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -283,7 +284,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
       </div>
 
       {/* Help Section */}
-      <div className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+      <div className="bg-linear-to-br from-neutral-50 to-neutral-100 rounded-2xl p-6 border border-neutral-200">
         <div className="flex items-start gap-4">
           <div className="text-4xl">📚</div>
           <div className="flex-1">
@@ -294,30 +295,18 @@ export default async function DashboardPage(props: DashboardPageProps) {
               Check out our guides to make the most of DevFlow
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/help/getting-started"
-                className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
-              >
-                🚀 Getting Started
-              </Link>
-              <Link
-                href="/help/telegram-groups"
-                className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
-              >
-                👥 Telegram Groups
-              </Link>
-              <Link
-                href="/help/filtering"
-                className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
-              >
-                🎯 Webhook Filtering
-              </Link>
-              <Link
-                href="/help/sources"
-                className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-white px-4 py-2 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors"
-              >
-                🔗 Webhook Sources
-              </Link>
+              <Button variant={"default"} asChild>
+                <Link href="/help/getting-started">🚀 Getting Started</Link>
+              </Button>
+              <Button variant={"default"} asChild>
+                <Link href="/help/telegram-groups">👥 Telegram Groups</Link>
+              </Button>
+              <Button variant={"default"} asChild>
+                <Link href="/help/filtering">🎯 Webhook Filtering</Link>
+              </Button>
+              <Button variant={"default"} asChild>
+                <Link href="/help/sources">🔗 Webhook Sources</Link>
+              </Button>
             </div>
           </div>
         </div>
