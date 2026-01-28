@@ -1,11 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
-import PinSettingsForm from "./PinSettingsForm";
-import NotificationChannelsForm from "./NotificationChannelsForm";
-import PreferencesForm from "./PreferencesForm";
-import WebhookInfo from "./WebhookInfo";
-import CredentialsForm from "./CredentialsForm";
+import SettingsContent from "./SettingsContent";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
@@ -27,42 +23,11 @@ export default async function SettingsPage() {
   const hasGithubToken = !!dbUser?.credentials?.github;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <p className="text-gray-500">Manage your notification preferences</p>
-      </div>
-
-      <div className="grid gap-6">
-        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
-          <CredentialsForm initialHasGithubToken={hasGithubToken} />
-        </div>
-
-        <WebhookInfo userId={user.userId.toString()} />
-        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4">Notification Channels</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Configure where you want to receive notifications
-          </p>
-          <NotificationChannelsForm
-            initialChannels={channels}
-            userId={user.userId.toString()}
-          />
-        </div>
-
-        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4">Preferences</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Customize how you receive notifications
-          </p>
-          <PreferencesForm initialPreferences={preferences} />
-        </div>
-
-        <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4">Security</h2>
-          <PinSettingsForm />
-        </div>
-      </div>
-    </div>
+    <SettingsContent
+      user={user}
+      channels={channels}
+      preferences={preferences}
+      hasGithubToken={hasGithubToken}
+    />
   );
 }
