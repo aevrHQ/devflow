@@ -266,24 +266,33 @@ export abstract class BaseChannelHandler implements IChannelHandler {
       history: [], // We can implement history loading here similar to telegram route
     });
 
-    if (response) {
+    if (response && response.text && response.text.trim()) {
       await this.send(event.channelId, { text: response.text });
 
       // Save history if user exists
       if (user) {
+        // Prepare messages to save
+        const messagesToSave: object[] = [
+          { role: "user", content: text, createdAt: new Date() },
+        ];
+
+        // For non-web channels, we might need to save the assistant response manually
+        // because 'send' might just dispatch to an external API (like Telegram) without saving.
+        // For 'web', 'send' updates the DB directly, so we don't want to duplicate.
+        if (this.type !== "web") {
+          messagesToSave.push({
+            role: "assistant",
+            content: response.text,
+            createdAt: new Date(),
+          });
+        }
+
         await User.updateOne(
           { _id: user._id },
           {
             $push: {
               chatHistory: {
-                $each: [
-                  { role: "user", content: text, createdAt: new Date() },
-                  {
-                    role: "assistant",
-                    content: response.text,
-                    createdAt: new Date(),
-                  },
-                ],
+                $each: messagesToSave,
                 $slice: -50,
               },
             },

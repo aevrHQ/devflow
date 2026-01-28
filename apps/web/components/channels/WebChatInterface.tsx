@@ -167,6 +167,18 @@ export default function WebChatInterface() {
                 </div>
               </motion.div>
             ))}
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex justify-start"
+              >
+                <div className="bg-neutral-800 text-neutral-400 rounded-2xl rounded-bl-none px-4 py-3 text-sm leading-relaxed flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span>Thinking...</span>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         )}
       </div>
