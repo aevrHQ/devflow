@@ -452,6 +452,98 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ ok: true });
         }
 
+        // Handle /status command - Show agent statuses
+        if (
+          text.toLowerCase() === "/status" ||
+          text.toLowerCase().startsWith("/status@")
+        ) {
+          try {
+            await connectToDatabase();
+
+            // Find user via Channel configuration
+            const { default: Channel } = await import("@/models/Channel");
+            const channel = await Channel.findOne({
+              "config.chatId": chat.id.toString(),
+              type: "telegram",
+              enabled: true,
+            });
+
+            if (!channel) {
+              await sendPlainMessage(
+                "⚠️ Please connect your Telegram account first.\n\n" +
+                  "Use the dashboard to configure Telegram notifications.",
+                chat.id.toString(),
+              );
+              return NextResponse.json({ ok: true });
+            }
+
+            const statusUser = await User.findById(channel.userId);
+            if (!statusUser) {
+              await sendPlainMessage(
+                "⚠️ User not found. Please reconnect your account.",
+                chat.id.toString(),
+              );
+              return NextResponse.json({ ok: true });
+            }
+
+            const agents = await Agent.find({ userId: statusUser._id });
+
+            if (agents.length === 0) {
+              await sendPlainMessage(
+                "📊 Agent Status\n\n" +
+                  "No agents connected.\n\n" +
+                  "Start an agent with `devflow start` to see it here.",
+                chat.id.toString(),
+              );
+              return NextResponse.json({ ok: true });
+            }
+
+            const formatLastSeen = (lastHeartbeat: Date | null) => {
+              if (!lastHeartbeat) return "Never";
+              const now = new Date();
+              const diffMs = now.getTime() - lastHeartbeat.getTime();
+              const diffSec = Math.floor(diffMs / 1000);
+              if (diffSec < 30) return "Just now";
+              if (diffSec < 60) return `${diffSec}s ago`;
+              const diffMin = Math.floor(diffSec / 60);
+              if (diffMin < 60) return `${diffMin}m ago`;
+              const diffHour = Math.floor(diffMin / 60);
+              if (diffHour < 24) return `${diffHour}h ago`;
+              const diffDays = Math.floor(diffHour / 24);
+              return `${diffDays}d ago`;
+            };
+
+            const getStatusEmoji = (lastHeartbeat: Date | null) => {
+              if (!lastHeartbeat) return "🔴";
+              const diffSec =
+                (new Date().getTime() - lastHeartbeat.getTime()) / 1000;
+              if (diffSec < 30) return "🟢";
+              if (diffSec < 300) return "🟡";
+              return "🔴";
+            };
+
+            const agentStatuses = agents
+              .map(
+                (agent) =>
+                  `${getStatusEmoji(agent.lastHeartbeat)} ${agent.name}\n   Last seen: ${formatLastSeen(agent.lastHeartbeat)}`,
+              )
+              .join("\n\n");
+
+            await sendPlainMessage(
+              `📊 Agent Status\n\n${agentStatuses}\n\n` +
+                "🟢 Online  🟡 Stale  🔴 Offline",
+              chat.id.toString(),
+            );
+          } catch (error) {
+            console.error("Error fetching agent status:", error);
+            await sendPlainMessage(
+              "❌ Failed to fetch agent status. Please try again.",
+              chat.id.toString(),
+            );
+          }
+          return NextResponse.json({ ok: true });
+        }
+
         // Handle /help command
         if (
           text.toLowerCase() === "/help" ||
