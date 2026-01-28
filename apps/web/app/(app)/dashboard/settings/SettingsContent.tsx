@@ -4,13 +4,11 @@ import { useState } from "react";
 import SettingsSection from "@/components/Settings/SettingsSection";
 import SettingsItem from "@/components/Settings/SettingsItem";
 import SettingsDrawer from "@/components/Settings/SettingsDrawer";
-import CredentialsForm from "@/app/dashboard/settings/CredentialsForm";
-import NotificationChannelsForm, {
-  Channel,
-} from "@/app/dashboard/settings/NotificationChannelsForm";
-import PreferencesForm from "@/app/dashboard/settings/PreferencesForm";
-import PinSettingsForm from "@/app/dashboard/settings/PinSettingsForm";
-import WebhookInfo from "@/app/dashboard/settings/WebhookInfo";
+import CredentialsForm from "./CredentialsForm";
+import NotificationChannelsForm, { Channel } from "./NotificationChannelsForm";
+import PreferencesForm from "./PreferencesForm";
+import PinSettingsForm from "./PinSettingsForm";
+import WebhookInfo from "./WebhookInfo";
 import {
   ShieldSecurity,
   Key,
