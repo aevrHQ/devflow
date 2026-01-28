@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, Lock, Check, Save } from "lucide-react";
 import Loader from "@/components/ui/aevr/loader";
+import { Button } from "@/components/ui/aevr/button";
 
 interface CredentialsFormProps {
   initialHasGithubToken?: boolean;
@@ -98,9 +99,10 @@ export default function CredentialsForm({
         </div>
 
         <div className="flex items-center gap-4 pt-2">
-          <button
+          <Button
             type="submit"
             disabled={isLoading || !githubToken}
+            variant="default"
             className="flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
           >
             {isLoading ? (
@@ -109,7 +111,7 @@ export default function CredentialsForm({
               <Save className="w-4 h-4" />
             )}
             Save Credentials
-          </button>
+          </Button>
           {message && (
             <span
               className={`text-sm ${

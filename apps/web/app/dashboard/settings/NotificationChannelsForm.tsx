@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Loader2, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import WebhookFilterForm from "./WebhookFilterForm";
 import Loader from "@/components/ui/aevr/loader";
+import { Button } from "@/components/ui/aevr/button";
 
 export interface Channel {
   type: string;
@@ -145,13 +146,15 @@ export default function NotificationChannelsForm({
                   />
                   <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/5 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-black"></div>
                 </label>
-                <button
+                <Button
                   type="button"
                   onClick={() => removeChannel(index)}
-                  className="p-1.5 text-red-600 hover:bg-red-50 rounded-md"
+                  variant="ghost"
+                  size="sm"
+                  className="p-1.5 text-red-600 hover:bg-red-50 rounded-md h-auto w-auto min-h-0 min-w-0"
                 >
                   <Trash2 className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -221,7 +224,7 @@ export default function NotificationChannelsForm({
                       <div className="bg-white p-3 rounded border border-blue-300 font-mono text-xs break-all">
                         /start channel_{userId}_{index}
                       </div>
-                      <button
+                      <Button
                         type="button"
                         onClick={() => {
                           navigator.clipboard.writeText(
@@ -229,10 +232,11 @@ export default function NotificationChannelsForm({
                           );
                           alert("Command copied! Paste it in your group chat.");
                         }}
-                        className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+                        variant="primary"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
                       >
                         📋 Copy Command
-                      </button>
+                      </Button>
                       <p className="text-xs text-blue-700">
                         💡 The bot will confirm when connected successfully
                       </p>
@@ -381,30 +385,33 @@ export default function NotificationChannelsForm({
       </div>
 
       <div className="flex gap-2">
-        <button
+        <Button
           type="button"
           onClick={() => addChannel("telegram")}
+          variant="secondary"
           className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
         >
           <Plus className="w-4 h-4" />
           Add Telegram
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => addChannel("discord")}
+          variant="secondary"
           className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
         >
           <Plus className="w-4 h-4" />
           Add Discord
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => addChannel("slack")}
+          variant="secondary"
           className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
         >
           <Plus className="w-4 h-4" />
           Add Slack
-        </button>
+        </Button>
       </div>
 
       <div className="flex items-center gap-4 pt-4 border-t">

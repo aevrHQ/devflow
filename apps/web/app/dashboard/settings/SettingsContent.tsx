@@ -160,9 +160,9 @@ export default function SettingsContent({
             />
           }
         >
-          <div className="overflow-y-auto max-h-[70vh] pb-8">
-            <WebhookInfo userId={user.userId.toString()} />
-          </div>
+          {/* <div className="overflow-y-auto max-h-[70vh] pb-8"> */}
+          <WebhookInfo userId={user.userId.toString()} />
+          {/* </div> */}
         </SettingsDrawer>
       </SettingsSection>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Loader from "@/components/ui/aevr/loader";
+import { Button } from "@/components/ui/aevr/button";
 import { Lock } from "lucide-react";
 import { useState } from "react";
 
@@ -90,10 +91,11 @@ export default function PinSettingsForm() {
       </div>
 
       <div className="flex items-center gap-4">
-        <button
+        <Button
           type="submit"
           disabled={isLoading || !pin}
-          className="flex items-center gap-2 bg-gray-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+          variant="default"
+          className="bg-gray-900 text-white hover:bg-gray-800 transition-colors"
         >
           {isLoading ? (
             <Loader loading className="w-4 h-4 animate-spin" />
@@ -101,7 +103,7 @@ export default function PinSettingsForm() {
             <Lock className="w-4 h-4" />
           )}
           Update PIN
-        </button>
+        </Button>
         {message && (
           <span
             className={

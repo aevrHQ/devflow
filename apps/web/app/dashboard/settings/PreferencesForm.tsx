@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Loader from "@/components/ui/aevr/loader";
+import { Button } from "@/components/ui/aevr/button";
 import { Save2 } from "iconsax-react";
 
 interface Preferences {
@@ -105,13 +106,15 @@ export default function PreferencesForm({
                     className="inline-flex items-center gap-1 px-3 py-1 bg-black text-white text-sm rounded-full"
                   >
                     {source}
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => removeSource(source)}
-                      className="hover:bg-white/20 rounded-full p-0.5"
+                      className="hover:bg-white/20 rounded-full p-0.5 h-auto w-auto min-h-0 min-w-0"
                     >
                       ×
-                    </button>
+                    </Button>
                   </span>
                 ))}
               </div>
@@ -131,23 +134,25 @@ export default function PreferencesForm({
                   }
                 }}
               />
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={addSource}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 w-full sm:w-auto"
+                className="w-full sm:w-auto"
               >
                 Add
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex items-center gap-4 pt-4 border-t">
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
+          variant="default"
+          className="bg-black text-white hover:bg-gray-800"
         >
           {isLoading ? (
             <Loader loading className="w-4 h-4" />
@@ -155,7 +160,7 @@ export default function PreferencesForm({
             <Save2 variant="Bulk" color="currentColor" className="w-4 h-4" />
           )}
           Save Preferences
-        </button>
+        </Button>
         {message && (
           <span
             className={

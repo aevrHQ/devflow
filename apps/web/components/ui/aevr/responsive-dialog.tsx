@@ -60,7 +60,7 @@ const ResponsiveDialog: React.FC<ResponsiveDialogProps> = ({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent
-          className={`max-h-[90vh] max-w-4xl ${
+          className={`max-h-[90vh] lg:max-w-248 w-full ${
             title != null || description != null ? "" : "gap-0"
           }`}
         >

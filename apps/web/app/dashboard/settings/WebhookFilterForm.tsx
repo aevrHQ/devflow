@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Filter, Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/aevr/button";
 
 interface WebhookFilter {
   type: string;
@@ -144,10 +145,11 @@ export default function WebhookFilterForm({
 
   return (
     <div className="mt-4 border border-gray-200 rounded-lg">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 rounded-lg transition-colors"
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 rounded-lg transition-colors h-auto"
       >
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-gray-600" />
@@ -164,7 +166,7 @@ export default function WebhookFilterForm({
         ) : (
           <ChevronDown className="w-4 h-4 text-gray-400" />
         )}
-      </button>
+      </Button>
 
       {isExpanded && (
         <div className="p-4 border-t space-y-6">
@@ -194,13 +196,15 @@ export default function WebhookFilterForm({
                 </label>
               </div>
               {githubSource && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => removeSource("github")}
-                  className="text-xs text-red-600 hover:text-red-700"
+                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 h-auto min-h-0"
                 >
                   Remove
-                </button>
+                </Button>
               )}
             </div>
 
@@ -225,13 +229,15 @@ export default function WebhookFilterForm({
                       placeholder="owner/repo"
                       className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
                     />
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
+                      size="sm"
                       onClick={() => addRepository("github")}
-                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors h-auto"
                     >
                       <Plus className="w-4 h-4" />
-                    </button>
+                    </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {githubSource.filters.repositories?.map((repo) => (
@@ -240,13 +246,15 @@ export default function WebhookFilterForm({
                         className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-md"
                       >
                         <span>{repo}</span>
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="sm"
                           onClick={() => removeRepository("github", repo)}
-                          className="hover:text-blue-900"
+                          className="hover:text-blue-900 h-auto w-auto min-h-0 min-w-0 p-0.5"
                         >
                           <X className="w-3 h-3" />
-                        </button>
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -302,13 +310,15 @@ export default function WebhookFilterForm({
                 </label>
               </div>
               {renderSource && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => removeSource("render")}
-                  className="text-xs text-red-600 hover:text-red-700"
+                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 h-auto min-h-0"
                 >
                   Remove
-                </button>
+                </Button>
               )}
             </div>
 
@@ -358,13 +368,15 @@ export default function WebhookFilterForm({
                 </label>
               </div>
               {vercelSource && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => removeSource("vercel")}
-                  className="text-xs text-red-600 hover:text-red-700"
+                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 h-auto min-h-0"
                 >
                   Remove
-                </button>
+                </Button>
               )}
             </div>
 
