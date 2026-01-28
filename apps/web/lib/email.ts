@@ -1,85 +1,53 @@
-import nodemailer from "nodemailer";
+import { emailService } from "./emails";
 
-// Environment variables
-const MAIL_USER = process.env.MAIL_USER;
-const MAIL_PASS = process.env.MAIL_PASS;
-// const MAIL_HOST = process.env.MAIL_HOST || "smtp.gmail.com";
-// const MAIL_PORT = parseInt(process.env.MAIL_PORT || "587");
-const MAIL_FROM = process.env.MAIL_FROM || "notifications@devflow.local";
-
-export interface EmailOptions {
-  to: string;
-  subject: string;
-  html: string;
-}
-
-// Simple Nodemailer transporter (Gmail by default or generally SMTP)
-// For Gmail you need an App Password
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: MAIL_USER,
-    pass: MAIL_PASS,
-  },
-});
+// Re-export types for compatibility if needed
+export type { EmailOptions } from "./emails/types";
 
 /**
  * Send an email
+ * @deprecated Use emailService.sendEmail or emailService.sendStyledEmail directly
  */
-export async function sendEmail(options: EmailOptions) {
-  if (!MAIL_USER || !MAIL_PASS) {
-    console.warn("Email credentials missing. Logging email instead.");
-    console.log(`[EMAIL to ${options.to}] Subject: ${options.subject}`);
-    // console.log(options.html);
-    return;
-  }
-
+export async function sendEmail(options: {
+  to: string;
+  subject: string;
+  html: string;
+}) {
   try {
-    await transporter.sendMail({
-      from: MAIL_FROM,
-      to: options.to,
+    const result = await emailService.sendEmail({
+      to: { email: options.to },
       subject: options.subject,
-      html: options.html,
+      htmlBody: options.html,
     });
-    console.log(`Email sent to ${options.to}`);
+
+    if (result.success) {
+      console.log(`Email sent to ${options.to}`);
+    } else {
+      console.error("Failed to send email:", result.error);
+    }
   } catch (error) {
     console.error("Failed to send email:", error);
     throw error;
   }
 }
 
+import { generateMinimalistTemplate } from "./emails/templates";
+
 /**
  * Generate minimalist HTML template
+ * @deprecated Use emailService.sendStyledEmail or generateMinimalistTemplate from lib/emails/templates
  */
 export function generateEmailHtml(
   title: string,
   content: string,
   actionUrl?: string,
   actionText?: string,
-) {
-  const buttonHtml = actionUrl
-    ? `
-    <div style="margin: 32px 0;">
-      <a href="${actionUrl}" style="background-color: #000; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
-        ${actionText}
-      </a>
-    </div>`
-    : "";
-
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h1 style="font-size: 24px; font-weight: 600; margin-bottom: 24px;">${title}</h1>
-      <div style="font-size: 16px;">
-        ${content}
-      </div>
-      ${buttonHtml}
-      <hr style="border: 0; border-top: 1px solid #eee; margin-top: 40px;" />
-      <p style="color: #666; font-size: 14px;">DevFlow Notifications</p>
-    </body>
-    </html>
-  `;
+): string {
+  return generateMinimalistTemplate({
+    title,
+    content,
+    actionUrl,
+    actionText,
+  });
 }
 
 /**
@@ -92,16 +60,15 @@ export async function sendMagicLink(email: string, link: string, otp?: string) {
     <p>Or use the code above if you are logging in on a different device.</p>
   `;
 
-  const html = generateEmailHtml(
+  await emailService.sendStyledEmail(
+    email,
     otp ? `Your Login Code: ${otp}` : "Sign in to DevFlow",
-    content,
-    link,
-    "Sign In",
+    {
+      title: otp ? `Your Login Code: ${otp}` : "Sign in to DevFlow",
+      content,
+      actionUrl: link,
+      actionText: "Sign In",
+      footerText: "DevFlow Security",
+    },
   );
-
-  await sendEmail({
-    to: email,
-    subject: otp ? `Your Login Code: ${otp}` : "Sign in to DevFlow",
-    html,
-  });
 }
