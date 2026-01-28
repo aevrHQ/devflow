@@ -80,7 +80,7 @@ Users: `npm install -g devflow-agent` → `devflow-agent init` → `devflow-agen
 
 - [ ] Docker Compose for local full stack
   - [ ] Postgres for database
-  - [ ] Pinga platform (port 3000)
+  - [ ] Devflow platform (port 3000)
   - [ ] Redis for job queue
   - [ ] Example agent (port 3001)
 
@@ -310,7 +310,7 @@ By end of Phase 5:
 
 - All tools from Phase 2 ✅
 - All workflows from Phase 3 ✅
-- All Pinga integration from Phase 4 ✅
+- All Devflow integration from Phase 4 ✅
 - Copilot SDK integration ✅
 - GitHub integration ✅
 

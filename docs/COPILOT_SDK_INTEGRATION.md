@@ -305,7 +305,7 @@ NODE_ENV=production
 GITHUB_TOKEN=ghp_your_token
 GITHUB_OWNER=your-username
 
-# Pinga Integration
+# Devflow Integration
 DEVFLOW_API_URL=http://localhost:3000
 DEVFLOW_API_SECRET=your-secret
 
@@ -337,7 +337,7 @@ Once real SDK is available:
 - [ ] Test MCP server connection (optional)
 - [ ] Test error handling
 - [ ] Run all workflows
-- [ ] Integration test with Pinga
+- [ ] Integration test with Devflow
 - [ ] End-to-end test with Telegram/Slack
 
 ## Troubleshooting SDK Integration
@@ -395,7 +395,7 @@ When SDK becomes available:
 - [ ] Run `npm run dev` - should start without errors
 - [ ] Test `/health` endpoint
 - [ ] Send test command to `/command` endpoint
-- [ ] Verify progress updates in Pinga
+- [ ] Verify progress updates in Devflow
 - [ ] Test all 4 workflows
 - [ ] Integration test with Telegram/Slack
 

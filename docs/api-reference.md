@@ -4,7 +4,7 @@ Pinga exposes standardized endpoints for ingesting notifications from external s
 
 ## Webhooks
 
-The primary endpoint for sending events to Pinga is:
+The primary endpoint for sending events to Devflow is:
 
 \`\`\`
 POST /api/webhook/:source
@@ -26,13 +26,13 @@ POST /api/webhook/:source
 
 ### Payload
 
-Accepts any JSON body. Pinga attempts to structure known formats (like GitHub) and provides a raw summary for others.
+Accepts any JSON body. Devflow attempts to structure known formats (like GitHub) and provides a raw summary for others.
 
 ### Examples
 
 #### 1. Generic Notification (cURL)
 
-Send a custom alert to your Pinga account.
+Send a custom alert to your Devflow account.
 
 \`\`\`bash
 curl -X POST "https://your-pinga-instance.com/api/webhook/custom?userId=YOUR_USER_ID" \
@@ -52,11 +52,11 @@ Point your GitHub repository webhook settings to:
 https://your-pinga-instance.com/api/webhook/github
 \`\`\`
 
-(Ensure you have installed the Pinga GitHub App or provided your User ID if using manual webhooks).
+(Ensure you have installed the Devflow GitHub App or provided your User ID if using manual webhooks).
 
 ## Telegram Webhook
 
-Used by Telegram to send updates to Pinga.
+Used by Telegram to send updates to Devflow.
 
 \`\`\`
 POST /api/webhook/telegram

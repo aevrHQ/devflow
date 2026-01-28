@@ -5,7 +5,7 @@ Pinga provides a deep integration with Telegram, functioning not just as a notif
 ## Setup
 
 1. **Dashboard Setup**:
-   - Go to your Pinga Dashboard.
+   - Go to your Devflow Dashboard.
    - Navigate to **Settings** -> **Add Channel**.
    - Create a channel (e.g., "My SaaS Alerts").
    - Click **Connect with Telegram**.

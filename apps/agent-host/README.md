@@ -1,13 +1,13 @@
 # Devflow Agent Host
 
-AI-powered DevOps agent that receives commands from Slack/Telegram (via Pinga) and performs development operations using the GitHub Copilot SDK.
+AI-powered DevOps agent that receives commands from Slack/Telegram (via Devflow) and performs development operations using the GitHub Copilot SDK.
 
 ## Features
 
 - 🤖 AI-driven development workflows (fix bugs, implement features, explain code)
 - 📝 Custom tool integration (git, tests, file I/O, GitHub PRs)
 - 📊 Real-time progress updates streamed back to Slack/Telegram
-- 🔗 Seamless integration with Pinga notification system
+- 🔗 Seamless integration with Devflow notification system
 - 🛠️ GitHub Copilot SDK-powered intelligent code operations
 
 ## Quick Start
@@ -16,7 +16,7 @@ AI-powered DevOps agent that receives commands from Slack/Telegram (via Pinga) a
 
 - Node.js 20+
 - GitHub Personal Access Token
-- Pinga API access (for progress notifications)
+- Devflow API access (for progress notifications)
 
 ### Installation
 
@@ -33,7 +33,7 @@ cp .env.example .env.local
 Fill in the required values:
 
 - `GITHUB_TOKEN` - Your GitHub PAT with repo access
-- `DEVFLOW_API_URL` - URL to Pinga instance (e.g., https://pinga-mvp-web.vercel.app)
+- `DEVFLOW_API_URL` - URL to Devflow instance (e.g., https://pinga-mvp-web.vercel.app)
 - `DEVFLOW_API_SECRET` - Shared secret for API authentication
 - `PORT` - Server port (default: 3001)
 
@@ -51,7 +51,7 @@ Check health: `http://localhost:3001/health`
 
 ### POST /command
 
-Receive a command from Pinga to execute a development task.
+Receive a command from Devflow to execute a development task.
 
 **Request:**
 
@@ -121,8 +121,8 @@ src/
 │       └── review-pr.ts
 ├── queue/
 │   └── processor.ts        # Job queue processor
-└── pinga/
-    └── client.ts           # Pinga API client
+└── Devflow/
+    └── client.ts           # Devflow API client
 ```
 
 ## Development Steps (Roadmap)
@@ -131,7 +131,7 @@ src/
   - [x] Set up Express server with TypeScript
   - [x] Implement `/command` and `/health` endpoints
   - [x] Create job queue processor
-  - [x] Create Pinga client for progress updates
+  - [x] Create Devflow client for progress updates
 - [ ] Phase 2: Custom Tools
   - [ ] Git operations tool
   - [ ] Test runner tool
@@ -144,7 +144,7 @@ src/
   - [ ] Code explanation workflow
   - [ ] PR review workflow
 - [ ] Phase 4: Integration
-  - [ ] Pinga command detection
+  - [ ] Devflow command detection
   - [ ] End-to-end testing
   - [ ] Production deployment
 

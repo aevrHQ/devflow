@@ -16,7 +16,7 @@
 │  PHASE 3: Workflows                         ████████████░░ 100% │
 │  └─ 4 AI workflows (fix, feature, explain, review)             │
 │                                                                 │
-│  PHASE 4: Pinga Integration                 ████████████░░ 100% │
+│  PHASE 4: Devflow Integration                 ████████████░░ 100% │
 │  └─ Command parsing, task forwarding, progress relay           │
 │                                                                 │
 │  PHASE 5: Deployment & Polish               ████░░░░░░░░░░ 10% │
@@ -38,7 +38,7 @@
 | Health Endpoint  | ✅     | /health returns uptime & status          |
 | Command Endpoint | ✅     | /command receives devflow tasks          |
 | Job Queue        | ✅     | In-memory processor with status tracking |
-| Pinga Client     | ✅     | HTTP client for API calls                |
+| Devflow Client   | ✅     | HTTP client for API calls                |
 | Type Definitions | ✅     | Full TypeScript interfaces               |
 
 ### Phase 2 ✅ COMPLETE
@@ -51,7 +51,7 @@
 | write_file           | ✅     | Auto mkdir, multiple format support       |
 | list_files           | ✅     | Glob patterns, recursive listing          |
 | open_pull_request    | ✅     | create, list, get, close PRs              |
-| send_progress_update | ✅     | Real-time updates to Pinga                |
+| send_progress_update | ✅     | Real-time updates to Devflow              |
 
 ### Phase 3 ✅ COMPLETE
 
@@ -93,7 +93,7 @@ Agent Host (apps/agent-host/):
 ├─ src/
 │  ├─ index.ts                  (200 lines)  - Main server
 │  ├─ types.ts                  (85 lines)   - Interfaces
-│  ├─ pinga/client.ts            (60 lines)   - API client
+│  ├─ Devflow/client.ts            (60 lines)   - API client
 │  ├─ queue/processor.ts         (75 lines)   - Job queue
 │  ├─ copilot/
 │  │  ├─ client.ts              (50 lines)   - SDK stub
@@ -139,7 +139,7 @@ Pinga (apps/web/):
 ├─ package.json, next.config.js
 └─ node_modules/
 
-Total Pinga Changes: ~577 lines (327 new + 250 modified)
+Total Devflow Changes: ~577 lines (327 new + 250 modified)
 
 Documentation:
 ├─ DEVFLOW_INTEGRATION_GUIDE.md (10,210 lines)
@@ -236,7 +236,7 @@ Progress Relay Layer (Pinga)
 # Both apps
 DEVFLOW_API_SECRET=<strong-random-string>
 
-# Pinga only
+# Devflow only
 AGENT_HOST_URL=http://localhost:3001
 
 # Agent Host only
@@ -322,7 +322,7 @@ NODE_ENV=production
 
 - [DEVFLOW_INTEGRATION_GUIDE.md](./DEVFLOW_INTEGRATION_GUIDE.md) - Complete setup guide
 - [Agent Host README](./apps/agent-host/README.md) - Agent Host documentation
-- [Pinga README](./apps/web/README.md) - Pinga documentation
+- [Pinga README](./apps/web/README.md) - Devflow documentation
 - [GitHub Copilot CLI Challenge](https://github.com/github/copilot-cli-challenge)
 
 ## Summary

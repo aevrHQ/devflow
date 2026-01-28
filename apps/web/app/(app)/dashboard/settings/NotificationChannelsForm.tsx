@@ -366,7 +366,7 @@ export default function NotificationChannelsForm({
                       Connect Slack
                     </a>
                     <p className="text-xs text-gray-500 text-center">
-                      You&apos;ll be redirected to Slack to authorize Pinga
+                      You&apos;ll be redirected to Slack to authorize Devflow
                     </p>
                   </div>
                 )}

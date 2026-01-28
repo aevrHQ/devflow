@@ -6,7 +6,7 @@ The current architecture requires:
 
 - Users download the full GitHub repo
 - Users set up Node.js, npm, environment variables
-- Users run both Pinga and Agent Host locally
+- Users run both Devflow and Agent Host locally
 - Users modify source code
 
 **This doesn't work for end users.** They need a proper SaaS platform.
@@ -392,7 +392,7 @@ Devflow Agent (open source or internal)
 
 **Solution:**
 
-1. Keep Pinga as "Devflow Platform" (web app)
+1. Keep Devflow as "Devflow Platform" (web app)
 2. Convert Agent Host to "devflow-agent" (CLI tool)
 3. Users sign up → install agent → use DevFlow
 

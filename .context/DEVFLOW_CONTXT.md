@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-I'm building **Devflow**, an AI-powered DevOps agent that receives commands from Slack/Telegram (via my existing Pinga notification system) and uses GitHub Copilot SDK to perform development operations like fixing bugs, implementing features, explaining codebases, running tests, and opening PRs.
+I'm building **Devflow**, an AI-powered DevOps agent that receives commands from Slack/Telegram (via my existing Devflow notification system) and uses GitHub Copilot SDK to perform development operations like fixing bugs, implementing features, explaining codebases, running tests, and opening PRs.
 
 This is for the **GitHub Copilot CLI Challenge** (deadline: Feb 15, 2025).
 
@@ -26,9 +26,9 @@ Pinga (relays to Slack/Telegram)
 
 ---
 
-## Existing Pinga Context
+## Existing Devflow Context
 
-### What Pinga Does
+### What Devflow Does
 
 - Receives webhooks from sources (GitHub, Render, Vercel, etc.)
 - Analyzes and formats them using AI
@@ -36,7 +36,7 @@ Pinga (relays to Slack/Telegram)
 - Has AI chat assistant that responds in channels
 - Multi-tenant, passwordless auth, MongoDB storage
 
-### Relevant Pinga Code Structure
+### Relevant Devflow Code Structure
 
 ```
 apps/web/
@@ -61,11 +61,11 @@ apps/web/
       └── WebhookEvent.ts
 ```
 
-### Pinga Integration Points
+### Devflow Integration Points
 
-1. **Command Detection**: Pinga already handles Telegram/Slack messages
-2. **API Communication**: Pinga will call Devflow Agent Host's `/command` endpoint
-3. **Update Streaming**: Devflow will call Pinga's `/api/copilot/task-update` endpoint
+1. **Command Detection**: Devflow already handles Telegram/Slack messages
+2. **API Communication**: Devflow will call Devflow Agent Host's `/command` endpoint
+3. **Update Streaming**: Devflow will call Devflow's `/api/copilot/task-update` endpoint
 
 ---
 
@@ -213,7 +213,7 @@ Create as: `apps/agent-host/`
 
 ### Core Endpoints
 
-#### 1. `POST /command` - Receive Commands from Pinga
+#### 1. `POST /command` - Receive Commands from Devflow
 
 **Request Schema:**
 
@@ -332,7 +332,7 @@ const openPullRequest = defineTool("open_pull_request", {
 
 ```typescript
 const sendProgressUpdate = defineTool("send_progress_update", {
-  description: "Send progress update back to Pinga for user notification",
+  description: "Send progress update back to Devflow for user notification",
   parameters: {
     type: "object",
     properties: {
@@ -349,8 +349,8 @@ const sendProgressUpdate = defineTool("send_progress_update", {
     required: ["taskId", "status", "step"],
   },
   handler: async (args) => {
-    // Call Pinga's /api/copilot/task-update endpoint
-    // Pinga will relay to Slack/Telegram
+    // Call Devflow's /api/copilot/task-update endpoint
+    // Devflow will relay to Slack/Telegram
   },
 });
 ```
@@ -425,7 +425,7 @@ async function fixBugFlow(taskId: string, payload: any, source: any) {
     },
   });
 
-  // Listen for events and stream to Pinga
+  // Listen for events and stream to Devflow
   session.on((event: SessionEvent) => {
     if (event.type === "tool.start") {
       // Send progress update via tool
@@ -482,8 +482,8 @@ apps/agent-host/
 │   │       └── review-pr.ts
 │   ├── queue/
 │   │   └── processor.ts      # Job queue processor
-│   ├── pinga/
-│   │   └── client.ts         # Pinga API client
+│   ├── Devflow/
+│   │   └── client.ts         # Devflow API client
 │   └── types.ts              # TypeScript types
 ├── package.json
 ├── tsconfig.json
@@ -497,7 +497,7 @@ apps/agent-host/
 GITHUB_TOKEN=ghp_xxx              # Personal access token
 GITHUB_COPILOT_TOKEN=xxx          # If needed separately
 
-# Pinga Integration
+# Devflow Integration
 DEVFLOW_API_URL=https://pinga-mvp-web.vercel.app
 DEVFLOW_API_SECRET=xxx              # Shared secret for HMAC
 
@@ -519,7 +519,7 @@ NODE_ENV=development
 2. Initialize Copilot SDK client
 3. Implement `/command` and `/health` endpoints
 4. Set up basic job queue
-5. Create Pinga client for sending updates
+5. Create Devflow client for sending updates
 
 ### Phase 2: Custom Tools
 
@@ -538,11 +538,11 @@ NODE_ENV=development
 4. Add GitHub MCP server integration
 5. Install and test skills
 
-### Phase 4: Pinga Integration
+### Phase 4: Devflow Integration
 
-1. Add command detection in Pinga's Telegram/Slack handlers
-2. Call Devflow's `/command` endpoint from Pinga
-3. Add `/api/copilot/task-update` endpoint in Pinga
+1. Add command detection in Devflow's Telegram/Slack handlers
+2. Call Devflow's `/command` endpoint from Devflow
+3. Add `/api/copilot/task-update` endpoint in Devflow
 4. Test end-to-end flow
 
 ### Phase 5: Polish & Deploy

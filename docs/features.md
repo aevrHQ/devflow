@@ -11,7 +11,7 @@ Pinga unifies notifications from various sources and delivers them to your prefe
   - Interactive AI Assistant (`@PingaBot`) capable of answering questions and performing tasks.
   - Voice message transcription and command execution.
 - **Slack Integration**:
-  - Connect Pinga to any Slack channel.
+  - Connect Devflow to any Slack channel.
   - Thread-supported AI conversations.
   - Granular control over linked channels.
 
@@ -44,7 +44,7 @@ We prioritize security without sacrificing convenience.
 Pinga isn't just a notifier; it's an agent.
 
 - **Context Aware**: The bot understands the context of your notifications.
-- **Voice Commands** (Telegram): Send a voice note, Pinga transcribes it, asks for confirmation, and executes the command.
+- **Voice Commands** (Telegram): Send a voice note, Devflow transcribes it, asks for confirmation, and executes the command.
 - **Conversation History**: Maintains context across messages for natural interaction.
 
 ## 5. Developer-First API

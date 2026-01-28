@@ -30,7 +30,7 @@ export class WorkflowExecutor {
 
 ### Key Methods
 
-- **sendProgress()** - Update user in real-time via Pinga
+- **sendProgress()** - Update user in real-time via Devflow
 - **sendCompletion()** - Notify success or failure
 - **buildSystemPrompt()** - Build Copilot system instructions
 - **setupSession()** - Create Copilot session with tools & MCP
@@ -46,6 +46,7 @@ Automatically diagnoses and fixes bugs in a repository.
 **File**: `flows/fix-bug.ts`
 
 **Process**:
+
 1. Clone the repository
 2. Examine error location and related code
 3. Identify the root cause
@@ -56,6 +57,7 @@ Automatically diagnoses and fixes bugs in a repository.
 8. Create PR with fix details and labels
 
 **Input Context**:
+
 ```typescript
 {
   naturalLanguage: "Authentication fails when token expires",
@@ -68,6 +70,7 @@ Automatically diagnoses and fixes bugs in a repository.
 ```
 
 **Output**:
+
 ```typescript
 {
   success: true,
@@ -77,6 +80,7 @@ Automatically diagnoses and fixes bugs in a repository.
 ```
 
 **Tools Used**:
+
 - git_operations (clone, branch, commit, push)
 - read_file (examine code)
 - write_file (apply fix)
@@ -93,6 +97,7 @@ Automatically implements new features in a repository.
 **File**: `flows/feature.ts`
 
 **Process**:
+
 1. Clone the repository
 2. Explore repository structure
 3. Create `feature/<feature-name>` branch
@@ -103,6 +108,7 @@ Automatically implements new features in a repository.
 8. Create PR with feature description and enhancement label
 
 **Input Context**:
+
 ```typescript
 {
   naturalLanguage: "Add user export to CSV functionality",
@@ -115,6 +121,7 @@ Automatically implements new features in a repository.
 ```
 
 **Output**:
+
 ```typescript
 {
   success: true,
@@ -124,6 +131,7 @@ Automatically implements new features in a repository.
 ```
 
 **Tools Used**:
+
 - git_operations (clone, branch, commit, push)
 - read_file (understand architecture)
 - list_files (explore codebase)
@@ -141,6 +149,7 @@ Explains code, architecture, or specific features.
 **File**: `flows/explain.ts`
 
 **Process**:
+
 1. Clone the repository
 2. List directory structure
 3. Identify relevant files
@@ -155,6 +164,7 @@ Explains code, architecture, or specific features.
 6. Send explanation via progress update
 
 **Input Context**:
+
 ```typescript
 {
   naturalLanguage: "Explain the authentication flow",
@@ -166,6 +176,7 @@ Explains code, architecture, or specific features.
 ```
 
 **Output**:
+
 ```typescript
 {
   success: true,
@@ -175,6 +186,7 @@ Explains code, architecture, or specific features.
 ```
 
 **Tools Used**:
+
 - git_operations (clone)
 - read_file (examine code)
 - list_files (explore structure)
@@ -189,6 +201,7 @@ Reviews pull requests and provides constructive feedback.
 **File**: `flows/review-pr.ts`
 
 **Process**:
+
 1. Clone the repository
 2. Checkout the PR branch
 3. List modified files
@@ -208,6 +221,7 @@ Reviews pull requests and provides constructive feedback.
    - Positive feedback
 
 **Input Context**:
+
 ```typescript
 {
   naturalLanguage: "Review this authentication PR",
@@ -220,6 +234,7 @@ Reviews pull requests and provides constructive feedback.
 ```
 
 **Output**:
+
 ```typescript
 {
   success: true,
@@ -229,6 +244,7 @@ Reviews pull requests and provides constructive feedback.
 ```
 
 **Tools Used**:
+
 - git_operations (clone, checkout)
 - read_file (examine changes)
 - list_files (see modified files)
@@ -242,13 +258,14 @@ All workflows receive a `WorkflowContext`:
 
 ```typescript
 interface WorkflowContext {
-  taskId: string;                    // Unique identifier
+  taskId: string; // Unique identifier
   intent: "fix-bug" | "feature" | "explain" | "review-pr" | "deploy";
-  repo: string;                      // owner/repo format
-  branch?: string;                   // Optional: specific branch
-  naturalLanguage: string;           // User's request
-  context?: Record<string, any>;     // Additional context
-  source: {                          // Where command came from
+  repo: string; // owner/repo format
+  branch?: string; // Optional: specific branch
+  naturalLanguage: string; // User's request
+  context?: Record<string, any>; // Additional context
+  source: {
+    // Where command came from
     channel: "telegram" | "slack";
     chatId: string;
     messageId: string;
@@ -265,10 +282,10 @@ All workflows return a `WorkflowResult`:
 ```typescript
 interface WorkflowResult {
   success: boolean;
-  output?: string;        // Detailed output or explanation
-  prUrl?: string;         // PR URL if created
-  summary?: string;       // User-friendly summary
-  error?: string;         // Error message if failed
+  output?: string; // Detailed output or explanation
+  prUrl?: string; // PR URL if created
+  summary?: string; // User-friendly summary
+  error?: string; // Error message if failed
 }
 ```
 
@@ -286,7 +303,7 @@ const context: WorkflowContext = {
   intent: "fix-bug",
   repo: "owner/repo",
   naturalLanguage: "Fix authentication bug",
-  source: { channel: "telegram", chatId: "...", messageId: "..." }
+  source: { channel: "telegram", chatId: "...", messageId: "..." },
 };
 
 const result = await WorkflowFactory.executeWorkflow(context);
@@ -310,17 +327,17 @@ session.on((event: SessionEvent) => {
     // Tool execution started
     sendProgress(`Executing ${event.data.toolName}`);
   }
-  
+
   if (event.type === "tool.end") {
     // Tool completed
     console.log(`Tool result:`, event.data.result);
   }
-  
+
   if (event.type === "assistant.message_delta") {
     // Streaming response chunk
     output += event.data.deltaContent;
   }
-  
+
   if (event.type === "error") {
     // Error occurred
     hasError = true;
@@ -340,8 +357,9 @@ Workflows handle errors gracefully:
 3. **Network Errors** - Caught during API calls
 
 All errors are reported back to user via:
+
 - `sendCompletion(taskId, { success: false, error: msg })`
-- Sends error notification to Pinga
+- Sends error notification to Devflow
 - User receives notification in Slack/Telegram
 
 ---
@@ -361,7 +379,7 @@ async function handleCommand(command: CommandRequest): Promise<void> {
   };
 
   const result = await WorkflowFactory.executeWorkflow(context);
-  // Result sent to user via Pinga
+  // Result sent to user via Devflow
 }
 ```
 
@@ -370,18 +388,21 @@ async function handleCommand(command: CommandRequest): Promise<void> {
 ## Future Workflows
 
 ### Deploy Workflow (Planned)
+
 - Deploy to Vercel/Netlify
 - Run health checks
 - Rollback on failure
 - Notify on completion
 
 ### Test Optimization Workflow (Planned)
+
 - Analyze test suite
 - Identify slow tests
 - Suggest optimizations
 - Parallel test execution
 
 ### Documentation Generation (Planned)
+
 - Analyze codebase
 - Generate API docs
 - Create architecture diagrams

@@ -110,7 +110,7 @@ function LoginForm() {
           <p className="text-gray-500 text-sm">
             {mode === "pin-login"
               ? "Enter your PIN to access your account"
-              : "Sign in to manage your Pinga bot"}
+              : "Sign in to manage your Devflow bot"}
           </p>
         </div>
 
@@ -323,7 +323,7 @@ function LoginForm() {
       </div>
       <div className="bg-gray-50 px-8 py-4 text-center border-t border-gray-100">
         <p className="text-xs text-gray-400">
-          Secure authentication powered by Pinga
+          Secure authentication powered by Devflow
         </p>
       </div>
     </div>

@@ -4,7 +4,7 @@
 
 ### What's Accomplished
 
-**Full end-to-end integration** of Devflow Agent Host with Pinga notification system:
+**Full end-to-end integration** of Devflow Agent Host with Devflow notification system:
 
 - ✅ Command parsing in Telegram/Slack (`!devflow fix owner/repo bug`)
 - ✅ Task forwarding to Agent Host
@@ -29,7 +29,7 @@
 ### Build Status
 
 ```
-✅ Pinga builds successfully
+✅ Devflow builds successfully
 ✅ Agent Host builds successfully
 ✅ 0 TypeScript errors
 ✅ All tests passing
@@ -74,7 +74,7 @@ Agent Host routes to FixBugWorkflow
     ↓
 Workflow uses 7 custom tools to fix bug
     ↓
-Progress updates sent back to Pinga
+Progress updates sent back to Devflow
     ↓
 User sees real-time progress in chat
 ```

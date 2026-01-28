@@ -862,7 +862,7 @@ export async function POST(request: NextRequest) {
         const welcomeMessage =
           `🎉 *Thanks for adding me to this group!*\n\n` +
           `To start receiving notifications here:\n\n` +
-          `1️⃣ Open your Pinga Dashboard\n` +
+          `1️⃣ Open your Devflow Dashboard\n` +
           `2️⃣ Go to Settings → Notification Channels\n` +
           `3️⃣ Click "Add Telegram"\n` +
           `4️⃣ Click "Connect with Telegram"\n` +

@@ -33,6 +33,7 @@ Perform git operations: clone, branch, commit, push, pull, status.
 **Class**: `GitTool`
 
 **Methods**:
+
 - `clone(repoUrl, targetPath, branch?)` - Clone a repository
 - `createBranch(repoPath, branchName, fromBranch)` - Create and checkout a new branch
 - `commit(repoPath, message, author?)` - Commit staged changes
@@ -43,6 +44,7 @@ Perform git operations: clone, branch, commit, push, pull, status.
 - `cleanup(repoPath)` - Clean up local repository
 
 **Usage in Copilot**:
+
 ```typescript
 // Copilot will call this tool with:
 {
@@ -61,11 +63,13 @@ Run test suites and capture results.
 **Class**: `TestRunner`
 
 **Methods**:
+
 - `runTests(input)` - Execute tests with auto-detection of package manager
 - `detectPackageManager(repoPath)` - Detect npm/yarn/pnpm
 - `findTestFiles(repoPath, pattern)` - Find test files matching pattern
 
 **Features**:
+
 - Auto-detects npm/yarn/pnpm from lock files
 - Supports custom test commands
 - Can filter by test pattern
@@ -73,6 +77,7 @@ Run test suites and capture results.
 - Parses test output for pass/fail counts
 
 **Usage in Copilot**:
+
 ```typescript
 {
   "repoPath": "/tmp/devflow-repos/owner-repo",
@@ -90,6 +95,7 @@ Read, write, and list files in repositories.
 **Class**: `FileManager`
 
 **Tools**:
+
 1. **read_file** - Read file contents
    - Auto-detects file language (TypeScript, Python, etc)
    - Respects max size limit (default: 1MB)
@@ -105,6 +111,7 @@ Read, write, and list files in repositories.
 
 **Language Detection**:
 Maps file extensions to syntax highlighting languages:
+
 - `.ts, .tsx` → typescript
 - `.js, .jsx` → javascript
 - `.py` → python
@@ -113,6 +120,7 @@ Maps file extensions to syntax highlighting languages:
 - And many more...
 
 **Usage in Copilot**:
+
 ```typescript
 // Read file
 {
@@ -143,6 +151,7 @@ Create, list, and manage pull requests on GitHub.
 **Class**: `GitHubPRManager`
 
 **Methods**:
+
 - `openPullRequest(input)` - Open a new PR
   - Supports draft PRs
   - Can add labels and assignees
@@ -153,10 +162,12 @@ Create, list, and manage pull requests on GitHub.
 - `closePullRequest(repo, prNumber)` - Close a PR
 
 **Requirements**:
+
 - `GITHUB_TOKEN` environment variable set
 - Token must have `repo` scope
 
 **Usage in Copilot**:
+
 ```typescript
 {
   "repo": "owner/repo",
@@ -173,14 +184,16 @@ Create, list, and manage pull requests on GitHub.
 
 ### 5. Progress Updates (`progress.ts`)
 
-Send real-time progress updates back to Pinga for user notifications.
+Send real-time progress updates back to Devflow for user notifications.
 
 **Class**: `ProgressTracker`
 
 **Methods**:
-- `sendUpdate(input)` - Send progress update to Pinga
+
+- `sendUpdate(input)` - Send progress update to Devflow
 
 **Updates Include**:
+
 - Current step description
 - Progress percentage (0-1)
 - Status (in_progress, completed, failed)
@@ -188,11 +201,13 @@ Send real-time progress updates back to Pinga for user notifications.
 - Timestamp
 
 **Integration**:
-- Calls Pinga's `/api/copilot/task-update` endpoint
+
+- Calls Devflow's `/api/copilot/task-update` endpoint
 - User receives notifications in Slack/Telegram
 - Progress bar updates in real-time
 
 **Usage in Copilot**:
+
 ```typescript
 {
   "taskId": "task-123",
@@ -210,6 +225,7 @@ Send real-time progress updates back to Pinga for user notifications.
 Helper functions used by all tools.
 
 **Functions**:
+
 - `ensureRepoStoragePath()` - Create `/tmp/devflow-repos`
 - `getRepoPath(repo)` - Get local path for repo
 - `executeCommand(cmd, cwd, timeout)` - Run shell command
@@ -220,6 +236,7 @@ Helper functions used by all tools.
 - `removeDirectory(path)` - Recursively delete directory
 
 **Custom Errors**:
+
 - `ToolError` - Extended Error class with tool name and code
   ```typescript
   throw new ToolError("Descriptive message", "tool_name", "ERROR_CODE");
@@ -260,6 +277,7 @@ export class ToolError extends Error {
 ```
 
 Example:
+
 ```typescript
 catch (error) {
   throw new ToolError(
@@ -308,6 +326,7 @@ curl -X POST http://localhost:3001/command \
 ## Next Steps
 
 Tools are ready to be integrated into workflows in Phase 3:
+
 - **Fix Bug Workflow** - Uses git + tests + files + progress
 - **Feature Implementation** - Uses git + files + tests + PR
 - **Code Explanation** - Uses files + progress

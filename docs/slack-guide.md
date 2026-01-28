@@ -5,11 +5,11 @@ Pinga integrates with Slack to bring notifications and AI assistance directly in
 ## Setup
 
 1. **Dashboard Setup**:
-   - Go to your Pinga Dashboard.
+   - Go to your Devflow Dashboard.
    - Create a generic "Slack" channel in your settings if you haven't already.
 
 2. **Slack App Configuration**:
-   - Ensure the Pinga Slack App is installed in your workspace.
+   - Ensure the Devflow Slack App is installed in your workspace.
    - Invite the bot user to the desired channel: `/invite @Pinga`
 
 ## Linking a Channel

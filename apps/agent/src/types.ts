@@ -1,4 +1,4 @@
-// Core command types from Pinga
+// Core command types from Devflow
 export interface TaskPayload {
   intent: "fix-bug" | "feature" | "explain" | "review-pr" | "deploy";
   repo: string;
@@ -28,7 +28,7 @@ export interface CommandResponse {
   error?: string;
 }
 
-// Progress update types for Pinga
+// Progress update types for Devflow
 export interface ProgressUpdate {
   taskId: string;
   status: "in_progress" | "completed" | "failed";

@@ -15,7 +15,7 @@ This document describes the complete end-to-end workflow testing for the DevFlow
 ### Start Services
 
 ```bash
-# Terminal 1: Start the Pinga web platform
+# Terminal 1: Start the Devflow web platform
 cd apps/web
 npm run dev
 # Platform runs on http://localhost:3000
@@ -114,6 +114,7 @@ pending → in_progress → completed
 **Test Cases:**
 
 1. **Invalid Config**
+
    ```bash
    rm ~/.devflow/config.json
    devflow start
@@ -121,6 +122,7 @@ pending → in_progress → completed
    ```
 
 2. **Network Error**
+
    ```bash
    # Stop the platform service
    # Keep agent running
@@ -129,6 +131,7 @@ pending → in_progress → completed
    ```
 
 3. **Expired Token**
+
    ```bash
    # Manually edit ~/.devflow/config.json and change api_key
    devflow start
@@ -148,6 +151,7 @@ pending → in_progress → completed
 ### Agent Registration API
 
 **Request:**
+
 ```
 POST /api/agents
 Authorization: Bearer <oauth-token>
@@ -163,6 +167,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```
 HTTP 201 Created
 
@@ -183,12 +188,14 @@ HTTP 201 Created
 ### Get Pending Commands API
 
 **Request:**
+
 ```
 GET /api/agents/agent-uuid/commands
 Authorization: Bearer <jwt-token>
 ```
 
 **Response:**
+
 ```
 HTTP 200 OK
 
@@ -209,6 +216,7 @@ HTTP 200 OK
 ### Report Progress API
 
 **Request:**
+
 ```
 POST /api/tasks/task-123/progress
 Authorization: Bearer <agent-token>
@@ -223,6 +231,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```
 HTTP 200 OK
 
@@ -235,6 +244,7 @@ HTTP 200 OK
 ### Complete Task API
 
 **Request:**
+
 ```
 POST /api/tasks/task-123/complete
 Authorization: Bearer <agent-token>
@@ -249,6 +259,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```
 HTTP 200 OK
 
@@ -283,7 +294,7 @@ Test execution time for different workflow types:
 
 ```bash
 # fix-bug: expect 30-120 seconds
-# feature: expect 60-300 seconds  
+# feature: expect 60-300 seconds
 # explain: expect 5-30 seconds
 # review-pr: expect 15-60 seconds
 ```
@@ -423,7 +434,7 @@ cd apps/web
 npm run dev
 # Look for: POST /api/agents, GET /api/agents/*/commands
 
-# Check agent-host logs  
+# Check agent-host logs
 cd apps/agent-host
 npm run dev
 # Look for: POST /api/workflows/execute

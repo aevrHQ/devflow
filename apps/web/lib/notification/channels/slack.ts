@@ -23,7 +23,7 @@ export class SlackChannel implements NotificationChannel {
       return { success: false, error: "Missing Slack webhook URL" };
     }
 
-    // Convert Pinga notification to Slack Block Kit
+    // Convert Devflow notification to Slack Block Kit
     // https://api.slack.com/block-kit
 
     const blocks: any[] = [];

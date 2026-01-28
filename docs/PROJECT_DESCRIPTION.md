@@ -2,7 +2,7 @@
 
 DevFlow is an innovative SaaS platform paired with a self-hosted CLI agent that harnesses the GitHub Copilot SDK to orchestrate AI-powered development workflows. It represents a two-tier architecture where cloud-based task management integrates seamlessly with local, secure code execution.
 
-The platform consists of three interconnected applications: the Pinga Web Platform, a Next.js SaaS dashboard for task management and notifications; the DevFlow CLI Agent, a self-hosted npm package that polls for tasks and executes workflows locally; and Agent-Host, an Express.js server that provides real Copilot SDK integration and workflow execution.
+The platform consists of three interconnected applications: the Devflow Web Platform, a Next.js SaaS dashboard for task management and notifications; the DevFlow CLI Agent, a self-hosted npm package that polls for tasks and executes workflows locally; and Agent-Host, an Express.js server that provides real Copilot SDK integration and workflow execution.
 
 DevFlow enables four primary AI-powered workflows: fix-bug (analyzes issues, implements fixes, runs tests, and creates PRs), feature (implements new features with tests and documentation), explain (generates code documentation), and review-pr (reviews pull requests for best practices).
 

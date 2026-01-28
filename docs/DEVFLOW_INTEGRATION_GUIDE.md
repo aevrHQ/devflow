@@ -13,7 +13,7 @@ Devflow is an AI-powered DevOps agent accessible through Telegram and Slack. Use
 └────────────────────────────┬──────────────────────────────────┘
                              ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Pinga Web Application                        │
+│                    Devflow Web Application                        │
 │  ├─ /webhook/telegram - Telegram message handler              │
 │  ├─ /webhook/slack    - Slack message handler                 │
 │  ├─ /api/copilot/command - Command forwarder                  │
@@ -49,7 +49,7 @@ Devflow is an AI-powered DevOps agent accessible through Telegram and Slack. Use
 
 ```bash
 git clone https://github.com/aevrHQ/pinga-mvp.git
-cd pinga-mvp
+cd Devflow-mvp
 
 # Install root dependencies
 npm install
@@ -58,7 +58,7 @@ npm install
 npm install --workspaces
 ```
 
-### 2. Configure Pinga Web App
+### 2. Configure Devflow Web App
 
 Edit `apps/web/.env.local`:
 
@@ -80,7 +80,7 @@ Edit `apps/agent-host/.env.local`:
 GITHUB_TOKEN=ghp_your_token_here
 GITHUB_OWNER=your-github-username
 
-# Pinga Integration
+# Devflow Integration
 DEVFLOW_API_URL=http://localhost:3000
 DEVFLOW_API_SECRET=your-secret-here
 
@@ -96,7 +96,7 @@ COPILOT_ENABLE_MCP=true
 ### 4. Start Services
 
 ```bash
-# Terminal 1: Start Pinga
+# Terminal 1: Start Devflow
 cd apps/web
 npm run dev
 # Runs on http://localhost:3000
@@ -148,7 +148,7 @@ npm run dev
 
 When a user sends `!devflow fix owner/repo Fix the bug`:
 
-1. Pinga webhook handler receives the message
+1. Devflow webhook handler receives the message
 2. Calls `parseDevflowCommand()` utility
 3. Extracts: intent="fix-bug", repo="owner/repo", description="Fix the bug"
 4. Generates unique taskId: `crypto.randomUUID()`
@@ -210,7 +210,7 @@ During execution, tools call `send_progress_update()`:
 }
 ```
 
-This POST to Pinga's `/api/copilot/task-update`:
+This POST to Devflow's `/api/copilot/task-update`:
 
 1. Receives progress update
 2. Looks up taskId mapping
@@ -242,9 +242,9 @@ User receives: `✅ Task completed! PR created: https://github.com/owner/repo/pu
 
 **Solution**:
 
-1. Check that Pinga webhook is receiving messages
+1. Check that Devflow webhook is receiving messages
 2. Verify DEVFLOW_API_SECRET is set correctly in both apps
-3. Check Pinga logs for errors
+3. Check Devflow logs for errors
 
 ### Task Timeout
 
@@ -263,12 +263,12 @@ User receives: `✅ Task completed! PR created: https://github.com/owner/repo/pu
 **Solution**:
 
 1. Verify `send_progress_update` tool is being called
-2. Check Pinga `/api/copilot/task-update` logs
+2. Check Devflow `/api/copilot/task-update` logs
 3. Ensure X-API-Secret header matches
 
 ## API Endpoints
 
-### Pinga
+### Devflow
 
 **POST /api/copilot/command**
 
@@ -309,7 +309,7 @@ curl -X POST http://localhost:3000/api/copilot/task-update \
 
 **POST /command**
 
-Receive task from Pinga and execute workflow.
+Receive task from Devflow and execute workflow.
 
 ```bash
 curl -X POST http://localhost:3001/command \
@@ -338,7 +338,7 @@ curl http://localhost:3001/health
 
 ### API Secret
 
-Both Pinga and Agent Host use `DEVFLOW_API_SECRET` for authentication:
+Both Devflow and Agent Host use `DEVFLOW_API_SECRET` for authentication:
 
 - Required header: `X-API-Secret`
 - Must match environment variable
@@ -361,7 +361,7 @@ Both Pinga and Agent Host use `DEVFLOW_API_SECRET` for authentication:
 
 ## Monitoring & Logging
 
-### Check Pinga Logs
+### Check Devflow Logs
 
 ```bash
 cd apps/web
