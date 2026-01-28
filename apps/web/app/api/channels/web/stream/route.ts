@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
       try {
         await changeStream.close();
         await writer.close();
-      } catch (e) {
+      } catch {
         // Ignore errors during close
       }
     };

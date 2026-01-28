@@ -23,7 +23,6 @@ export default function WebChatInterface() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isAtBottomRef = useRef(true);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchHistory = useCallback(async () => {
     try {
       const res = await fetch("/api/channels/web/history");

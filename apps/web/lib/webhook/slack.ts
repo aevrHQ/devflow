@@ -15,7 +15,7 @@ export function escapeSlack(text: string): string {
  */
 export async function sendSlackWebhook(
   webhookUrl: string,
-  payload: { text?: string; blocks?: any[] },
+  payload: { text?: string; blocks?: unknown[] },
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const response = await fetch(webhookUrl, {

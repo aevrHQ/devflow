@@ -1,6 +1,14 @@
 import { UserDocument } from "@/models/User";
 import { NotificationPayload } from "@/lib/notification/types";
 
+export type { NotificationPayload };
+
+export interface ChannelResult {
+  success: boolean;
+  error?: string;
+  messageId?: string;
+}
+
 export type ChannelType = "telegram" | "slack" | "web";
 
 export interface ChannelUser {
