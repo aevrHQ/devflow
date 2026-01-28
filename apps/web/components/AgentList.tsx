@@ -166,16 +166,18 @@ export default function AgentList({ initialAgents }: AgentListProps) {
                       <Activity className="w-4 h-4" />
                       View Tasks
                     </Link>
-                    <button
-                      onClick={() => handleDisconnect(agent.id, agent.name)}
-                      disabled={disconnecting === agent.id}
-                      className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <Power className="w-4 h-4" />
-                      {disconnecting === agent.id
-                        ? "Disconnecting..."
-                        : "Disconnect"}
-                    </button>
+                    {agent.status !== "offline" && (
+                      <button
+                        onClick={() => handleDisconnect(agent.id, agent.name)}
+                        disabled={disconnecting === agent.id}
+                        className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <Power className="w-4 h-4" />
+                        {disconnecting === agent.id
+                          ? "Disconnecting..."
+                          : "Disconnect"}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
