@@ -1,12 +1,16 @@
 # @untools/devflow - Copilot-Powered DevOps Agent
 
-The self-hosted CLI agent for **DevFlow** - powered by the **GitHub Copilot CLI** and **GitHub Copilot SDK** (released Jan 2026).
+The self-hosted CLI agent for **DevFlow** - powered by the **GitHub Copilot CLI** and **GitHub Copilot SDK**.
 
 Install this CLI tool on your local machine or server to execute AI-driven development tasks securely on your own infrastructure, leveraging the full power of GitHub Copilot.
 
 ## What is DevFlow?
 
-DevFlow is a production SaaS platform that orchestrates AI-powered development workflows. Create a DevFlow account, connect your GitHub repositories and communication channels (Slack, Telegram), then use the **@untools/devflow** CLI to execute complex development tasks right from your machine.
+DevFlow is a platform that orchestrates AI-powered development workflows.
+
+- Create a DevFlow account - [Sign up](https://devflow.aevr.space),
+- Connect your GitHub Sources and Communication Channels (Slack, Telegram),
+- Then use the **@untools/devflow** CLI to execute complex development tasks right from your machine.
 
 It acts as a bridge between your infrastructure and the AI, utilizing:
 
@@ -16,7 +20,7 @@ It acts as a bridge between your infrastructure and the AI, utilizing:
 **Key Features:**
 
 - 🤖 **Copilot-Powered Workflows**: Fix bugs, implement features, and explain code using GitHub Copilot's intelligence.
-- 🔒 **Self-hosted & Secure**: Code never leaves your machine. Secure tunneling for remote control.
+- 🔒 **Self-hosted & Secure**: Code never leaves your machine.
 - 📱 **ChatOps**: Control your dev environment from Slack or Telegram.
 - 🔗 **GitHub Integration**: Deep integration with repositories, issues, and PRs.
 - ⚡ **Real-time Tasks**: Execute long-running tasks with live progress updates.
@@ -352,4 +356,4 @@ MIT License - see LICENSE file for details
 
 **Made with ❤️ for developers by the DevFlow team**
 
-Built on the GitHub Copilot SDK for the [GitHub Copilot CLI Challenge](https://github.blog/news-and-insights/copilot-cli-challenge/)
+Built with GitHub Copilot CLI for the [GitHub Copilot CLI Challenge](https://dev.to/devteam/join-the-github-copilot-cli-challenge-win-github-universe-tickets-copilot-pro-subscriptions-and-50af?bb=260467)
