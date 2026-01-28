@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Loader2, Mail, CheckCircle2, Lock, ArrowLeft } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Loader from "@/components/ui/aevr/loader";
 
 function LoginForm() {
   const router = useRouter();
@@ -153,7 +154,7 @@ function LoginForm() {
                 className="w-full flex items-center justify-center gap-2 bg-black text-white py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
               >
                 {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader loading className="w-4 h-4" />
                 ) : (
                   "Send Magic Link"
                 )}
@@ -220,7 +221,7 @@ function LoginForm() {
                   className="w-full flex items-center justify-center gap-2 bg-black text-white py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
                 >
                   {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader loading className="w-4 h-4" />
                   ) : (
                     "Verify Code"
                   )}
@@ -300,7 +301,7 @@ function LoginForm() {
                 className="w-full flex items-center justify-center gap-2 bg-black text-white py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
               >
                 {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader loading className="w-4 h-4" />
                 ) : (
                   "Login with PIN"
                 )}
@@ -335,7 +336,7 @@ export default function LoginPage() {
       <Suspense
         fallback={
           <div className="p-8 bg-white rounded-2xl shadow-xl">
-            <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+            <Loader loading className="w-8 h-8 mx-auto" />
           </div>
         }
       >

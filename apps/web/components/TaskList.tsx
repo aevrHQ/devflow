@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Trash2,
 } from "lucide-react";
+import Loader from "@/components/ui/aevr/loader";
 
 interface Task {
   _id: string;
@@ -126,7 +127,9 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
       case "failed":
         return <XCircle className="w-5 h-5 text-red-500" />;
       case "in_progress":
-        return <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />;
+        return (
+          <Loader loading className="w-5 h-5 text-blue-500 animate-spin" />
+        );
       case "pending":
         return <Clock className="w-5 h-5 text-gray-400" />;
     }
@@ -159,7 +162,7 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader loading className="w-4 h-4 animate-spin" />
                   Deleting...
                 </>
               ) : (

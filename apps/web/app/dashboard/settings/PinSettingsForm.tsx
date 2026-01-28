@@ -1,7 +1,8 @@
 "use client";
 
+import Loader from "@/components/ui/aevr/loader";
+import { Lock } from "lucide-react";
 import { useState } from "react";
-import { Loader2, Lock } from "lucide-react";
 
 export default function PinSettingsForm() {
   const [pin, setPin] = useState("");
@@ -95,7 +96,7 @@ export default function PinSettingsForm() {
           className="flex items-center gap-2 bg-gray-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
         >
           {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader loading className="w-4 h-4 animate-spin" />
           ) : (
             <Lock className="w-4 h-4" />
           )}

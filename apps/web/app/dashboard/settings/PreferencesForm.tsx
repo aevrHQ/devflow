@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, Save } from "lucide-react";
+import Loader from "@/components/ui/aevr/loader";
 
 interface Preferences {
   aiSummary: boolean;
@@ -149,7 +150,7 @@ export default function PreferencesForm({
           className="flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
         >
           {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader loading className="w-4 h-4" />
           ) : (
             <Save className="w-4 h-4" />
           )}

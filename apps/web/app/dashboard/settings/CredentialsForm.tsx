@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, Lock, Check, Save } from "lucide-react";
+import Loader from "@/components/ui/aevr/loader";
 
 interface CredentialsFormProps {
   initialHasGithubToken?: boolean;
@@ -103,7 +104,7 @@ export default function CredentialsForm({
             className="flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
           >
             {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader loading={isLoading} className="w-4 h-4" />
             ) : (
               <Save className="w-4 h-4" />
             )}

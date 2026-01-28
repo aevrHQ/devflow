@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Loader2, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import WebhookFilterForm from "./WebhookFilterForm";
+import Loader from "@/components/ui/aevr/loader";
 
 interface Channel {
   type: string;
@@ -409,7 +410,7 @@ export default function NotificationChannelsForm({
       <div className="flex items-center gap-4 pt-4 border-t">
         {isSaving && (
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader loading={isSaving} className="w-4 h-4" />
             Saving...
           </div>
         )}

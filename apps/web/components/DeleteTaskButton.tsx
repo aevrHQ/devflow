@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import Loader from "./ui/aevr/loader";
 
 interface DeleteTaskButtonProps {
   taskId: string;
@@ -43,7 +44,7 @@ export default function DeleteTaskButton({ taskId }: DeleteTaskButtonProps) {
       }`}
     >
       {isDeleting ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader loading className="w-4 h-4 " />
       ) : (
         <Trash2 className="w-4 h-4" />
       )}

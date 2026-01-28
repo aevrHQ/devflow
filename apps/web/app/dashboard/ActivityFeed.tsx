@@ -12,6 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import Loader from "@/components/ui/aevr/loader";
 
 interface ActivityLog {
   _id: string;
@@ -80,14 +81,17 @@ export default function ActivityFeed() {
       case "skipped":
         return <AlertCircle className="w-4 h-4 text-gray-400" />;
       default:
-        return <Loader2 className="w-4 h-4 text-gray-400" />;
+        return <Loader loading className="w-4 h-4 text-gray-400" />;
     }
   };
 
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        <Loader
+          loading={loading}
+          className="w-6 h-6 animate-spin text-gray-400"
+        />
       </div>
     );
   }
@@ -239,7 +243,7 @@ export default function ActivityFeed() {
             className="w-full text-gray-500"
           >
             {loadingMore ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              <Loader loading={loadingMore} className="w-4 h-4 mr-2" />
             ) : null}
             Load More
           </Button>
