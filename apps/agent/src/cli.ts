@@ -4,7 +4,7 @@ import type { Argv } from "yargs";
 import { randomBytes } from "crypto";
 import * as fsSync from "fs";
 import * as pathLib from "path";
-import { formatError } from "./utils.js";
+import { formatError, getRepoInfo } from "./utils.js";
 
 import type { DevFlowConfig } from "./config.js";
 import {
@@ -347,10 +347,24 @@ async function startCommand(options: StartOptions): Promise<void> {
               console.log(`⚡ Executing task locally...`);
 
               // Build context
+              let repo = cmd.repo || "";
+              // If repo is missing or generic placeholder, try to detect from local git
+              if (
+                !repo ||
+                repo === "miracleio/project" ||
+                repo.includes("example.com")
+              ) {
+                const detected = await getRepoInfo();
+                if (detected) {
+                  repo = detected.full_name;
+                  console.log(`   (Auto-detected repo: ${repo})`);
+                }
+              }
+
               const context = {
                 taskId: cmd.taskId,
                 intent: cmd.intent,
-                repo: cmd.repo || "",
+                repo,
                 localPath: process.cwd(),
                 branch: cmd.branch,
                 naturalLanguage: cmd.description || "",
