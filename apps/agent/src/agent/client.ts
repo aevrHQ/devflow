@@ -7,6 +7,11 @@ export interface CommandRequest {
   description?: string;
   repo?: string;
   branch?: string;
+  sessionId?: string;
+  createdAt?: string;
+  credentials?: {
+    github?: string;
+  };
 }
 
 export interface ProgressUpdate {

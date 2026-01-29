@@ -350,9 +350,10 @@ async function startCommand(options: StartOptions): Promise<void> {
                   chatId: "local",
                   messageId: cmd.taskId,
                 },
-                sessionId: undefined, // Session ID not available in CommandRequest
+                sessionId: cmd.sessionId,
                 // Use local GitHub token from config (more secure than platform credentials)
                 localGitHubToken: config.credentials?.github_token,
+                credentials: cmd.credentials,
               };
 
               // Set GitHub Token for Copilot SDK if available - REMOVED (Handled in WorkflowExecutor)

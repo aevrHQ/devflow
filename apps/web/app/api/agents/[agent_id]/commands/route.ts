@@ -73,14 +73,15 @@ export async function GET(
           }
 
           return {
-            task_id: cmd.taskId,
+            taskId: cmd.taskId,
+            commandId: cmd.taskId,
             intent: cmd.intent,
             description: cmd.description || cmd.intent,
             repo: cmd.repo || "",
             branch: cmd.branch || "",
             credentials,
-            session_id: cmd.source?.chatId || cmd.taskId,
-            created_at: cmd.createdAt,
+            sessionId: cmd.source?.chatId || cmd.taskId,
+            createdAt: cmd.createdAt,
           };
         }),
       },
