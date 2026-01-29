@@ -253,9 +253,14 @@ async function startCommand(options: StartOptions): Promise<void> {
 
   // Graceful shutdown
   let running = true;
-  process.on("SIGINT", () => {
+  process.on("SIGINT", async () => {
     console.log("\n\n✓ Agent shutdown requested");
     running = false;
+
+    console.log("🔌 Disconnecting from platform...");
+    await client.disconnect();
+    console.log("✓ Disconnected");
+
     setTimeout(() => process.exit(0), 1000);
   });
 

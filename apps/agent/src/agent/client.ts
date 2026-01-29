@@ -86,6 +86,16 @@ export class PlatformClient {
     return response.data;
   }
 
+  async disconnect(): Promise<void> {
+    try {
+      await this.client.post(`/api/agents/${this.agentId}/heartbeat`, {
+        status: "disconnected",
+      });
+    } catch (e) {
+      // Ignore errors during shutdown
+    }
+  }
+
   async reportProgress(
     taskId: string,
     update: ProgressUpdate,

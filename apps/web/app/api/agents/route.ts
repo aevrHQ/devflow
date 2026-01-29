@@ -210,6 +210,60 @@ export async function GET(request: NextRequest) {
     // Get agents for this user
     const agents = await Agent.find({ userId: payload.userId });
 
+    const now = new Date();
+    const heartbeatThreshold = 2 * 60 * 1000; // 2 minutes
+
+    // Check for stale agents and update status
+    await Promise.all(
+      agents.map(async (agent) => {
+        const lastHeartbeat = new Date(agent.lastHeartbeat || 0);
+        const isStale =
+          now.getTime() - lastHeartbeat.getTime() > heartbeatThreshold;
+
+        // If agent is stale but marked as online, it crashed or lost conn
+        if (isStale && agent.status === "online") {
+          agent.status = "offline";
+          await agent.save();
+
+          // Send offline notification (passive detection)
+          // We need to fetch user again because payload only has userId
+          const user = await import("@/models/User").then((m) =>
+            m.default.findById(payload.userId),
+          );
+
+          if (user) {
+            const { notificationService } =
+              await import("@/lib/notification/service");
+            await notificationService.send(user, {
+              title: `🔌 Agent Offline: ${agent.name}`,
+              emoji: "🔌",
+              source: "agent",
+              eventType: "agent.offline",
+              payloadUrl: `${process.env.NEXT_PUBLIC_APP_URL || ""}/dashboard/agents`,
+              fields: [
+                { label: "Reason", value: "Connection Timeout" },
+                {
+                  label: "Last Seen",
+                  value: lastHeartbeat.toLocaleTimeString(),
+                },
+              ],
+              links: [
+                {
+                  label: "View Agents",
+                  url: `${process.env.NEXT_PUBLIC_APP_URL || ""}/dashboard/agents`,
+                },
+              ],
+              rawPayload: {
+                agentId: agent.agentId,
+                name: agent.name,
+                reason: "timeout",
+              },
+            });
+          }
+        }
+      }),
+    );
+
     return NextResponse.json(
       {
         success: true,

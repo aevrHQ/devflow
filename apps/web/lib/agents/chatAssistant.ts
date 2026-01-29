@@ -85,6 +85,13 @@ export async function generateChatResponse(
         - Explain that agents allow you to run commands on their machine securely.
         - Tell them to run \`npx devflow login\` then \`npx devflow init\` on their server/laptop.
 
+        CRITICAL for Agents:
+        - When asked to run a task, ALWAYS call \`get_agents\` first.
+        - Look for an agent where \`status: "online"\`.
+        - If multiple agents are online, pick the one with the most recent \`lastHeartbeat\`.
+        - If NO agents are online, do NOT create a task. Inform the user they need to start an agent first.
+        - NEVER assign a task to an offline agent unless explicitly told to "queue" it.
+
         If asked for help: Direct them to the dashboard or "/help" command.
         Keep responses concise within telegram limits.
         

@@ -296,6 +296,42 @@ export const createDashboardTools = (
             if (isStale && a.status === "online") {
               a.status = "offline";
               await a.save();
+
+              // Send offline notification (passive detection)
+              const { notificationService } =
+                await import("@/lib/notification/service");
+              try {
+                const user = await User.findById(userId);
+                if (user) {
+                  await notificationService.send(user, {
+                    title: `🔌 Agent Offline: ${a.name}`,
+                    emoji: "🔌",
+                    source: "agent",
+                    eventType: "agent.offline",
+                    payloadUrl: `${process.env.NEXT_PUBLIC_APP_URL || ""}/dashboard/agents`,
+                    fields: [
+                      { label: "Reason", value: "Connection Timeout" },
+                      {
+                        label: "Last Seen",
+                        value: lastHeartbeat.toLocaleTimeString(),
+                      },
+                    ],
+                    links: [
+                      {
+                        label: "View Agents",
+                        url: `${process.env.NEXT_PUBLIC_APP_URL || ""}/dashboard/agents`,
+                      },
+                    ],
+                    rawPayload: {
+                      agentId: a.agentId,
+                      name: a.name,
+                      reason: "timeout",
+                    },
+                  });
+                }
+              } catch (err) {
+                console.error("Failed to send offline notification:", err);
+              }
             } else if (!isStale && a.status === "offline") {
               // Should theoretically be handled by heartbeat endpoint, but self-correct just in case
               a.status = "online";
@@ -378,6 +414,42 @@ export const createDashboardTools = (
           message:
             "Task dispatched to agent. The agent will pick it up shortly.",
           status: "pending",
+        };
+      },
+    }),
+
+    cancelTask: tool({
+      description: "Cancel a pending or queued task.",
+      inputSchema: z.object({
+        taskId: z.string().describe("The ID of the task to cancel"),
+      }),
+      execute: async ({ taskId }) => {
+        const userId = await getAuthorizedUserId(context.userId);
+        if (!userId) return { error: "Unauthorized" };
+
+        await connectToDatabase();
+
+        const task = await TaskAssignment.findOne({
+          taskId,
+          userId: new Types.ObjectId(userId),
+        });
+
+        if (!task) return { error: "Task not found" };
+
+        if (!["pending", "queued"].includes(task.status)) {
+          return {
+            error: `Cannot cancel task in '${task.status}' status. Only pending tasks can be cancelled.`,
+          };
+        }
+
+        task.status = "cancelled";
+        await task.save();
+
+        return {
+          success: true,
+          message: `Task ${taskId} has been cancelled.`,
+          taskId,
+          status: "cancelled",
         };
       },
     }),

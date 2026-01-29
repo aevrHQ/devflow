@@ -37,7 +37,7 @@ export async function POST(
     }
 
     // Parse optional metadata from body
-    let meta: { cwd?: string; capabilities?: string[] } = {};
+    let meta: { cwd?: string; capabilities?: string[]; status?: string } = {};
     try {
       const body = await request.json();
       if (body && typeof body === "object") {
@@ -50,6 +50,45 @@ export async function POST(
 
     if (!agent) {
       return NextResponse.json({ error: "Agent not found" }, { status: 404 });
+    }
+
+    // HANDLE ACTIVE DISCONNECT
+    if (meta.status === "disconnected") {
+      agent.status = "disconnected";
+      agent.lastHeartbeat = new Date();
+      await agent.save();
+
+      // Trigger notification for manual disconnect
+      const user = await User.findById(payload.userId);
+      if (user) {
+        await notificationService.send(user, {
+          title: `🔌 Agent Disconnected: ${agent.name}`,
+          emoji: "🔌",
+          source: "agent",
+          eventType: "agent.offline",
+          payloadUrl: `${process.env.NEXT_PUBLIC_APP_URL || ""}/dashboard/agents`,
+          fields: [
+            { label: "Reason", value: "Manual Shutdown" },
+            { label: "Last Seen", value: new Date().toLocaleTimeString() },
+          ],
+          links: [
+            {
+              label: "View Agents",
+              url: `${process.env.NEXT_PUBLIC_APP_URL || ""}/dashboard/agents`,
+            },
+          ],
+          rawPayload: {
+            agentId: agent.agentId,
+            name: agent.name,
+            reason: "manual_disconnect",
+          },
+        });
+      }
+
+      return NextResponse.json(
+        { success: true, status: "disconnected" },
+        { status: 200 },
+      );
     }
 
     const wasOffline = agent.status !== "online" && agent.status !== "busy";
