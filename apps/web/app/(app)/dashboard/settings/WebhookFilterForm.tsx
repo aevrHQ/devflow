@@ -144,33 +144,35 @@ export default function WebhookFilterForm({
   const vercelSource = getSourceFilter("vercel");
 
   return (
-    <div className="mt-4 border border-gray-200 rounded-lg">
+    <div className="mt-4 border border-border rounded-lg">
       <Button
         type="button"
         variant="ghost"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 rounded-lg transition-colors h-auto"
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-accent rounded-lg transition-colors h-auto"
       >
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-600" />
-          <span className="font-medium text-sm">Webhook Filters</span>
+          <Filter className="w-4 h-4 text-muted-foreground" />
+          <span className="font-medium text-sm text-foreground">
+            Webhook Filters
+          </span>
           {getActiveFilterCount() > 0 && (
-            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+            <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs rounded-full">
               {getActiveFilterCount()} source
               {getActiveFilterCount() > 1 ? "s" : ""}
             </span>
           )}
         </div>
         {isExpanded ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" />
+          <ChevronUp className="w-4 h-4 text-muted-foreground" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-gray-400" />
+          <ChevronDown className="w-4 h-4 text-muted-foreground" />
         )}
       </Button>
 
       {isExpanded && (
-        <div className="p-4 border-t space-y-6">
-          <p className="text-xs text-gray-500">
+        <div className="p-4 border-t border-border space-y-6">
+          <p className="text-xs text-muted-foreground">
             Configure which webhooks trigger notifications on this channel.
             Leave empty to receive all events.
           </p>
@@ -186,11 +188,11 @@ export default function WebhookFilterForm({
                   onChange={(e) =>
                     updateSourceFilter("github", { enabled: e.target.checked })
                   }
-                  className="rounded border-gray-300"
+                  className="rounded border-input bg-background"
                 />
                 <label
                   htmlFor={`github-enabled`}
-                  className="font-medium text-sm"
+                  className="font-medium text-sm text-foreground"
                 >
                   GitHub
                 </label>
@@ -201,7 +203,7 @@ export default function WebhookFilterForm({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeSource("github")}
-                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 h-auto min-h-0"
+                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 h-auto min-h-0"
                 >
                   Remove
                 </Button>
@@ -212,7 +214,7 @@ export default function WebhookFilterForm({
               <div className="ml-6 space-y-3">
                 {/* Repositories */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">
                     Repositories (leave empty for all)
                   </label>
                   <div className="flex gap-2 mb-2">
@@ -227,14 +229,14 @@ export default function WebhookFilterForm({
                         }
                       }}
                       placeholder="owner/repo"
-                      className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
+                      className="flex-1 px-3 py-1.5 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
                     />
                     <Button
                       type="button"
                       variant="secondary"
                       size="sm"
                       onClick={() => addRepository("github")}
-                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors h-auto"
+                      className="px-3 py-1.5 h-auto"
                     >
                       <Plus className="w-4 h-4" />
                     </Button>
@@ -243,7 +245,7 @@ export default function WebhookFilterForm({
                     {githubSource.filters.repositories?.map((repo) => (
                       <div
                         key={repo}
-                        className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-md"
+                        className="flex items-center gap-1 px-2 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs rounded-md"
                       >
                         <span>{repo}</span>
                         <Button
@@ -251,7 +253,7 @@ export default function WebhookFilterForm({
                           variant="ghost"
                           size="sm"
                           onClick={() => removeRepository("github", repo)}
-                          className="hover:text-blue-900 h-auto w-auto min-h-0 min-w-0 p-0.5"
+                          className="hover:text-blue-800 dark:hover:text-blue-300 h-auto w-auto min-h-0 min-w-0 p-0.5"
                         >
                           <X className="w-3 h-3" />
                         </Button>
@@ -262,14 +264,14 @@ export default function WebhookFilterForm({
 
                 {/* Event Types */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-muted-foreground mb-2">
                     Event Types (leave empty for all)
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     {GITHUB_EVENTS.map((event) => (
                       <label
                         key={event}
-                        className="flex items-center gap-2 text-xs cursor-pointer"
+                        className="flex items-center gap-2 text-xs cursor-pointer text-foreground"
                       >
                         <input
                           type="checkbox"
@@ -278,7 +280,7 @@ export default function WebhookFilterForm({
                             false
                           }
                           onChange={() => toggleEventType("github", event)}
-                          className="rounded border-gray-300"
+                          className="rounded border-input bg-background"
                         />
                         <span>{event}</span>
                       </label>
@@ -300,11 +302,11 @@ export default function WebhookFilterForm({
                   onChange={(e) =>
                     updateSourceFilter("render", { enabled: e.target.checked })
                   }
-                  className="rounded border-gray-300"
+                  className="rounded border-input bg-background"
                 />
                 <label
                   htmlFor={`render-enabled`}
-                  className="font-medium text-sm"
+                  className="font-medium text-sm text-foreground"
                 >
                   Render
                 </label>
@@ -315,7 +317,7 @@ export default function WebhookFilterForm({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeSource("render")}
-                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 h-auto min-h-0"
+                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 h-auto min-h-0"
                 >
                   Remove
                 </Button>
@@ -328,7 +330,7 @@ export default function WebhookFilterForm({
                   {RENDER_EVENTS.map((event) => (
                     <label
                       key={event}
-                      className="flex items-center gap-2 text-xs cursor-pointer"
+                      className="flex items-center gap-2 text-xs cursor-pointer text-foreground"
                     >
                       <input
                         type="checkbox"
@@ -337,7 +339,7 @@ export default function WebhookFilterForm({
                           false
                         }
                         onChange={() => toggleEventType("render", event)}
-                        className="rounded border-gray-300"
+                        className="rounded border-input bg-background"
                       />
                       <span>{event}</span>
                     </label>
@@ -358,11 +360,11 @@ export default function WebhookFilterForm({
                   onChange={(e) =>
                     updateSourceFilter("vercel", { enabled: e.target.checked })
                   }
-                  className="rounded border-gray-300"
+                  className="rounded border-input bg-background"
                 />
                 <label
                   htmlFor={`vercel-enabled`}
-                  className="font-medium text-sm"
+                  className="font-medium text-sm text-foreground"
                 >
                   Vercel
                 </label>
@@ -373,7 +375,7 @@ export default function WebhookFilterForm({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeSource("vercel")}
-                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 h-auto min-h-0"
+                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 h-auto min-h-0"
                 >
                   Remove
                 </Button>
@@ -386,7 +388,7 @@ export default function WebhookFilterForm({
                   {VERCEL_EVENTS.map((event) => (
                     <label
                       key={event}
-                      className="flex items-center gap-2 text-xs cursor-pointer"
+                      className="flex items-center gap-2 text-xs cursor-pointer text-foreground"
                     >
                       <input
                         type="checkbox"
@@ -395,7 +397,7 @@ export default function WebhookFilterForm({
                           false
                         }
                         onChange={() => toggleEventType("vercel", event)}
-                        className="rounded border-gray-300"
+                        className="rounded border-input bg-background"
                       />
                       <span>{event}</span>
                     </label>

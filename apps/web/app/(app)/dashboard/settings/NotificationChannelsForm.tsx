@@ -117,7 +117,7 @@ export default function NotificationChannelsForm({
         {channels.map((channel, index) => (
           <div
             key={index}
-            className="p-4 border border-gray-200 rounded-lg bg-gray-50"
+            className="p-4 border border-border rounded-lg bg-card/50 dark:bg-zinc-900/50"
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
@@ -127,10 +127,10 @@ export default function NotificationChannelsForm({
                   onChange={(e) =>
                     updateChannel(index, { name: e.target.value })
                   }
-                  className="text-sm font-medium bg-transparent border-none focus:outline-none focus:ring-0 p-0"
+                  className="text-sm font-medium bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-foreground placeholder:text-muted-foreground"
                   placeholder="Channel name"
                 />
-                <p className="text-xs text-gray-500 capitalize">
+                <p className="text-xs text-muted-foreground capitalize">
                   {channel.type}
                 </p>
               </div>
@@ -144,14 +144,14 @@ export default function NotificationChannelsForm({
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/5 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-black"></div>
+                  <div className="w-9 h-5 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-background after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-background after:border-border after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
                 </label>
                 <Button
                   type="button"
                   onClick={() => removeChannel(index)}
                   variant="ghost"
                   size="sm"
-                  className="p-1.5 text-red-600 hover:bg-red-50 rounded-md h-auto w-auto min-h-0 min-w-0"
+                  className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md h-auto w-auto min-h-0 min-w-0"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -160,7 +160,7 @@ export default function NotificationChannelsForm({
 
             {channel.type === "telegram" && (
               <div className="space-y-3">
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="block text-xs font-medium text-muted-foreground">
                   Chat Type
                 </label>
                 <div className="flex gap-3">
@@ -179,9 +179,9 @@ export default function NotificationChannelsForm({
                           },
                         })
                       }
-                      className="rounded-full border-gray-300"
+                      className="rounded-full border-input bg-background"
                     />
-                    <span className="text-sm">Personal DM</span>
+                    <span className="text-sm text-foreground">Personal DM</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -199,20 +199,20 @@ export default function NotificationChannelsForm({
                           },
                         })
                       }
-                      className="rounded-full border-gray-300"
+                      className="rounded-full border-input bg-background"
                     />
-                    <span className="text-sm">Group Chat</span>
+                    <span className="text-sm text-foreground">Group Chat</span>
                   </label>
                 </div>
 
                 {!(channel.config as Record<string, unknown>).chatId ? (
                   (channel.config as Record<string, unknown>).isGroupChat ? (
                     // Group Chat Instructions
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
-                      <p className="text-sm text-blue-900 font-medium">
+                    <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg space-y-3">
+                      <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
                         📋 Steps to connect group chat:
                       </p>
-                      <ol className="text-sm text-blue-800 space-y-2 list-decimal list-inside">
+                      <ol className="text-sm text-blue-600 dark:text-blue-300 space-y-2 list-decimal list-inside">
                         <li>
                           Add @
                           {process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME ||
@@ -221,7 +221,7 @@ export default function NotificationChannelsForm({
                         </li>
                         <li>In the group, send this command:</li>
                       </ol>
-                      <div className="bg-white p-3 rounded border border-blue-300 font-mono text-xs break-all">
+                      <div className="bg-background p-3 rounded border border-border font-mono text-xs break-all text-foreground">
                         /start channel_{userId}_{index}
                       </div>
                       <Button
@@ -237,7 +237,7 @@ export default function NotificationChannelsForm({
                       >
                         📋 Copy Command
                       </Button>
-                      <p className="text-xs text-blue-700">
+                      <p className="text-xs text-blue-600 dark:text-blue-400">
                         💡 The bot will confirm when connected successfully
                       </p>
                     </div>
@@ -252,14 +252,14 @@ export default function NotificationChannelsForm({
                       >
                         Connect with Telegram
                       </a>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         Click to open Telegram and connect this channel
                       </p>
                     </div>
                   )
                 ) : (
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50 px-3 py-2 rounded-md">
+                    <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 bg-green-500/10 px-3 py-2 rounded-md">
                       <svg
                         className="w-4 h-4"
                         fill="none"
@@ -298,7 +298,7 @@ export default function NotificationChannelsForm({
                         })
                       }
                       placeholder="Bot Token (optional)"
-                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
+                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
                     />
                   </div>
                 )}
@@ -327,14 +327,14 @@ export default function NotificationChannelsForm({
                   })
                 }
                 placeholder="Discord Webhook URL"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
               />
             )}
 
             {channel.type === "slack" && (
               <div className="space-y-4">
                 {(channel.config as Record<string, unknown>).webhookUrl ? (
-                  <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50 px-3 py-2 rounded-md border border-green-100">
+                  <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 bg-green-500/10 px-3 py-2 rounded-md border border-green-500/20">
                     <CheckCircle2 className="w-4 h-4" />
                     Connected to{" "}
                     <span className="font-medium">
@@ -365,7 +365,7 @@ export default function NotificationChannelsForm({
                       </svg>
                       Connect Slack
                     </a>
-                    <p className="text-xs text-gray-500 text-center">
+                    <p className="text-xs text-muted-foreground text-center">
                       You&apos;ll be redirected to Slack to authorize Devflow
                     </p>
                   </div>
@@ -389,7 +389,7 @@ export default function NotificationChannelsForm({
           type="button"
           onClick={() => addChannel("telegram")}
           variant="secondary"
-          className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-accent text-foreground"
         >
           <Plus className="w-4 h-4" />
           Add Telegram
@@ -398,7 +398,7 @@ export default function NotificationChannelsForm({
           type="button"
           onClick={() => addChannel("discord")}
           variant="secondary"
-          className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-accent text-foreground"
         >
           <Plus className="w-4 h-4" />
           Add Discord
@@ -407,22 +407,22 @@ export default function NotificationChannelsForm({
           type="button"
           onClick={() => addChannel("slack")}
           variant="secondary"
-          className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-accent text-foreground"
         >
           <Plus className="w-4 h-4" />
           Add Slack
         </Button>
       </div>
 
-      <div className="flex items-center gap-4 pt-4 border-t">
+      <div className="flex items-center gap-4 pt-4 border-t border-border">
         {isSaving && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader loading={isSaving} className="w-4 h-4" />
             Saving...
           </div>
         )}
         {message && (
-          <div className="flex items-center gap-2 text-sm text-green-600">
+          <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
             <CheckCircle2 className="w-4 h-4" />
             {message}
           </div>

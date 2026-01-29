@@ -74,13 +74,14 @@ export class PlatformClient {
     return response.data.commands || [];
   }
 
-  async heartbeat(): Promise<{
+  async heartbeat(meta?: { cwd?: string; capabilities?: string[] }): Promise<{
     success: boolean;
     lastHeartbeat: string;
     status?: string;
   }> {
     const response = await this.client.post(
       `/api/agents/${this.agentId}/heartbeat`,
+      meta,
     );
     return response.data;
   }

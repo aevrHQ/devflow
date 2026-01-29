@@ -262,7 +262,10 @@ async function startCommand(options: StartOptions): Promise<void> {
   // Send initial heartbeat to mark agent as online
   try {
     console.log("� Connecting to platform...");
-    await client.heartbeat();
+    await client.heartbeat({
+      cwd: process.cwd(),
+      capabilities: ["git", "copilot"],
+    });
 
     console.log(`✓ Agent online: ${config.agent.id}`);
     console.log(`✓ Listening for commands...\n`);
