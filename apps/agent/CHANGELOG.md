@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.16](https://github.com/miracleonyenma/devflow/compare/v0.2.15...v0.2.16) (2026-01-29)
+
+
+### Features
+
+* **api:** Implement active agent disconnect and passive detection. ([2918b94](https://github.com/miracleonyenma/devflow/commit/2918b94f58706e64e82eaa86deb53d237af462af))
+
 ### [0.2.15](https://github.com/miracleonyenma/devflow/compare/v0.2.14...v0.2.15) (2026-01-29)
 
 
