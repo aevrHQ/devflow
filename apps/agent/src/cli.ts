@@ -4,6 +4,7 @@ import type { Argv } from "yargs";
 import { randomBytes } from "crypto";
 import * as fsSync from "fs";
 import * as pathLib from "path";
+import { formatError } from "./utils.js";
 
 import type { DevFlowConfig } from "./config.js";
 import {
@@ -325,12 +326,20 @@ async function startCommand(options: StartOptions): Promise<void> {
           console.log(`   Task ID: ${cmd.taskId}`);
 
           // Send progress update
-          client.reportProgress(cmd.taskId, {
-            taskId: cmd.taskId,
-            status: "in_progress",
-            step: cmd.intent,
-            progress: 0.25,
-          });
+          (async () => {
+            try {
+              await client.reportProgress(cmd.taskId, {
+                taskId: cmd.taskId,
+                status: "in_progress",
+                step: cmd.intent,
+                progress: 0.25,
+              });
+            } catch (err) {
+              console.error(
+                `Failed to report progress for task ${cmd.taskId}: ${formatError(err)}`,
+              );
+            }
+          })();
 
           // Execute task LOCALLY using embedded Workflow Engine
           (async () => {
@@ -385,7 +394,7 @@ async function startCommand(options: StartOptions): Promise<void> {
               });
               console.error(`✗ Task failed: ${cmd.taskId} - ${errorMsg}`);
               if (options.debug) {
-                console.error("Full Error Details:", error);
+                console.error("Full Error Details:", formatError(error));
               }
             }
           })();
@@ -395,9 +404,7 @@ async function startCommand(options: StartOptions): Promise<void> {
       // Wait before next poll
       await new Promise((resolve) => setTimeout(resolve, options.pollInterval));
     } catch (error) {
-      console.error(
-        `⚠ Poll error: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      console.error(`⚠ Poll error: ${formatError(error)}`);
       await new Promise((resolve) =>
         setTimeout(resolve, options.pollInterval * 2),
       );
