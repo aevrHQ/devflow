@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.15](https://github.com/miracleonyenma/devflow/compare/v0.2.14...v0.2.15) (2026-01-29)
+
+
+### Features
+
+* **api:** Implement live Web Chat functionality via Server-Sent Events (SSE). ([0dc2eeb](https://github.com/miracleonyenma/devflow/commit/0dc2eebb727f8e528ad8de423b06d9835b1f4ebc))
+* **landing:** Add web-based chat functionality and API endpoints. ([b6c8ed0](https://github.com/miracleonyenma/devflow/commit/b6c8ed06ed861ad0d7e0bdf1de67439d14a08abf))
+* **lib/channels:** Enhance authentication with two-factor token verification and cookie fallback. ([f6b84e7](https://github.com/miracleonyenma/devflow/commit/f6b84e7b085d21e614114a78e5d40236e4e977c6))
+
+
+### Bug Fixes
+
+* **agents:** Enhance command request and response data. ([eb08ff5](https://github.com/miracleonyenma/devflow/commit/eb08ff5c696a715bc077997080441bf50ab2d0ee))
+* **channels:** Improve channel response and history saving logic. ([3c459f1](https://github.com/miracleonyenma/devflow/commit/3c459f1ec1f6461dbc977c67fed2c8fd95c26e37))
+* **client:** Extend heartbeat with metadata and user capabilities. ([70ca77c](https://github.com/miracleonyenma/devflow/commit/70ca77c23bea8b9e25bd79bea73c7a6f15b81e7c))
+* **lib:** Improve slack channel and webhook APIs for types and error handling. ([f377b70](https://github.com/miracleonyenma/devflow/commit/f377b70632dbc80238ce25c52f5b21189908666b))
+* **ui:** Update text colors and theme for better readability and consistency. ([a9d973f](https://github.com/miracleonyenma/devflow/commit/a9d973f21aa748e12440732b0d5936f0cd5bd8e7))
+* **web:** Optimize chat interface scroll and fetch logic, improve performance. ([dee7183](https://github.com/miracleonyenma/devflow/commit/dee7183eb2d486eb3b433369fa715698fe77c13f))
+
+
+### Code Refactoring
+
+* **AGENT/cli:** Automatically detect local GitHub repository URL and update CLI. ([3cebed1](https://github.com/miracleonyenma/devflow/commit/3cebed1992b87f7233a0a419b01623965e4add08))
+* **utilities:** Enhance error formatting for Axios and native JavaScript errors. ([bec9134](https://github.com/miracleonyenma/devflow/commit/bec9134cd691047e3854105e8de73441613faf80))
+
 ### [0.2.14](https://github.com/miracleonyenma/devflow/compare/v0.2.13...v0.2.14) (2026-01-28)
 
 ### [0.2.13](https://github.com/miracleonyenma/devflow/compare/v0.2.12...v0.2.13) (2026-01-28)

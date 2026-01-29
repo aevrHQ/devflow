@@ -1,6 +1,6 @@
 {
   "name": "@untools/devflow",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "Self-hosted AI DevOps agent for DevFlow platform",
   "type": "module",
   "bin": {
