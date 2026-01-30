@@ -20,6 +20,9 @@ import {
 interface Preferences {
   aiSummary: boolean;
   allowedSources: string[];
+  featureFlags?: {
+    sidebarNavigation: boolean;
+  };
 }
 
 interface PreferencesFormProps {
@@ -44,7 +47,13 @@ export default function PreferencesForm({
       const res = await fetch("/api/user/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ preferences }),
+        body: JSON.stringify({
+          preferences: {
+            aiSummary: preferences.aiSummary,
+            allowedSources: preferences.allowedSources,
+          },
+          featureFlags: preferences.featureFlags,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to update");
@@ -158,6 +167,40 @@ export default function PreferencesForm({
             </div>
           </div>
         </Field>
+
+        <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <h4 className="text-sm font-medium mb-3 text-muted-foreground">
+            Example Feature
+          </h4>
+          <Field
+            orientation="horizontal"
+            className="justify-between items-center"
+          >
+            <FieldContent>
+              <FieldLabel>Sidebar Navigation (Beta)</FieldLabel>
+              <FieldDescription>
+                Try the new collapsible sidebar navigation experience
+              </FieldDescription>
+            </FieldContent>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={preferences.featureFlags?.sidebarNavigation || false}
+                onChange={(e) =>
+                  setPreferences({
+                    ...preferences,
+                    featureFlags: {
+                      ...preferences.featureFlags,
+                      sidebarNavigation: e.target.checked,
+                    },
+                  })
+                }
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/5 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+            </label>
+          </Field>
+        </div>
       </div>
 
       <div className="flex items-center gap-4 pt-4 border-t">

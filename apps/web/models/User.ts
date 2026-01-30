@@ -12,6 +12,10 @@ export interface IUser {
     allowedSources: string[];
   };
 
+  featureFlags?: {
+    sidebarNavigation: boolean;
+  };
+
   // Auth fields
   pin?: string; // Hashed PIN for quick login
 
@@ -43,6 +47,10 @@ const UserSchema = new Schema<UserDocument>(
       aiSummary: { type: Boolean, default: false }, // Enable AI summary
       allowedSources: { type: [String], default: [] }, // If empty, allow all. Else only allow specific sources.
       // Future: tone, concise vs detailed, etc.
+    },
+
+    featureFlags: {
+      sidebarNavigation: { type: Boolean, default: false },
     },
 
     pin: { type: String },

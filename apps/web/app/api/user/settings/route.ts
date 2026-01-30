@@ -23,10 +23,16 @@ const credentialsSchema = z.object({
   groqApiKeys: z.array(z.string()).optional(),
 });
 
+const featureFlagsSchema = z.object({
+  sidebarNavigation: z.boolean(),
+});
+
 const settingsSchema = z.object({
   channels: z.array(channelSchema).optional(),
   preferences: preferencesSchema.optional(),
+
   credentials: credentialsSchema.optional(),
+  featureFlags: featureFlagsSchema.optional(),
 });
 
 export async function POST(request: Request) {
@@ -49,6 +55,10 @@ export async function POST(request: Request) {
 
     if (result.data.preferences !== undefined)
       updateData.preferences = result.data.preferences;
+
+    if (result.data.featureFlags !== undefined) {
+      updateData.featureFlags = result.data.featureFlags;
+    }
 
     if (result.data.credentials) {
       const { encryptCredentials } = await import("@/lib/credentialEncryption");

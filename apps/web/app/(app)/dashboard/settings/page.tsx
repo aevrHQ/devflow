@@ -22,6 +22,10 @@ export default async function SettingsPage() {
     ? JSON.parse(JSON.stringify(dbUser.preferences))
     : { aiSummary: false, allowedSources: [] };
 
+  const featureFlags = dbUser?.featureFlags
+    ? JSON.parse(JSON.stringify(dbUser.featureFlags))
+    : { sidebarNavigation: false };
+
   const hasGithubToken = !!dbUser?.credentials?.github;
   const groqKeysCount = dbUser?.credentials?.groqApiKeys?.length || 0;
 
@@ -55,6 +59,7 @@ export default async function SettingsPage() {
       preferences={preferences}
       hasGithubToken={hasGithubToken}
       groqKeysCount={groqKeysCount}
+      featureFlags={featureFlags}
       header={
         <ProfileHeader
           stats={{

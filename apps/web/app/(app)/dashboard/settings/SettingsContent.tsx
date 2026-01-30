@@ -22,6 +22,7 @@ interface SettingsContentProps {
   preferences: { aiSummary: boolean; allowedSources: string[] };
   hasGithubToken: boolean;
   groqKeysCount?: number;
+  featureFlags?: { sidebarNavigation: boolean };
   header: React.ReactNode;
 }
 
@@ -31,6 +32,7 @@ export default function SettingsContent({
   preferences,
   hasGithubToken,
   groqKeysCount = 0,
+  featureFlags,
   header,
 }: SettingsContentProps) {
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
@@ -140,7 +142,9 @@ export default function SettingsContent({
           }
         >
           <div className="overflow-y-auto max-h-[70vh] pb-8">
-            <PreferencesForm initialPreferences={preferences} />
+            <PreferencesForm
+              initialPreferences={{ ...preferences, featureFlags }}
+            />
           </div>
         </SettingsDrawer>
 

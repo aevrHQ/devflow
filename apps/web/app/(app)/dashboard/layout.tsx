@@ -4,6 +4,10 @@ import Link from "next/link";
 import DashboardNav from "@/components/DashboardNav";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { ThemeToggle } from "@/components/theme-toggle";
+import connectToDatabase from "@/lib/mongodb";
+import User from "@/models/User";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export default async function DashboardLayout({
   children,
@@ -14,6 +18,30 @@ export default async function DashboardLayout({
 
   if (!user) {
     redirect("/login");
+  }
+
+  await connectToDatabase();
+  const dbUser = await User.findById(user.userId).select("featureFlags");
+  const useSidebar = dbUser?.featureFlags?.sidebarNavigation || false;
+
+  if (useSidebar) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <div className="flex flex-col flex-1 min-h-screen transition-all duration-300 ease-in-out bg-background">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <div className="mr-auto separator hidden md:block w-[1px] h-4 bg-border mx-2" />
+            <div className="flex items-center gap-4 ml-auto">
+              <ThemeToggle />
+            </div>
+          </header>
+          <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-6xl mx-auto w-full">
+            {children}
+          </main>
+        </div>
+      </SidebarProvider>
+    );
   }
 
   return (

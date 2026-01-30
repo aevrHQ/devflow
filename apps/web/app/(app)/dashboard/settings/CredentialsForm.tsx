@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Check, Save } from "lucide-react";
+import { Lock, Save } from "lucide-react";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
@@ -54,46 +54,42 @@ export default function CredentialsForm({
     setNewGroqKeys(newGroqKeys.filter((_, i) => i !== index));
   };
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function saveCredentials(
+    updates: Partial<{ github: string; groqApiKeys: string[] }>,
+  ) {
     setIsLoading(true);
     setMessage("");
 
     try {
-      const payload: {
-        credentials: { github?: string; groqApiKeys?: string[] };
-      } = { credentials: {} };
-      if (githubToken) payload.credentials.github = githubToken;
-      if (newGroqKeys.length > 0) payload.credentials.groqApiKeys = newGroqKeys;
-
-      // If nothing to update
-      if (!githubToken && newGroqKeys.length === 0) {
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await fetch("/api/user/settings", {
+      const res = await fetch("/api/user/settings", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credentials: updates }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) {
+      if (!res.ok) {
         throw new Error(data.error || "Failed to update credentials");
+      }
+
+      if (updates.github !== undefined) {
+        setHasToken(updates.github !== ""); // If empty string, it's cleared
+      }
+      if (updates.groqApiKeys !== undefined) {
+        setGroqKeysCount(updates.groqApiKeys.length);
       }
 
       setMessage("Credentials updated successfully");
       setTimeout(() => setMessage(""), 3000);
 
-      setGithubToken(""); // Clear input
-      setNewGroqKeys([]); // Clear new keys
-      if (githubToken) setHasToken(true);
-      if (newGroqKeys.length > 0)
-        setGroqKeysCount((prev) => prev + newGroqKeys.length);
+      // If clearing, show specific message
+      if (
+        updates.github === "" ||
+        (updates.groqApiKeys && updates.groqApiKeys.length === 0)
+      ) {
+        // handled by state updates above
+      }
     } catch (error) {
       const msg =
         error instanceof Error ? error.message : "Something went wrong";
@@ -101,6 +97,43 @@ export default function CredentialsForm({
     } finally {
       setIsLoading(false);
     }
+  }
+
+  const handleClearGithub = () => {
+    if (confirm("Are you sure you want to remove your GitHub token?")) {
+      setGithubToken("");
+      saveCredentials({ github: "" });
+    }
+  };
+
+  const handleClearGroq = () => {
+    if (confirm("Are you sure you want to remove ALL Groq API keys?")) {
+      setGroqKeyInput("");
+      setNewGroqKeys([]);
+      saveCredentials({ groqApiKeys: [] });
+    }
+  };
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const payload: {
+      github?: string;
+      groqApiKeys?: string[];
+    } = {};
+
+    if (githubToken) payload.github = githubToken;
+    if (newGroqKeys.length > 0) payload.groqApiKeys = newGroqKeys;
+
+    // If nothing to update, return
+    if (!githubToken && newGroqKeys.length === 0) {
+      return;
+    }
+
+    await saveCredentials(payload);
+
+    setGithubToken(""); // Clear input
+    setNewGroqKeys([]); // Clear new keys
   }
 
   return (
@@ -134,8 +167,17 @@ export default function CredentialsForm({
           <FieldDescription>
             Required for the agent to access your repositories.
             {hasToken && (
-              <span className="ml-2 inline-flex items-center text-green-600 font-medium">
-                <Check className="mr-1 h-3 w-3" /> Configured
+              <span className="text-green-600 dark:text-green-400 flex items-center mt-2">
+                <span className="mr-1">✓</span> Configured
+                <Button
+                  type="button"
+                  variant="danger"
+                  size="sm"
+                  className="ml-4 h-6 px-2 text-xs"
+                  onClick={handleClearGithub}
+                >
+                  Clear Token
+                </Button>
               </span>
             )}
           </FieldDescription>
@@ -148,10 +190,18 @@ export default function CredentialsForm({
             <FieldDescription className="mb-3">
               Add multiple keys to enable rotation and handle rate limits.
               {groqKeysCount > 0 && (
-                <span className="ml-2 inline-flex items-center text-green-600 font-medium">
-                  <Check className="mr-1 h-3 w-3" /> {groqKeysCount} keys
-                  configured
-                </span>
+                <div className="text-sm text-green-600 dark:text-green-400 mt-2 flex items-center justify-between">
+                  <span>✓ {groqKeysCount} keys configured (rotating)</span>
+                  <Button
+                    type="button"
+                    variant="danger"
+                    size="sm"
+                    className="h-6 px-2 text-xs"
+                    onClick={handleClearGroq}
+                  >
+                    Clear All Keys
+                  </Button>
+                </div>
               )}
             </FieldDescription>
 
