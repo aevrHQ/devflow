@@ -4,6 +4,18 @@ import { useState } from "react";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
 import { Save2 } from "iconsax-react";
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldContent,
+} from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
 
 interface Preferences {
   aiSummary: boolean;
@@ -66,15 +78,16 @@ export default function PreferencesForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <label className="text-sm font-medium text-gray-900">
-              AI-Generated Summaries
-            </label>
-            <p className="text-xs text-gray-500">
+        <Field
+          orientation="horizontal"
+          className="justify-between items-center"
+        >
+          <FieldContent>
+            <FieldLabel>AI-Generated Summaries</FieldLabel>
+            <FieldDescription>
               Get concise summaries of notifications instead of raw data
-            </p>
-          </div>
+            </FieldDescription>
+          </FieldContent>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -86,18 +99,16 @@ export default function PreferencesForm({
             />
             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/5 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
           </label>
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
-            Allowed Sources
-          </label>
-          <p className="text-xs text-gray-500 mb-3">
+        <Field>
+          <FieldLabel>Allowed Sources</FieldLabel>
+          <FieldDescription>
             Leave empty to receive notifications from all sources. Add specific
             sources to filter.
-          </p>
+          </FieldDescription>
 
-          <div className="space-y-2">
+          <div className="space-y-2 pt-2">
             {preferences.allowedSources.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {preferences.allowedSources.map((source) => (
@@ -120,31 +131,33 @@ export default function PreferencesForm({
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="text"
-                value={newSource}
-                onChange={(e) => setNewSource(e.target.value)}
-                placeholder="e.g., github, vercel, render"
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 w-full"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addSource();
-                  }
-                }}
-              />
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={addSource}
-                className="w-full sm:w-auto"
-              >
-                Add
-              </Button>
+            <div className="pt-2">
+              <InputGroup>
+                <InputGroupInput
+                  type="text"
+                  value={newSource}
+                  onChange={(e) => setNewSource(e.target.value)}
+                  placeholder="e.g., github, vercel, render"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addSource();
+                    }
+                  }}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    variant="secondary"
+                    onClick={addSource}
+                  >
+                    Add
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
-        </div>
+        </Field>
       </div>
 
       <div className="flex items-center gap-4 pt-4 border-t">

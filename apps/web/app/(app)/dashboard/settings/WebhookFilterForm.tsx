@@ -3,6 +3,13 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Filter, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/aevr/button";
+import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
 
 interface WebhookFilter {
   type: string;
@@ -181,21 +188,20 @@ export default function WebhookFilterForm({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id={`github-enabled`}
-                  checked={githubSource?.enabled || false}
-                  onChange={(e) =>
-                    updateSourceFilter("github", { enabled: e.target.checked })
-                  }
-                  className="rounded border-input bg-background"
-                />
-                <label
-                  htmlFor={`github-enabled`}
-                  className="font-medium text-sm text-foreground"
-                >
-                  GitHub
-                </label>
+                <Field orientation="horizontal">
+                  <input
+                    type="checkbox"
+                    id={`github-enabled`}
+                    checked={githubSource?.enabled || false}
+                    onChange={(e) =>
+                      updateSourceFilter("github", {
+                        enabled: e.target.checked,
+                      })
+                    }
+                    className="rounded border-input bg-background"
+                  />
+                  <FieldLabel htmlFor={`github-enabled`}>GitHub</FieldLabel>
+                </Field>
               </div>
               {githubSource && (
                 <Button
@@ -212,36 +218,36 @@ export default function WebhookFilterForm({
 
             {githubSource?.enabled && (
               <div className="ml-6 space-y-3">
-                {/* Repositories */}
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">
-                    Repositories (leave empty for all)
-                  </label>
-                  <div className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={newRepo}
-                      onChange={(e) => setNewRepo(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          addRepository("github");
-                        }
-                      }}
-                      placeholder="owner/repo"
-                      className="flex-1 px-3 py-1.5 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
-                    />
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => addRepository("github")}
-                      className="px-3 py-1.5 h-auto"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                  <Field>
+                    <FieldLabel>Repositories</FieldLabel>
+                    <InputGroup className="mb-2">
+                      <InputGroupInput
+                        type="text"
+                        value={newRepo}
+                        onChange={(e) => setNewRepo(e.target.value)}
+                        onKeyPress={(e: React.KeyboardEvent) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addRepository("github");
+                          }
+                        }}
+                        placeholder="owner/repo"
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          type="button"
+                          variant="secondary"
+                          onClick={() => addRepository("github")}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </InputGroupButton>
+                      </InputGroupAddon>
+                    </InputGroup>
+                    <FieldDescription>Leave empty for all</FieldDescription>
+                  </Field>
+                  {/* Tags Container moved outside or below description */}
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {githubSource.filters.repositories?.map((repo) => (
                       <div
                         key={repo}
@@ -295,21 +301,20 @@ export default function WebhookFilterForm({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id={`render-enabled`}
-                  checked={renderSource?.enabled || false}
-                  onChange={(e) =>
-                    updateSourceFilter("render", { enabled: e.target.checked })
-                  }
-                  className="rounded border-input bg-background"
-                />
-                <label
-                  htmlFor={`render-enabled`}
-                  className="font-medium text-sm text-foreground"
-                >
-                  Render
-                </label>
+                <Field orientation="horizontal">
+                  <input
+                    type="checkbox"
+                    id={`render-enabled`}
+                    checked={renderSource?.enabled || false}
+                    onChange={(e) =>
+                      updateSourceFilter("render", {
+                        enabled: e.target.checked,
+                      })
+                    }
+                    className="rounded border-input bg-background"
+                  />
+                  <FieldLabel htmlFor={`render-enabled`}>Render</FieldLabel>
+                </Field>
               </div>
               {renderSource && (
                 <Button
@@ -353,21 +358,20 @@ export default function WebhookFilterForm({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id={`vercel-enabled`}
-                  checked={vercelSource?.enabled || false}
-                  onChange={(e) =>
-                    updateSourceFilter("vercel", { enabled: e.target.checked })
-                  }
-                  className="rounded border-input bg-background"
-                />
-                <label
-                  htmlFor={`vercel-enabled`}
-                  className="font-medium text-sm text-foreground"
-                >
-                  Vercel
-                </label>
+                <Field orientation="horizontal">
+                  <input
+                    type="checkbox"
+                    id={`vercel-enabled`}
+                    checked={vercelSource?.enabled || false}
+                    onChange={(e) =>
+                      updateSourceFilter("vercel", {
+                        enabled: e.target.checked,
+                      })
+                    }
+                    className="rounded border-input bg-background"
+                  />
+                  <FieldLabel htmlFor={`vercel-enabled`}>Vercel</FieldLabel>
+                </Field>
               </div>
               {vercelSource && (
                 <Button

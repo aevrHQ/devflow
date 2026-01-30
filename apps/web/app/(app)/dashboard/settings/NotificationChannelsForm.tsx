@@ -5,6 +5,8 @@ import { Plus, Trash2, CheckCircle2 } from "lucide-react";
 import WebhookFilterForm from "./WebhookFilterForm";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
+import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export interface Channel {
   type: string;
@@ -121,18 +123,20 @@ export default function NotificationChannelsForm({
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <input
-                  type="text"
-                  value={channel.name || ""}
-                  onChange={(e) =>
-                    updateChannel(index, { name: e.target.value })
-                  }
-                  className="text-sm font-medium bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-foreground placeholder:text-muted-foreground"
-                  placeholder="Channel name"
-                />
-                <p className="text-xs text-muted-foreground capitalize">
-                  {channel.type}
-                </p>
+                <Field>
+                  <FieldLabel className="sr-only">Channel Name</FieldLabel>
+                  <Input
+                    type="text"
+                    value={channel.name || ""}
+                    onChange={(e) =>
+                      updateChannel(index, { name: e.target.value })
+                    }
+                    placeholder="Channel name"
+                  />
+                  <FieldDescription className="text-xs capitalize mt-0">
+                    {channel.type}
+                  </FieldDescription>
+                </Field>
               </div>
               <div className="flex items-center gap-2">
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -160,50 +164,55 @@ export default function NotificationChannelsForm({
 
             {channel.type === "telegram" && (
               <div className="space-y-3">
-                <label className="block text-xs font-medium text-muted-foreground">
-                  Chat Type
-                </label>
-                <div className="flex gap-3">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name={`chat-type-${index}`}
-                      checked={
-                        !(channel.config as Record<string, unknown>).isGroupChat
-                      }
-                      onChange={() =>
-                        updateChannel(index, {
-                          config: {
-                            ...channel.config,
-                            isGroupChat: false,
-                          },
-                        })
-                      }
-                      className="rounded-full border-input bg-background"
-                    />
-                    <span className="text-sm text-foreground">Personal DM</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name={`chat-type-${index}`}
-                      checked={
-                        !!(channel.config as Record<string, unknown>)
-                          .isGroupChat
-                      }
-                      onChange={() =>
-                        updateChannel(index, {
-                          config: {
-                            ...channel.config,
-                            isGroupChat: true,
-                          },
-                        })
-                      }
-                      className="rounded-full border-input bg-background"
-                    />
-                    <span className="text-sm text-foreground">Group Chat</span>
-                  </label>
-                </div>
+                <Field>
+                  <FieldLabel>Chat Type</FieldLabel>
+                  <div className="flex gap-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name={`chat-type-${index}`}
+                        checked={
+                          !(channel.config as Record<string, unknown>)
+                            .isGroupChat
+                        }
+                        onChange={() =>
+                          updateChannel(index, {
+                            config: {
+                              ...channel.config,
+                              isGroupChat: false,
+                            },
+                          })
+                        }
+                        className="rounded-full border-input bg-background"
+                      />
+                      <span className="text-sm text-foreground">
+                        Personal DM
+                      </span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name={`chat-type-${index}`}
+                        checked={
+                          !!(channel.config as Record<string, unknown>)
+                            .isGroupChat
+                        }
+                        onChange={() =>
+                          updateChannel(index, {
+                            config: {
+                              ...channel.config,
+                              isGroupChat: true,
+                            },
+                          })
+                        }
+                        className="rounded-full border-input bg-background"
+                      />
+                      <span className="text-sm text-foreground">
+                        Group Chat
+                      </span>
+                    </label>
+                  </div>
+                </Field>
 
                 {!(channel.config as Record<string, unknown>).chatId ? (
                   (channel.config as Record<string, unknown>).isGroupChat ? (
@@ -283,23 +292,28 @@ export default function NotificationChannelsForm({
                           "",
                       )}
                     </div>
-                    <input
-                      type="password"
-                      value={
-                        ((channel.config as Record<string, unknown>)
-                          .botToken as string) || ""
-                      }
-                      onChange={(e) =>
-                        updateChannel(index, {
-                          config: {
-                            ...channel.config,
-                            botToken: e.target.value,
-                          },
-                        })
-                      }
-                      placeholder="Bot Token (optional)"
-                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
-                    />
+                    <Field>
+                      <FieldLabel>Bot Token</FieldLabel>
+                      <Input
+                        type="password"
+                        value={
+                          ((channel.config as Record<string, unknown>)
+                            .botToken as string) || ""
+                        }
+                        onChange={(e) =>
+                          updateChannel(index, {
+                            config: {
+                              ...channel.config,
+                              botToken: e.target.value,
+                            },
+                          })
+                        }
+                        placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                      />
+                      <FieldDescription>
+                        Optional if using the official bot
+                      </FieldDescription>
+                    </Field>
                   </div>
                 )}
 
@@ -315,20 +329,22 @@ export default function NotificationChannelsForm({
             )}
 
             {channel.type === "discord" && (
-              <input
-                type="text"
-                value={
-                  ((channel.config as Record<string, unknown>)
-                    .webhookUrl as string) || ""
-                }
-                onChange={(e) =>
-                  updateChannel(index, {
-                    config: { ...channel.config, webhookUrl: e.target.value },
-                  })
-                }
-                placeholder="Discord Webhook URL"
-                className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
-              />
+              <Field>
+                <FieldLabel>Webhook URL</FieldLabel>
+                <Input
+                  type="text"
+                  value={
+                    ((channel.config as Record<string, unknown>)
+                      .webhookUrl as string) || ""
+                  }
+                  onChange={(e) =>
+                    updateChannel(index, {
+                      config: { ...channel.config, webhookUrl: e.target.value },
+                    })
+                  }
+                  placeholder="https://discord.com/api/webhooks/..."
+                />
+              </Field>
             )}
 
             {channel.type === "slack" && (

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
 
 export default function WebhookInfo({ userId }: { userId: string }) {
   const [copied, setCopied] = useState("");
@@ -34,10 +35,8 @@ export default function WebhookInfo({ userId }: { userId: string }) {
 
       <div className="space-y-6">
         {/* User ID */}
-        <div>
-          <label className="block text-sm font-medium text-muted-foreground mb-2">
-            Your User ID
-          </label>
+        <Field>
+          <FieldLabel>Your User ID</FieldLabel>
           <div className="flex flex-col sm:flex-row gap-2">
             <code className="flex-1 bg-muted p-3 rounded-lg border border-border text-sm font-mono overflow-x-auto flex items-center text-foreground">
               {userId}
@@ -49,13 +48,11 @@ export default function WebhookInfo({ userId }: { userId: string }) {
               {copied === "id" ? "Copied!" : "Copy"}
             </button>
           </div>
-        </div>
+        </Field>
 
         {/* Render Webhook URL */}
-        <div>
-          <label className="block text-sm font-medium text-muted-foreground mb-2">
-            Render / Custom Webhook URL
-          </label>
+        <Field>
+          <FieldLabel>Render / Custom Webhook URL</FieldLabel>
           <div className="flex flex-col sm:flex-row gap-2">
             <code className="flex-1 bg-muted p-3 rounded-lg border border-border text-sm font-mono overflow-x-auto whitespace-nowrap flex items-center text-foreground scrollbar-hide">
               {renderWebhookUrl}
@@ -68,7 +65,7 @@ export default function WebhookInfo({ userId }: { userId: string }) {
               {copied === "url" ? "Copied!" : "Copy"}
             </button>
           </div>
-          <p className="text-xs text-muted-foreground mt-2">
+          <FieldDescription className="mt-2">
             Use this URL for{" "}
             <Link
               href="/help/render"
@@ -77,8 +74,8 @@ export default function WebhookInfo({ userId }: { userId: string }) {
               Render email forwarding
             </Link>{" "}
             or generic webhooks.
-          </p>
-        </div>
+          </FieldDescription>
+        </Field>
       </div>
     </div>
   );

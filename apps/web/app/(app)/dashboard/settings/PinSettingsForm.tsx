@@ -3,6 +3,15 @@
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
 import { Lock } from "lucide-react";
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldSet,
+  FieldLegend,
+  FieldGroup,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 export default function PinSettingsForm() {
@@ -55,38 +64,38 @@ export default function PinSettingsForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-lg">
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Set Login PIN
-          </label>
-          <p className="text-xs text-gray-500 mb-3">
-            Create a 4-digit PIN for faster login on trusted devices.
-          </p>
+        <div className="space-y-4">
+          <FieldSet>
+            <FieldLegend>Set Login PIN</FieldLegend>
+            <FieldDescription className="mb-3">
+              Create a 4-digit PIN for faster login on trusted devices.
+            </FieldDescription>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <input
-                type="password"
-                maxLength={4}
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
-                placeholder="New PIN"
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                maxLength={4}
-                value={confirmPin}
-                onChange={(e) =>
-                  setConfirmPin(e.target.value.replace(/\D/g, ""))
-                }
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
-                placeholder="Confirm PIN"
-              />
-            </div>
-          </div>
+            <FieldGroup className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel className="sr-only">New PIN</FieldLabel>
+                <Input
+                  type="password"
+                  maxLength={4}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+                  placeholder="New PIN"
+                />
+              </Field>
+              <Field>
+                <FieldLabel className="sr-only">Confirm PIN</FieldLabel>
+                <Input
+                  type="password"
+                  maxLength={4}
+                  value={confirmPin}
+                  onChange={(e) =>
+                    setConfirmPin(e.target.value.replace(/\D/g, ""))
+                  }
+                  placeholder="Confirm PIN"
+                />
+              </Field>
+            </FieldGroup>
+          </FieldSet>
         </div>
       </div>
 

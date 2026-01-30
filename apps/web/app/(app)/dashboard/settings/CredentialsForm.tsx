@@ -4,6 +4,14 @@ import { useState } from "react";
 import { Lock, Check, Save } from "lucide-react";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
+import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
 
 interface CredentialsFormProps {
   initialHasGithubToken?: boolean;
@@ -110,101 +118,96 @@ export default function CredentialsForm({
 
       <form onSubmit={handleSubmit} className="space-y-8 max-w-lg">
         {/* GitHub Token Section */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            GitHub Personal Access Token
-          </label>
-          <div className="space-y-2">
-            <input
-              type="password"
-              value={githubToken}
-              onChange={(e) => setGithubToken(e.target.value)}
-              disabled={isLoading}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
-              placeholder={
-                hasToken
-                  ? "•••••••••••••••••••••••••••••••• (Configured)"
-                  : "ghp_..."
-              }
-            />
-          </div>
-          <p className="mt-1 text-xs text-gray-500">
+        <Field>
+          <FieldLabel>GitHub Personal Access Token</FieldLabel>
+          <Input
+            type="password"
+            value={githubToken}
+            onChange={(e) => setGithubToken(e.target.value)}
+            disabled={isLoading}
+            placeholder={
+              hasToken
+                ? "•••••••••••••••••••••••••••••••• (Configured)"
+                : "ghp_..."
+            }
+          />
+          <FieldDescription>
             Required for the agent to access your repositories.
             {hasToken && (
               <span className="ml-2 inline-flex items-center text-green-600 font-medium">
                 <Check className="mr-1 h-3 w-3" /> Configured
               </span>
             )}
-          </p>
-        </div>
+          </FieldDescription>
+        </Field>
 
         {/* Groq API Keys Section */}
         <div className="pt-4 border-t border-gray-100">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Groq API Keys (BYOK)
-          </label>
-          <p className="text-xs text-gray-500 mb-3">
-            Add multiple keys to enable rotation and handle rate limits.
-            {groqKeysCount > 0 && (
-              <span className="ml-2 inline-flex items-center text-green-600 font-medium">
-                <Check className="mr-1 h-3 w-3" /> {groqKeysCount} keys
-                configured
-              </span>
-            )}
-          </p>
+          <Field>
+            <FieldLabel>Groq API Keys (BYOK)</FieldLabel>
+            <FieldDescription className="mb-3">
+              Add multiple keys to enable rotation and handle rate limits.
+              {groqKeysCount > 0 && (
+                <span className="ml-2 inline-flex items-center text-green-600 font-medium">
+                  <Check className="mr-1 h-3 w-3" /> {groqKeysCount} keys
+                  configured
+                </span>
+              )}
+            </FieldDescription>
 
-          <div className="space-y-3">
-            <div className="flex gap-2">
-              <input
-                type="password"
-                value={groqKeyInput}
-                onChange={(e) => setGroqKeyInput(e.target.value)}
-                disabled={isLoading}
-                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
-                placeholder="gsk_..."
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addGroqKey();
-                  }
-                }}
-              />
-              <Button
-                type="button"
-                onClick={addGroqKey}
-                variant="secondary"
-                className="shrink-0"
-              >
-                Add
-              </Button>
-            </div>
-
-            {/* List of keys to be added */}
-            {newGroqKeys.length > 0 && (
-              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  To be saved:
-                </p>
-                {newGroqKeys.map((key, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between text-sm bg-white border border-gray-200 p-2 rounded"
+            <div className="space-y-3">
+              <InputGroup>
+                <InputGroupInput
+                  type="password"
+                  value={groqKeyInput}
+                  onChange={(e) => setGroqKeyInput(e.target.value)}
+                  disabled={isLoading}
+                  placeholder="gsk_..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addGroqKey();
+                    }
+                  }}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    onClick={addGroqKey}
+                    variant="secondary"
                   >
-                    <span className="font-mono text-gray-600">
-                      {key.substring(0, 8)}...{key.substring(key.length - 4)}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeNewKey(idx)}
-                      className="text-gray-400 hover:text-red-500"
+                    Add
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+
+              {/* List of keys to be added */}
+              {newGroqKeys.length > 0 && (
+                <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    To be saved:
+                  </p>
+                  {newGroqKeys.map((key, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between text-sm bg-white border border-gray-200 p-2 rounded"
                     >
-                      <span className="sr-only">Remove</span>×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                      <span className="font-mono text-gray-600">
+                        {key.substring(0, 8)}...{key.substring(key.length - 4)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeNewKey(idx)}
+                        className="text-gray-400 hover:text-red-500"
+                      >
+                        <span className="sr-only">Remove</span>×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Field>
         </div>
 
         <div className="flex items-center gap-4 pt-2">

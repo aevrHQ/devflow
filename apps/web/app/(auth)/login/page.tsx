@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from "motion/react";
 import { Mail, CheckCircle2, Lock, ArrowLeft } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Loader from "@/components/ui/aevr/loader";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+} from "@/components/ui/input-group";
 
 function LoginForm() {
   const router = useRouter();
@@ -125,26 +132,22 @@ function LoginForm() {
               onSubmit={handleRequestMagicLink}
               className="space-y-4"
             >
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-muted-foreground mb-1"
-                >
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <input
+              <Field>
+                <FieldLabel htmlFor="email">Email Address</FieldLabel>
+                <InputGroup>
+                  <InputGroupAddon className="pointer-events-none z-10">
+                    <Mail className="w-5 h-5 text-muted-foreground" />
+                  </InputGroupAddon>
+                  <InputGroupInput
                     id="email"
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="name@example.com"
                   />
-                </div>
-              </div>
+                </InputGroup>
+              </Field>
 
               {error && <p className="text-destructive text-sm">{error}</p>}
 
@@ -194,24 +197,19 @@ function LoginForm() {
               </div>
 
               <form onSubmit={handleVerifyOtp} className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="otp"
-                    className="block text-sm font-medium text-muted-foreground mb-1"
-                  >
-                    Enter 6-digit Code
-                  </label>
-                  <input
+                <Field>
+                  <FieldLabel htmlFor="otp">Enter 6-digit Code</FieldLabel>
+                  <Input
                     id="otp"
                     type="text" // numeric
                     maxLength={6}
                     required
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))} // numbers only
-                    className="w-full px-4 py-2 bg-background border border-border rounded-lg text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
+                    className="text-center text-lg tracking-widest font-mono"
                     placeholder="123456"
                   />
-                </div>
+                </Field>
 
                 {error && (
                   <p className="text-destructive text-sm text-center">
@@ -254,48 +252,40 @@ function LoginForm() {
               onSubmit={handlePinLogin}
               className="space-y-4"
             >
-              <div>
-                <label
-                  htmlFor="pin-email"
-                  className="block text-sm font-medium text-muted-foreground mb-1"
-                >
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <input
+              <Field>
+                <FieldLabel htmlFor="pin-email">Email Address</FieldLabel>
+                <InputGroup>
+                  <InputGroupAddon className="pointer-events-none z-10">
+                    <Mail className="w-5 h-5 text-muted-foreground" />
+                  </InputGroupAddon>
+                  <InputGroupInput
                     id="pin-email"
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="name@example.com"
                   />
-                </div>
-              </div>
+                </InputGroup>
+              </Field>
 
-              <div>
-                <label
-                  htmlFor="pin"
-                  className="block text-sm font-medium text-muted-foreground mb-1"
-                >
-                  4-digit PIN
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <input
+              <Field>
+                <FieldLabel htmlFor="pin">4-digit PIN</FieldLabel>
+                <InputGroup>
+                  <InputGroupAddon className="pointer-events-none z-10">
+                    <Lock className="w-5 h-5 text-muted-foreground" />
+                  </InputGroupAddon>
+                  <InputGroupInput
                     id="pin"
                     type="password"
                     maxLength={4}
                     required
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="****"
                   />
-                </div>
-              </div>
+                </InputGroup>
+              </Field>
 
               {error && <p className="text-destructive text-sm">{error}</p>}
 
