@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Filter, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/aevr/button";
+import { Switch } from "@/components/ui/switch";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
 import {
   InputGroup,
@@ -189,16 +190,14 @@ export default function WebhookFilterForm({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Field orientation="horizontal">
-                  <input
-                    type="checkbox"
+                  <Switch
                     id={`github-enabled`}
                     checked={githubSource?.enabled || false}
-                    onChange={(e) =>
+                    onCheckedChange={(checked) =>
                       updateSourceFilter("github", {
-                        enabled: e.target.checked,
+                        enabled: checked,
                       })
                     }
-                    className="rounded border-input bg-background"
                   />
                   <FieldLabel htmlFor={`github-enabled`}>GitHub</FieldLabel>
                 </Field>
@@ -302,16 +301,14 @@ export default function WebhookFilterForm({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Field orientation="horizontal">
-                  <input
-                    type="checkbox"
+                  <Switch
                     id={`render-enabled`}
                     checked={renderSource?.enabled || false}
-                    onChange={(e) =>
+                    onCheckedChange={(checked) =>
                       updateSourceFilter("render", {
-                        enabled: e.target.checked,
+                        enabled: checked,
                       })
                     }
-                    className="rounded border-input bg-background"
                   />
                   <FieldLabel htmlFor={`render-enabled`}>Render</FieldLabel>
                 </Field>
@@ -359,16 +356,14 @@ export default function WebhookFilterForm({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Field orientation="horizontal">
-                  <input
-                    type="checkbox"
+                  <Switch
                     id={`vercel-enabled`}
                     checked={vercelSource?.enabled || false}
-                    onChange={(e) =>
+                    onCheckedChange={(checked) =>
                       updateSourceFilter("vercel", {
-                        enabled: e.target.checked,
+                        enabled: checked,
                       })
                     }
-                    className="rounded border-input bg-background"
                   />
                   <FieldLabel htmlFor={`vercel-enabled`}>Vercel</FieldLabel>
                 </Field>

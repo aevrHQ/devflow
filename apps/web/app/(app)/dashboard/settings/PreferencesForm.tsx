@@ -16,6 +16,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
 } from "@/components/ui/input-group";
+import { Switch } from "@/components/ui/switch";
 
 interface Preferences {
   aiSummary: boolean;
@@ -97,17 +98,12 @@ export default function PreferencesForm({
               Get concise summaries of notifications instead of raw data
             </FieldDescription>
           </FieldContent>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={preferences.aiSummary}
-              onChange={(e) =>
-                setPreferences({ ...preferences, aiSummary: e.target.checked })
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/5 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
-          </label>
+          <Switch
+            checked={preferences.aiSummary}
+            onCheckedChange={(checked) =>
+              setPreferences({ ...preferences, aiSummary: checked })
+            }
+          />
         </Field>
 
         <Field>
@@ -182,23 +178,18 @@ export default function PreferencesForm({
                 Try the new collapsible sidebar navigation experience
               </FieldDescription>
             </FieldContent>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={preferences.featureFlags?.sidebarNavigation || false}
-                onChange={(e) =>
-                  setPreferences({
-                    ...preferences,
-                    featureFlags: {
-                      ...preferences.featureFlags,
-                      sidebarNavigation: e.target.checked,
-                    },
-                  })
-                }
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/5 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
-            </label>
+            <Switch
+              checked={preferences.featureFlags?.sidebarNavigation || false}
+              onCheckedChange={(checked) =>
+                setPreferences({
+                  ...preferences,
+                  featureFlags: {
+                    ...preferences.featureFlags,
+                    sidebarNavigation: checked,
+                  },
+                })
+              }
+            />
           </Field>
         </div>
       </div>
