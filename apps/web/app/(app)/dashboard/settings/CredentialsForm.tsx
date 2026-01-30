@@ -172,18 +172,19 @@ export default function CredentialsForm({
           <FieldDescription>
             Required for the agent to access your repositories.
             {hasToken && (
-              <span className="text-green-600 dark:text-green-400 flex items-center mt-2">
-                <span className="mr-1">✓</span> Configured
+              <div className="flex items-center gap-2 mt-3">
+                <span className="text-green-600 dark:text-green-400 flex items-center">
+                  <span className="mr-1">✓</span> Configured
+                </span>
                 <Button
                   type="button"
-                  variant="danger"
+                  variant="secondary"
                   size="sm"
-                  className="ml-4 h-6 px-2 text-xs"
                   onClick={handleClearGithub}
                 >
                   Clear Token
                 </Button>
-              </span>
+              </div>
             )}
           </FieldDescription>
         </Field>
