@@ -8,6 +8,7 @@ import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import DevflowLogo from "@/components/Icon/DevflowLogo";
 
 export default async function DashboardLayout({
   children,
@@ -35,14 +36,22 @@ export default async function DashboardLayout({
           }}
         />
         <div className="flex flex-col flex-1 min-h-screen transition-all duration-300 ease-in-out bg-background">
-          <header className="flex min-h-8 py-2 shrink-0 items-center gap-2 border-b px-4">
-            <SidebarTrigger className="-ml-1" />
+          <header className="flex min-h-16 shrink-0 items-center gap-2 border-b px-4 sticky top-0 z-10 bg-background/80 backdrop-blur-md">
+            {/* Desktop Sidebar Trigger */}
+            <SidebarTrigger className="-ml-1 hidden md:flex" />
+
+            {/* Mobile Logo */}
+            <div className="md:hidden flex items-center gap-2 mr-auto">
+              <DevflowLogo className="w-8 h-8" />
+              <span className="font-bold text-lg tracking-tight">Devflow</span>
+            </div>
+
             <div className="mr-auto separator hidden md:block w-[1px] h-4 bg-border mx-2" />
             <div className="flex items-center gap-4 ml-auto">
               <ThemeToggle />
             </div>
           </header>
-          <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-6xl mx-auto w-full">
+          <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-6xl mx-auto pb-32 w-full">
             {children}
           </main>
         </div>
@@ -88,7 +97,7 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8 text-foreground">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32 md:pb-8 text-foreground">
         {children}
       </main>
       <MobileBottomNav />
