@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Mail, CheckCircle2, Lock, ArrowLeft } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import Loader from "@/components/ui/aevr/loader";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,7 @@ function LoginForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   // 1. Request Magic Link (and OTP)
   const handleRequestMagicLink = async (e: React.FormEvent) => {
@@ -99,6 +101,7 @@ function LoginForm() {
         throw new Error("Failed to login");
       }
 
+      setIsSuccess(true);
       router.push(returnTo || "/dashboard");
     } catch (err) {
       setError((err as Error).message || "Login failed");
@@ -289,17 +292,27 @@ function LoginForm() {
 
               {error && <p className="text-destructive text-sm">{error}</p>}
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-colors"
-              >
-                {isLoading ? (
-                  <Loader loading className="w-4 h-4" />
-                ) : (
-                  "Login with PIN"
-                )}
-              </button>
+              {isSuccess ? (
+                <Link
+                  href={returnTo || "/dashboard"}
+                  className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2.5 rounded-xl font-medium hover:bg-green-700 transition-colors"
+                >
+                  <CheckCircle2 className="w-5 h-5" />
+                  Continue to App
+                </Link>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-colors"
+                >
+                  {isLoading ? (
+                    <Loader loading className="w-4 h-4" />
+                  ) : (
+                    "Login with PIN"
+                  )}
+                </button>
+              )}
 
               <div className="text-center pt-2">
                 <button
