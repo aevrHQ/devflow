@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { Trash } from "iconsax-react";
 import Loader from "./ui/aevr/loader";
 
 interface DeleteTaskButtonProps {
@@ -46,7 +46,7 @@ export default function DeleteTaskButton({ taskId }: DeleteTaskButtonProps) {
       {isDeleting ? (
         <Loader loading className="w-4 h-4 " />
       ) : (
-        <Trash2 className="w-4 h-4" />
+        <Trash className="w-4 h-4" variant="TwoTone" color="currentColor" />
       )}
       Delete Task
     </button>

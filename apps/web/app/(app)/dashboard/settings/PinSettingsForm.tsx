@@ -2,7 +2,7 @@
 
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
-import { Lock } from "lucide-react";
+import { Lock1 } from "iconsax-react";
 import {
   Field,
   FieldLabel,
@@ -109,7 +109,7 @@ export default function PinSettingsForm() {
           {isLoading ? (
             <Loader loading className="w-4 h-4 animate-spin" />
           ) : (
-            <Lock className="w-4 h-4" />
+            <Lock1 size={16} color="currentColor" variant="Bulk" />
           )}
           Update PIN
         </Button>

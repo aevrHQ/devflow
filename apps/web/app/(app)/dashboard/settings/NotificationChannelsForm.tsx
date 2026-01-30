@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, Trash2, CheckCircle2 } from "lucide-react";
+import { Add, Trash, TickCircle } from "iconsax-react";
 import WebhookFilterForm from "./WebhookFilterForm";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
@@ -153,7 +153,11 @@ export default function NotificationChannelsForm({
                   size="sm"
                   className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md h-auto w-auto min-h-0 min-w-0"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash
+                    className="w-4 h-4"
+                    variant="TwoTone"
+                    color="currentColor"
+                  />
                 </Button>
               </div>
             </div>
@@ -347,7 +351,11 @@ export default function NotificationChannelsForm({
               <div className="space-y-4">
                 {(channel.config as Record<string, unknown>).webhookUrl ? (
                   <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 bg-green-500/10 px-3 py-2 rounded-md border border-green-500/20">
-                    <CheckCircle2 className="w-4 h-4" />
+                    <TickCircle
+                      className="w-4 h-4"
+                      variant="Bulk"
+                      color="currentColor"
+                    />
                     Connected to{" "}
                     <span className="font-medium">
                       {String(
@@ -403,7 +411,7 @@ export default function NotificationChannelsForm({
           variant="secondary"
           className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-accent text-foreground"
         >
-          <Plus className="w-4 h-4" />
+          <Add className="w-4 h-4" color="currentColor" />
           Add Telegram
         </Button>
         <Button
@@ -412,7 +420,7 @@ export default function NotificationChannelsForm({
           variant="secondary"
           className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-accent text-foreground"
         >
-          <Plus className="w-4 h-4" />
+          <Add className="w-4 h-4" color="currentColor" />
           Add Discord
         </Button>
         <Button
@@ -421,7 +429,7 @@ export default function NotificationChannelsForm({
           variant="secondary"
           className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-accent text-foreground"
         >
-          <Plus className="w-4 h-4" />
+          <Add className="w-4 h-4" color="currentColor" />
           Add Slack
         </Button>
       </div>
@@ -435,7 +443,11 @@ export default function NotificationChannelsForm({
         )}
         {message && (
           <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-            <CheckCircle2 className="w-4 h-4" />
+            <TickCircle
+              className="w-4 h-4"
+              variant="Bulk"
+              color="currentColor"
+            />
             {message}
           </div>
         )}

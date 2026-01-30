@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Save } from "lucide-react";
+import { Lock1, Save2 } from "iconsax-react";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
@@ -139,7 +139,12 @@ export default function CredentialsForm({
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-2 mb-4">
-        <Lock className="h-5 w-5 text-gray-400" />
+        <Lock1
+          size={20}
+          color="currentColor"
+          variant="TwoTone"
+          className="text-gray-400"
+        />
         <div>
           <h3 className="text-lg font-medium text-gray-900">Credentials</h3>
           <p className="text-sm text-gray-500">
@@ -270,7 +275,7 @@ export default function CredentialsForm({
             {isLoading ? (
               <Loader loading={isLoading} className="w-4 h-4" />
             ) : (
-              <Save className="w-4 h-4" />
+              <Save2 size={16} color="currentColor" variant="Bulk" />
             )}
             Save Credentials
           </Button>

@@ -35,7 +35,7 @@ export default async function DashboardLayout({
           }}
         />
         <div className="flex flex-col flex-1 min-h-screen transition-all duration-300 ease-in-out bg-background">
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <header className="flex min-h-8 py-2 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
             <div className="mr-auto separator hidden md:block w-[1px] h-4 bg-border mx-2" />
             <div className="flex items-center gap-4 ml-auto">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Filter, Plus, X } from "lucide-react";
+import { ArrowDown2, ArrowUp2, Filter, Add, CloseCircle } from "iconsax-react";
 import { Button } from "@/components/ui/aevr/button";
 import { Switch } from "@/components/ui/switch";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
@@ -160,7 +160,11 @@ export default function WebhookFilterForm({
         className="w-full flex items-center justify-between p-4 text-left hover:bg-accent rounded-lg transition-colors h-auto"
       >
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-muted-foreground" />
+          <Filter
+            className="w-4 h-4 text-muted-foreground"
+            variant="TwoTone"
+            color="currentColor"
+          />
           <span className="font-medium text-sm text-foreground">
             Webhook Filters
           </span>
@@ -172,9 +176,15 @@ export default function WebhookFilterForm({
           )}
         </div>
         {isExpanded ? (
-          <ChevronUp className="w-4 h-4 text-muted-foreground" />
+          <ArrowUp2
+            className="w-4 h-4 text-muted-foreground"
+            color="currentColor"
+          />
         ) : (
-          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+          <ArrowDown2
+            className="w-4 h-4 text-muted-foreground"
+            color="currentColor"
+          />
         )}
       </Button>
 
@@ -239,7 +249,7 @@ export default function WebhookFilterForm({
                           variant="secondary"
                           onClick={() => addRepository("github")}
                         >
-                          <Plus className="w-4 h-4" />
+                          <Add className="w-4 h-4" color="currentColor" />
                         </InputGroupButton>
                       </InputGroupAddon>
                     </InputGroup>
@@ -260,7 +270,10 @@ export default function WebhookFilterForm({
                           onClick={() => removeRepository("github", repo)}
                           className="hover:text-blue-800 dark:hover:text-blue-300 h-auto w-auto min-h-0 min-w-0 p-0.5"
                         >
-                          <X className="w-3 h-3" />
+                          <CloseCircle
+                            className="w-3 h-3"
+                            color="currentColor"
+                          />
                         </Button>
                       </div>
                     ))}

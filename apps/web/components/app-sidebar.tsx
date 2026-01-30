@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Bot, Home, ListTodo, MessageSquare, Settings2 } from "lucide-react";
+import { Home2, TaskSquare, Setting2, Message, Cpu } from "iconsax-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,32 +19,32 @@ import {
 } from "@/components/ui/sidebar";
 import { TeamSwitcher } from "./TeamSwitcher";
 
-// Using standard Lucide icons matching previous implementation
+// Using Iconsax icons
 const navItems = [
   {
     title: "Overview",
     url: "/dashboard",
-    icon: Home,
+    icon: Home2,
   },
   {
     title: "Tasks",
     url: "/dashboard/tasks",
-    icon: ListTodo,
+    icon: TaskSquare,
   },
   {
     title: "Agents",
-    url: "/dashboard/agents",
-    icon: Bot,
+    url: "/dashboard/agents", // Replaced Robot with Cpu (or check logic below)
+    icon: Cpu,
   },
   {
     title: "Chat",
     url: "/dashboard/chat",
-    icon: MessageSquare,
+    icon: Message,
   },
   {
     title: "Settings",
     url: "/dashboard/settings",
-    icon: Settings2,
+    icon: Setting2,
   },
 ];
 
@@ -71,20 +71,27 @@ export function AppSidebar({
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {navItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  tooltip={item.title}
-                  isActive={pathname === item.url}
-                >
-                  <Link href={item.url}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.url;
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={item.title}
+                    isActive={isActive}
+                  >
+                    <Link href={item.url}>
+                      <item.icon
+                        variant={isActive ? "Bulk" : "TwoTone"}
+                        color="currentColor"
+                        size={24}
+                      />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
