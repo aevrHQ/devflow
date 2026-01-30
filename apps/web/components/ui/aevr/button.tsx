@@ -28,7 +28,7 @@ const buttonVariants = cva(
         "info-variant":
           "bg-sky-500 text-sky-50 hover:bg-sky-600 focus:ring-sky-500 dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-600",
         "error-variant":
-          "bg-red-500 text-red-50 hover:bg-red-600 focus:ring-red-500 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-600",
+          " text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30 border border-red-200 dark:border-red-900 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50",
       },
       size: {
         sm: "px-2 py-1.5 text-sm rounded-xl",

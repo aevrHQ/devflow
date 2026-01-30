@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/aevr/button";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import ResponsiveDialog from "@/components/ui/aevr/responsive-dialog";
 
 export interface Channel {
   type: string;
@@ -233,19 +234,33 @@ export default function NotificationChannelsForm({
                       <div className="bg-background p-3 rounded border border-border font-mono text-xs break-all text-foreground">
                         /start channel_{userId}_{index}
                       </div>
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(
-                            `/start channel_${userId}_${index}`,
-                          );
-                          alert("Command copied! Paste it in your group chat.");
-                        }}
-                        variant="primary"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors"
+                      <ResponsiveDialog
+                        title="Command Copied!"
+                        description="The command has been copied to your clipboard. Paste it in your Telegram group chat to connect."
+                        trigger={
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                `/start channel_${userId}_${index}`,
+                              );
+                            }}
+                            variant="primary"
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors"
+                          >
+                            📋 Copy Command
+                          </Button>
+                        }
                       >
-                        📋 Copy Command
-                      </Button>
+                        <div className="flex justify-end">
+                          <Button
+                            variant="secondary"
+                            className="w-full sm:w-auto"
+                          >
+                            Got it
+                          </Button>
+                        </div>
+                      </ResponsiveDialog>
                       <p className="text-xs text-blue-600 dark:text-blue-400">
                         💡 The bot will confirm when connected successfully
                       </p>

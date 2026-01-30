@@ -61,7 +61,7 @@ export default function SettingsContent({
             />
           }
         >
-          <div className="overflow-y-auto max-h-[70vh] pb-8">
+          <div className="overflow-y-auto max-h-[70vh] px-2">
             <CredentialsForm
               initialHasGithubToken={hasGithubToken}
               initialGroqKeysCount={groqKeysCount}
@@ -88,7 +88,7 @@ export default function SettingsContent({
             />
           }
         >
-          <div className="overflow-y-auto max-h-[70vh] pb-8">
+          <div className="overflow-y-auto max-h-[70vh] px-2">
             <PinSettingsForm />
           </div>
         </SettingsDrawer>
@@ -114,7 +114,7 @@ export default function SettingsContent({
             />
           }
         >
-          <div className="overflow-y-auto max-h-[70vh] pb-8">
+          <div className="overflow-y-auto max-h-[70vh] px-2">
             <NotificationChannelsForm
               initialChannels={channels}
               userId={user.userId.toString()}
@@ -141,7 +141,7 @@ export default function SettingsContent({
             />
           }
         >
-          <div className="overflow-y-auto max-h-[70vh] pb-8">
+          <div className="overflow-y-auto max-h-[70vh] px-2">
             <PreferencesForm
               initialPreferences={{ ...preferences, featureFlags }}
             />
@@ -167,7 +167,7 @@ export default function SettingsContent({
             />
           }
         >
-          {/* <div className="overflow-y-auto max-h-[70vh] pb-8"> */}
+          {/* <div className="overflow-y-auto max-h-[70vh] px-2"> */}
           <WebhookInfo userId={user.userId.toString()} />
           {/* </div> */}
         </SettingsDrawer>

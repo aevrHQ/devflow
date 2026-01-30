@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Lock1, Save2 } from "iconsax-react";
+import { TickCircle } from "iconsax-react";
+import ResponsiveDialog from "@/components/ui/aevr/responsive-dialog";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
@@ -100,10 +101,8 @@ export default function CredentialsForm({
   }
 
   const handleClearGithub = () => {
-    if (confirm("Are you sure you want to remove your GitHub token?")) {
-      setGithubToken("");
-      saveCredentials({ github: "" });
-    }
+    setGithubToken("");
+    saveCredentials({ github: "" });
   };
 
   const handleClearGroq = () => {
@@ -139,15 +138,8 @@ export default function CredentialsForm({
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-2 mb-4">
-        <Lock1
-          size={20}
-          color="currentColor"
-          variant="TwoTone"
-          className="text-gray-400"
-        />
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Credentials</h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm ">
             Manage sensitive credentials for your agents. These are encrypted
             before storage.
           </p>
@@ -176,14 +168,25 @@ export default function CredentialsForm({
                 <span className="text-green-600 dark:text-green-400 flex items-center">
                   <span className="mr-1">✓</span> Configured
                 </span>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleClearGithub}
+                <ResponsiveDialog
+                  title="Remove GitHub Token?"
+                  description="Are you sure you want to remove your GitHub token? This will revoke agent access to your repositories."
+                  trigger={
+                    <Button type="button" variant="secondary" size="sm">
+                      Clear Token
+                    </Button>
+                  }
                 >
-                  Clear Token
-                </Button>
+                  <div className="flex justify-end gap-3 pt-4">
+                    <Button
+                      variant="danger"
+                      onClick={handleClearGithub}
+                      disabled={isLoading}
+                    >
+                      Confirm Remove
+                    </Button>
+                  </div>
+                </ResponsiveDialog>
               </div>
             )}
           </FieldDescription>
@@ -271,12 +274,15 @@ export default function CredentialsForm({
             type="submit"
             disabled={isLoading || (!githubToken && newGroqKeys.length === 0)}
             variant="default"
-            className="flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-xl font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
           >
             {isLoading ? (
               <Loader loading={isLoading} className="w-4 h-4" />
             ) : (
-              <Save2 size={16} color="currentColor" variant="Bulk" />
+              <TickCircle
+                className="size-6"
+                color="currentColor"
+                variant="Bulk"
+              />
             )}
             Save Credentials
           </Button>

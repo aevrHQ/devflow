@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import Loader from "@/components/ui/aevr/loader";
 import { Checkbox } from "@/components/ui/checkbox";
+import ResponsiveDialog from "./ui/aevr/responsive-dialog";
+import { Button } from "./ui/aevr/button";
 
 interface Task {
   _id: string;
@@ -67,12 +69,6 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
   const handleBulkDelete = useCallback(async () => {
     if (selectedTasks.size === 0) return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${selectedTasks.size} task(s)? This action cannot be undone.`,
-    );
-
-    if (!confirmed) return;
-
     setIsDeleting(true);
     try {
       const response = await fetch("/api/tasks/bulk", {
@@ -88,11 +84,10 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
         );
         setSelectedTasks(new Set());
       } else {
-        alert("Failed to delete tasks. Please try again.");
+        console.error("Failed to delete tasks");
       }
     } catch (error) {
       console.error("Failed to delete tasks:", error);
-      alert("An error occurred while deleting tasks.");
     } finally {
       setIsDeleting(false);
     }
@@ -155,24 +150,36 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
         <div className="flex items-center gap-3 flex-wrap">
           {/* Bulk actions */}
           {selectedTasks.size > 0 && (
-            <button
-              onClick={handleBulkDelete}
-              disabled={isDeleting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30 border border-red-200 dark:border-red-900 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            <ResponsiveDialog
+              title="Delete Tasks?"
+              description={`Are you sure you want to delete ${selectedTasks.size} task(s)? This action cannot be undone.`}
+              trigger={
+                <Button variant="error-variant" disabled={isDeleting}>
+                  {isDeleting ? (
+                    <>
+                      <Loader loading className="w-4 h-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Delete {selectedTasks.size} task
+                      {selectedTasks.size > 1 ? "s" : ""}
+                    </>
+                  )}
+                </Button>
+              }
             >
-              {isDeleting ? (
-                <>
-                  <Loader loading className="w-4 h-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                <>
-                  <Trash2 className="w-4 h-4" />
-                  Delete {selectedTasks.size} task
-                  {selectedTasks.size > 1 ? "s" : ""}
-                </>
-              )}
-            </button>
+              <div className="flex justify-end gap-3 pt-4">
+                <Button
+                  variant="danger"
+                  onClick={handleBulkDelete}
+                  disabled={isDeleting}
+                >
+                  Confirm Delete
+                </Button>
+              </div>
+            </ResponsiveDialog>
           )}
 
           {/* Filter */}

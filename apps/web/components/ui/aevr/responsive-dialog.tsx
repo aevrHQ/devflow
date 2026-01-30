@@ -60,7 +60,7 @@ const ResponsiveDialog: React.FC<ResponsiveDialogProps> = ({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent
-          className={`max-h-[90vh] lg:max-w-248 w-full ${
+          className={`max-h-[90vh] max-w-4xl rounded-3xl ${
             title != null || description != null ? "" : "gap-0"
           }`}
         >
@@ -82,13 +82,13 @@ const ResponsiveDialog: React.FC<ResponsiveDialogProps> = ({
   }
 
   return (
-    <Drawer shouldScaleBackground open={open} onOpenChange={setOpen}>
+    <Drawer repositionInputs={false} open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent className="max-h-[95%]">
         <div className="wrapper overflow-y-auto">
           <DrawerHeader
             className={`text-left ${
-              title != null || description != null ? "p-6" : "p-0"
+              title != null || description != null ? "p-3 px-5" : "p-0"
             }`}
           >
             {title != null && <DrawerTitle>{title || "Heads Up!"}</DrawerTitle>}

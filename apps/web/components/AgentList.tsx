@@ -6,6 +6,7 @@ import { Activity, Power, Terminal, Clock } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/aevr/button";
 import { Trash } from "iconsax-react";
+import ResponsiveDialog from "./ui/aevr/responsive-dialog";
 
 interface Agent {
   id: string;
@@ -24,12 +25,6 @@ export default function AgentList({ initialAgents }: AgentListProps) {
   const [disconnecting, setDisconnecting] = useState<string | null>(null);
 
   const handleDisconnect = async (agentId: string, agentName: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to disconnect "${agentName}"? The agent will need to be manually restarted.`,
-    );
-
-    if (!confirmed) return;
-
     setDisconnecting(agentId);
     try {
       const response = await fetch(`/api/agents/${agentId}/disconnect`, {
@@ -39,23 +34,17 @@ export default function AgentList({ initialAgents }: AgentListProps) {
       if (response.ok) {
         window.location.reload(); // Refresh to show updated status
       } else {
-        alert("Failed to disconnect agent. Please try again.");
+        // Handle error (maybe toast?)
+        console.error("Failed to disconnect agent");
       }
     } catch (error) {
       console.error("Failed to disconnect agent:", error);
-      alert("An error occurred while disconnecting the agent.");
     } finally {
       setDisconnecting(null);
     }
   };
 
   const handleDelete = async (agentId: string, agentName: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to PERMANENTLY delete "${agentName}"? This action cannot be undone.`,
-    );
-
-    if (!confirmed) return;
-
     setDisconnecting(agentId); // Reusing state for loading
     try {
       const response = await fetch(`/api/agents/${agentId}`, {
@@ -65,11 +54,10 @@ export default function AgentList({ initialAgents }: AgentListProps) {
       if (response.ok) {
         window.location.reload();
       } else {
-        alert("Failed to delete agent. Please try again.");
+        console.error("Failed to delete agent");
       }
     } catch (error) {
       console.error("Failed to delete agent:", error);
-      alert("An error occurred while deleting the agent.");
     } finally {
       setDisconnecting(null);
     }
@@ -208,33 +196,65 @@ export default function AgentList({ initialAgents }: AgentListProps) {
                       </Link>
                     </Button>
                     {agent.status !== "offline" && (
-                      <Button
-                        onClick={() => handleDisconnect(agent.id, agent.name)}
-                        disabled={disconnecting === agent.id}
-                        variant={"danger"}
-                        title="Disconnect Agent"
+                      <ResponsiveDialog
+                        title={`Disconnect ${agent.name}?`}
+                        description="Are you sure you want to disconnect this agent? It will need to be manually restarted."
+                        trigger={
+                          <Button
+                            disabled={disconnecting === agent.id}
+                            variant={"danger"}
+                            title="Disconnect Agent"
+                          >
+                            <Power className="w-4 h-4" />
+                            {disconnecting === agent.id
+                              ? "Disconnecting..."
+                              : "Disconnect"}
+                          </Button>
+                        }
                       >
-                        <Power className="w-4 h-4" />
-                        {disconnecting === agent.id
-                          ? "Disconnecting..."
-                          : "Disconnect"}
-                      </Button>
+                        <div className="flex justify-end gap-3 pt-4">
+                          <Button
+                            variant="danger"
+                            onClick={() =>
+                              handleDisconnect(agent.id, agent.name)
+                            }
+                            disabled={disconnecting === agent.id}
+                          >
+                            Confirm Disconnect
+                          </Button>
+                        </div>
+                      </ResponsiveDialog>
                     )}
                     {agent.status === "offline" && (
-                      <Button
-                        onClick={() => handleDelete(agent.id, agent.name)}
-                        disabled={disconnecting === agent.id}
-                        variant={"error-variant"}
-                        title="Delete Agent"
-                        className="py-3"
+                      <ResponsiveDialog
+                        title={`Delete ${agent.name}?`}
+                        description="Are you sure you want to PERMANENTLY delete this agent? This action cannot be undone."
+                        trigger={
+                          <Button
+                            disabled={disconnecting === agent.id}
+                            variant={"error-variant"}
+                            title="Delete Agent"
+                            className="py-3"
+                          >
+                            <Trash
+                              className="w-4 h-4"
+                              variant="TwoTone"
+                              color="currentColor"
+                            />
+                            <span className="sr-only">Delete</span>
+                          </Button>
+                        }
                       >
-                        <Trash
-                          className="w-4 h-4"
-                          variant="TwoTone"
-                          color="currentColor"
-                        />
-                        <span className="sr-only">Delete</span>
-                      </Button>
+                        <div className="flex justify-end gap-3 pt-4">
+                          <Button
+                            variant="danger"
+                            onClick={() => handleDelete(agent.id, agent.name)}
+                            disabled={disconnecting === agent.id}
+                          >
+                            Confirm Delete
+                          </Button>
+                        </div>
+                      </ResponsiveDialog>
                     )}
                   </div>
                 </div>

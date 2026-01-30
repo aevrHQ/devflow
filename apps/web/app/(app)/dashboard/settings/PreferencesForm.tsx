@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Loader from "@/components/ui/aevr/loader";
 import { Button } from "@/components/ui/aevr/button";
-import { Save2 } from "iconsax-react";
+import { TickCircle } from "iconsax-react";
 import {
   Field,
   FieldLabel,
@@ -204,7 +204,11 @@ export default function PreferencesForm({
           {isLoading ? (
             <Loader loading className="w-4 h-4" />
           ) : (
-            <Save2 variant="Bulk" color="currentColor" className="w-4 h-4" />
+            <TickCircle
+              variant="Bulk"
+              color="currentColor"
+              className="size-6"
+            />
           )}
           Save Preferences
         </Button>
