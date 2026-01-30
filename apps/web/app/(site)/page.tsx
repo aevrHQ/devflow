@@ -116,7 +116,7 @@ export default function LandingPage() {
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
+                    <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800">
                       <Terminal className="w-5 h-5 text-blue-400" />
                     </div>
                     <div>
@@ -136,7 +136,7 @@ export default function LandingPage() {
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
+                    <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800">
                       <Bot className="w-5 h-5 text-purple-400" />
                     </div>
                     <div>
@@ -151,7 +151,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex-1 w-full">
-                <div className="bg-[#0d1117] rounded-xl border border-neutral-800 p-1 font-mono text-sm shadow-2xl">
+                <div className="bg-[#0d1117] rounded-2xl border border-neutral-800 p-1 font-mono text-sm shadow-2xl">
                   <div className="bg-[#161b22] rounded-t-lg p-3 flex items-center gap-2 border-b border-neutral-800">
                     <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
                     <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
@@ -238,7 +238,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="bg-muted rounded-2xl p-8 aspect-square flex items-center justify-center">
-            <div className="relative w-64 h-80 bg-card rounded-xl shadow-2xl border border-border p-6 flex flex-col">
+            <div className="relative w-64 h-80 bg-card rounded-2xl shadow-2xl border border-border p-6 flex flex-col">
               <div className="w-8 h-8 bg-muted rounded-full mb-4" />
               <div className="space-y-3 flex-1">
                 <div className="h-2 w-3/4 bg-muted rounded" />
@@ -304,7 +304,7 @@ function FeatureCard({
 }) {
   return (
     <div className="p-6 rounded-2xl bg-card border border-border hover:border-neutral-300 dark:hover:border-neutral-700 transition-all">
-      <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center mb-6 text-foreground">
+      <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center mb-6 text-foreground">
         {icon}
       </div>
       <h3 className="text-lg font-bold mb-3 text-foreground">{title}</h3>

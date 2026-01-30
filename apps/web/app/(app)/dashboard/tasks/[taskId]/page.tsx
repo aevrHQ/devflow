@@ -115,7 +115,7 @@ export default async function TaskDetailsPage({
               href={task.result.prUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
             >
               <GitBranch className="w-4 h-4" />
               View Pull Request
@@ -127,14 +127,14 @@ export default async function TaskDetailsPage({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-card text-card-foreground rounded-xl border border-border p-6">
+          <div className="bg-card text-card-foreground rounded-2xl border border-border p-6">
             <h2 className="text-lg font-semibold mb-4">Request</h2>
             <div className="prose prose-sm max-w-none text-muted-foreground">
               {task.description || task.intent}
             </div>
 
             {task.repo && (
-              <div className="mt-4 items-center gap-2 text-sm bg-muted/50 p-2 rounded-md border border-border inline-flex">
+              <div className="mt-4 items-center gap-2 text-sm bg-muted/50 p-2 rounded-xl border border-border inline-flex">
                 <GitBranch className="w-4 h-4 text-muted-foreground" />
                 <span className="text-foreground font-mono">{task.repo}</span>
                 {task.branch && (
@@ -151,13 +151,13 @@ export default async function TaskDetailsPage({
 
           {/* Sessions */}
           {sessions.length > 0 && (
-            <div className="bg-card text-card-foreground rounded-xl border border-border p-6">
+            <div className="bg-card text-card-foreground rounded-2xl border border-border p-6">
               <h2 className="text-lg font-semibold mb-4">Sessions</h2>
               <div className="space-y-4">
                 {sessions.map((session) => (
                   <div
                     key={session.sessionId}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border"
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-xl border border-border"
                   >
                     <div>
                       <div className="flex items-center gap-2">
@@ -189,7 +189,7 @@ export default async function TaskDetailsPage({
 
           {/* Output / Result */}
           {(task.result?.output || task.result?.error) && (
-            <div className="bg-card text-card-foreground rounded-xl border border-border overflow-hidden">
+            <div className="bg-card text-card-foreground rounded-2xl border border-border overflow-hidden">
               <div className="bg-neutral-900 px-4 py-3 flex items-center justify-between">
                 <h3 className="text-gray-200 text-sm font-mono flex items-center gap-2">
                   <Terminal className="w-4 h-4" />
@@ -209,7 +209,7 @@ export default async function TaskDetailsPage({
           )}
 
           {/* Execution Logs */}
-          <div className="bg-card text-card-foreground rounded-xl border border-border overflow-hidden">
+          <div className="bg-card text-card-foreground rounded-2xl border border-border overflow-hidden">
             <div className="bg-muted px-4 py-3 border-b border-border">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <Terminal className="w-4 h-4 text-muted-foreground" />
@@ -254,7 +254,7 @@ export default async function TaskDetailsPage({
 
         {/* Sidebar */}
         <div className="space-y-6">
-          <div className="bg-card text-card-foreground rounded-xl border border-border p-6">
+          <div className="bg-card text-card-foreground rounded-2xl border border-border p-6">
             <h3 className="text-sm font-semibold text-foreground mb-4">
               Agent Details
             </h3>
@@ -289,7 +289,7 @@ export default async function TaskDetailsPage({
               </div>
 
               {isOffline && (
-                <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-lg text-xs border border-red-200 dark:border-red-900/30 mt-2">
+                <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-xl text-xs border border-red-200 dark:border-red-900/30 mt-2">
                   <strong>Agent Offline</strong>
                   <p>Agent hasn&apos;t reported in for &gt; 5 minutes.</p>
                 </div>
@@ -297,7 +297,7 @@ export default async function TaskDetailsPage({
             </div>
           </div>
 
-          <div className="bg-card text-card-foreground rounded-xl border border-border p-6">
+          <div className="bg-card text-card-foreground rounded-2xl border border-border p-6">
             <h3 className="text-sm font-semibold text-foreground mb-4">
               Timeline
             </h3>

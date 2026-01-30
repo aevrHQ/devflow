@@ -188,7 +188,7 @@ export default function WebChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-2xl">
+    <div className="flex flex-col h-full bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl">
       {/* Header */}
       <div className="p-4 border-b border-neutral-800 bg-neutral-950/50 backdrop-blur flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -275,14 +275,14 @@ export default function WebChatInterface() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type a command or message..."
-            className="w-full bg-neutral-800/50 border-neutral-700 text-neutral-200 rounded-xl px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 outline-none resize-none min-h-[50px] max-h-[120px]"
+            className="w-full bg-neutral-800/50 border-neutral-700 text-neutral-200 rounded-2xl px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 outline-none resize-none min-h-[50px] max-h-[120px]"
             rows={1}
             disabled={loading}
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || loading}
-            className="absolute right-2 bottom-2 p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="absolute right-2 bottom-2 p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

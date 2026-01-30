@@ -144,7 +144,7 @@ declare module "zeptomail" {
     constructor(config: SendMailClientConfig);
     sendMail(payload: Record<string, unknown>): Promise<MailResponse>;
     sendMailWithTemplate(
-      payload: Record<string, unknown>
+      payload: Record<string, unknown>,
     ): Promise<MailResponse>;
   }
 }
@@ -285,7 +285,7 @@ export interface UserPayload extends JwtPayload {
  */
 export function signToken(
   payload: Omit<UserPayload, "iat" | "exp">,
-  expiresIn: SignOptions["expiresIn"] = "3h"
+  expiresIn: SignOptions["expiresIn"] = "3h",
 ) {
   return jwt.sign(payload, ACCESS_SECRET, { expiresIn });
 }
@@ -366,7 +366,7 @@ export class EmailService {
     providerType:
       | "nodemailer"
       | "zeptomail"
-      | "resend" = DEFAULT_MAIL_PROVIDER as any
+      | "resend" = DEFAULT_MAIL_PROVIDER as any,
   ) {
     this.defaultFromEmail = MAIL_USER || "hello@example.com";
     this.defaultFromName = APP_NAME || "Notification Service";
@@ -565,7 +565,7 @@ export const logger = {
   info: (message: string, data?: unknown) => {
     console.log(
       `[INFO] ${new Date().toISOString()} - ${message}`,
-      data ? JSON.stringify(data, null, 2) : ""
+      data ? JSON.stringify(data, null, 2) : "",
     );
   },
   error: (message: string, error?: unknown) => {
@@ -574,7 +574,7 @@ export const logger = {
   warn: (message: string, data?: unknown) => {
     console.warn(
       `[WARN] ${new Date().toISOString()} - ${message}`,
-      data ? JSON.stringify(data, null, 2) : ""
+      data ? JSON.stringify(data, null, 2) : "",
     );
   },
 };
@@ -601,7 +601,7 @@ interface MongooseError {
 
 export function handleApiError(
   error: unknown,
-  context: string = "API Error"
+  context: string = "API Error",
 ): NextResponse<ApiErrorResponse> {
   logger.error(context, error);
 
@@ -616,7 +616,7 @@ export function handleApiError(
     const field = keyValue ? Object.keys(keyValue)[0] : "unknown field";
     return NextResponse.json(
       { error: `Duplicate value for field: ${field}`, code: "DUPLICATE_KEY" },
-      { status: 409 }
+      { status: 409 },
     );
   }
 
@@ -629,7 +629,7 @@ export function handleApiError(
         details: messages,
         code: "VALIDATION_ERROR",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -687,7 +687,7 @@ export async function POST(request: Request) {
     const link = `${
       process.env.NEXT_PUBLIC_APP_URL
     }/api/auth/magic-link/verify?token=${token}&email=${encodeURIComponent(
-      email
+      email,
     )}`;
 
     // Send the email
@@ -699,7 +699,7 @@ export async function POST(request: Request) {
     logger.error(`[${requestId}] Magic link request error`, error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -732,7 +732,7 @@ export async function GET(request: Request) {
     if (!token || !email) {
       logger.warn(`[${requestId}] Missing token or email in verification link`);
       return NextResponse.redirect(
-        new URL("/error?error=Invalid link", request.url)
+        new URL("/error?error=Invalid link", request.url),
       );
     }
 
@@ -751,10 +751,10 @@ export async function GET(request: Request) {
 
     if (!magicToken) {
       logger.warn(
-        `[${requestId}] Invalid or expired token for email: ${email}`
+        `[${requestId}] Invalid or expired token for email: ${email}`,
       );
       return NextResponse.redirect(
-        new URL("/error?error=Invalid or expired token", request.url)
+        new URL("/error?error=Invalid or expired token", request.url),
       );
     }
 
@@ -817,7 +817,7 @@ export async function GET(request: Request) {
   } catch (error) {
     logger.error(`[${requestId}] Magic link verify error`, error);
     return NextResponse.redirect(
-      new URL("/error?error=Internal server error", request.url)
+      new URL("/error?error=Internal server error", request.url),
     );
   }
 }
@@ -847,7 +847,7 @@ export async function POST(request: Request) {
     if (!email || !pin) {
       return NextResponse.json(
         { error: "Email and PIN are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -859,7 +859,7 @@ export async function POST(request: Request) {
       // Return generic error for security (don't reveal if user exists)
       return NextResponse.json(
         { error: "Invalid credentials" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -869,7 +869,7 @@ export async function POST(request: Request) {
     if (pinHash !== user.pin) {
       return NextResponse.json(
         { error: "Invalid credentials" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -943,7 +943,7 @@ function InputOTP({
       data-slot="input-otp"
       containerClassName={cn(
         "flex items-center gap-2 has-disabled:opacity-50",
-        containerClassName
+        containerClassName,
       )}
       className={cn("disabled:cursor-not-allowed", className)}
       {...props}
@@ -979,7 +979,7 @@ function InputOTPSlot({
       data-active={isActive}
       className={cn(
         "data-[active=true]:border-ring data-[active=true]:ring-ring/50 border-input relative flex h-14 w-14 items-center justify-center border-y border-r text-xl shadow-xs transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
-        className
+        className,
       )}
       {...props}
     >
@@ -1020,7 +1020,7 @@ interface PersistedStateOptions {
 
 export function usePersistedState<T>(
   initialValue: T,
-  options: PersistedStateOptions
+  options: PersistedStateOptions,
 ) {
   const useStore = create(
     persist<{ state: T; setState: (value: T) => void }>(
@@ -1031,8 +1031,8 @@ export function usePersistedState<T>(
       {
         name: options.storageKey,
         storage: createJSONStorage(() => localStorage),
-      }
-    )
+      },
+    ),
   );
 
   return useStore();
@@ -1169,11 +1169,11 @@ export default function LoginPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Login Method Toggle */}
-            <div className="flex p-1 bg-muted rounded-lg mb-6">
+            <div className="flex p-1 bg-muted rounded-xl mb-6">
               <button
                 type="button"
                 onClick={() => setLoginMethod("magic")}
-                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                className={`flex-1 py-2 text-sm font-medium rounded-xl transition-all ${
                   loginMethod === "magic"
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
@@ -1184,7 +1184,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setLoginMethod("pin")}
-                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                className={`flex-1 py-2 text-sm font-medium rounded-xl transition-all ${
                   loginMethod === "pin"
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
@@ -1203,7 +1203,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-input border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-app-theme-500/50 transition-all"
+                className="w-full bg-input border border-border rounded-2xl px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-app-theme-500/50 transition-all"
                 placeholder="you@example.com"
                 required
               />
@@ -1409,7 +1409,7 @@ cookieStore.set("token", jwtToken, {
    if (!user || !user.pin) {
      return NextResponse.json(
        { error: "Invalid credentials" },
-       { status: 401 }
+       { status: 401 },
      );
    }
    ```

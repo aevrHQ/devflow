@@ -46,7 +46,7 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className=" text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+              <div className=" text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-xl">
                 <DevflowLogo className="6" useGradient={true} />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -57,7 +57,7 @@ export function TeamSwitcher({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-xl"
             align="start"
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
@@ -72,11 +72,11 @@ export function TeamSwitcher({
                 className="gap-2 p-2"
               >
                 {team.logo ? (
-                  <div className="flex size-6 items-center justify-center rounded-md border">
+                  <div className="flex size-6 items-center justify-center rounded-xl border">
                     <team.logo className="size-3.5 shrink-0" />
                   </div>
                 ) : (
-                  <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                  <div className="flex size-6 items-center justify-center rounded-xl border bg-transparent">
                     <DevflowLogo className="size-3.5 shrink-0" />
                   </div>
                 )}
@@ -85,7 +85,7 @@ export function TeamSwitcher({
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 p-2" onClick={() => {}}>
-              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+              <div className="flex size-6 items-center justify-center rounded-xl border bg-background">
                 <Add className="size-4" color="currentColor" />
               </div>
               <div className="font-medium text-muted-foreground">Add team</div>

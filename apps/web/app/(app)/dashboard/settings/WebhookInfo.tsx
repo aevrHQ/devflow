@@ -24,7 +24,7 @@ export default function WebhookInfo({ userId }: { userId: string }) {
     : "...";
 
   return (
-    <div className="bg-card p-6 rounded-xl border border-border">
+    <div className="bg-card p-6 rounded-2xl border border-border">
       <h2 className="text-lg font-semibold mb-4 text-foreground">
         Developer Information
       </h2>
@@ -38,12 +38,12 @@ export default function WebhookInfo({ userId }: { userId: string }) {
         <Field>
           <FieldLabel>Your User ID</FieldLabel>
           <div className="flex flex-col sm:flex-row gap-2">
-            <code className="flex-1 bg-muted p-3 rounded-lg border border-border text-sm font-mono overflow-x-auto flex items-center text-foreground">
+            <code className="flex-1 bg-muted p-3 rounded-xl border border-border text-sm font-mono overflow-x-auto flex items-center text-foreground">
               {userId}
             </code>
             <button
               onClick={() => copyToClipboard(userId, "id")}
-              className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-accent active:bg-muted transition-colors min-w-[80px]"
+              className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm font-medium text-foreground bg-background border border-border rounded-xl hover:bg-accent active:bg-muted transition-colors min-w-[80px]"
             >
               {copied === "id" ? "Copied!" : "Copy"}
             </button>
@@ -54,12 +54,12 @@ export default function WebhookInfo({ userId }: { userId: string }) {
         <Field>
           <FieldLabel>Render / Custom Webhook URL</FieldLabel>
           <div className="flex flex-col sm:flex-row gap-2">
-            <code className="flex-1 bg-muted p-3 rounded-lg border border-border text-sm font-mono overflow-x-auto whitespace-nowrap flex items-center text-foreground scrollbar-hide">
+            <code className="flex-1 bg-muted p-3 rounded-xl border border-border text-sm font-mono overflow-x-auto whitespace-nowrap flex items-center text-foreground scrollbar-hide">
               {renderWebhookUrl}
             </code>
             <button
               onClick={() => copyToClipboard(renderWebhookUrl, "url")}
-              className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-accent active:bg-muted transition-colors min-w-[80px]"
+              className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm font-medium text-foreground bg-background border border-border rounded-xl hover:bg-accent active:bg-muted transition-colors min-w-[80px]"
               disabled={!origin}
             >
               {copied === "url" ? "Copied!" : "Copy"}

@@ -238,7 +238,7 @@ export default function CredentialsForm({
 
               {/* List of keys to be added */}
               {newGroqKeys.length > 0 && (
-                <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <div className="bg-gray-50 rounded-xl p-3 space-y-2">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     To be saved:
                   </p>
@@ -270,7 +270,7 @@ export default function CredentialsForm({
             type="submit"
             disabled={isLoading || (!githubToken && newGroqKeys.length === 0)}
             variant="default"
-            className="flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-xl font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
           >
             {isLoading ? (
               <Loader loading={isLoading} className="w-4 h-4" />

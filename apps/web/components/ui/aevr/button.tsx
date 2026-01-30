@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  `inline-flex w-fit transform cursor-pointer items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-90 disabled:active:scale-100 focus:ring-offset-white dark:focus:ring-offset-neutral-800`,
+  `inline-flex w-fit transform cursor-pointer items-center justify-center gap-2 rounded-2xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-90 disabled:active:scale-100 focus:ring-offset-white dark:focus:ring-offset-neutral-800`,
   {
     variants: {
       variant: {
         default:
-          "bg-neutral-500 text-neutral-50 hover:bg-neutral-600 focus:ring-neutral-500 dark:bg-neutral-600 dark:hover:bg-neutral-700 dark:focus:ring-neutral-600",
+          "bg-neutral-800 text-neutral-50 hover:bg-neutral-900 focus:ring-neutral-900 dark:bg-neutral-200 dark:text-neutral-900 dark:hover:bg-neutral-300 dark:focus:ring-neutral-300",
         primary:
-          "bg-blue-500 text-blue-50 hover:bg-blue-600 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-600",
+          "bg-app-theme-500 text-app-theme-50 hover:bg-app-theme-600 focus:ring-app-theme-500 dark:bg-app-theme-600 dark:hover:bg-app-theme-700 dark:focus:ring-app-theme-600",
         secondary:
           "border border-neutral-300 bg-neutral-50 text-neutral-600 hover:bg-neutral-100 focus:ring-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:ring-neutral-600",
         tertiary:
-          "bg-blue-100 text-blue-600 hover:bg-blue-200 focus:ring-blue-500 dark:bg-blue-800 dark:text-blue-200 dark:hover:bg-blue-700 dark:focus:ring-blue-600",
+          "bg-app-theme-100 text-app-theme-600 hover:bg-app-theme-200 focus:ring-app-theme-500 dark:bg-app-theme-900 dark:text-app-theme-200 dark:hover:bg-app-theme-800 dark:focus:ring-app-theme-700",
         ghost:
-          "bg-transparent text-red-600 hover:bg-neutral-50 focus:ring-neutral-500 dark:text-red-400 dark:hover:bg-neutral-950/50 dark:focus:ring-neutral-600",
+          "bg-transparent text-app-theme-600 hover:bg-app-theme-50 focus:ring-app-theme-500 dark:text-app-theme-400 dark:hover:bg-app-theme-950/50 dark:focus:ring-app-theme-600",
         danger:
           "bg-red-500 text-red-50 hover:bg-red-600 focus:ring-red-500 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-600",
         "warning-variant":
@@ -28,10 +28,10 @@ const buttonVariants = cva(
         "info-variant":
           "bg-sky-500 text-sky-50 hover:bg-sky-600 focus:ring-sky-500 dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-600",
         "error-variant":
-          "bg-red-100 text-red-600 hover:bg-red-200 focus:ring-red-200 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-300 dark:focus:ring-red-300",
+          "bg-red-500 text-red-50 hover:bg-red-600 focus:ring-red-500 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-600",
       },
       size: {
-        sm: "px-2 py-1.5 text-sm rounded-lg",
+        sm: "px-2 py-1.5 text-sm rounded-xl",
         md: "px-3 py-2 text-base",
         lg: "px-6 py-3 text-xl",
       },

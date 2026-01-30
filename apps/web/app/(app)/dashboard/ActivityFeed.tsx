@@ -115,7 +115,7 @@ export default function ActivityFeed() {
       </div>
 
       {activities.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground bg-muted/30 rounded-lg border border-border border-dashed">
+        <div className="text-center py-8 text-muted-foreground bg-muted/30 rounded-xl border border-border border-dashed">
           <p>No processed webhooks yet.</p>
         </div>
       ) : (
@@ -123,7 +123,7 @@ export default function ActivityFeed() {
           {activities.map((log) => (
             <div
               key={log._id}
-              className="flex items-center justify-between p-3 bg-card border border-border rounded-lg hover:border-primary/50 transition-colors"
+              className="flex items-center justify-between p-3 bg-card border border-border rounded-xl hover:border-primary/50 transition-colors"
             >
               <div className="flex items-start gap-3 overflow-hidden">
                 <div className="mt-1">{getStatusIcon(log.status)}</div>
@@ -200,7 +200,7 @@ export default function ActivityFeed() {
                     </div>
 
                     {log.error && (
-                      <div className="bg-red-50 dark:bg-red-900/30 p-3 rounded-md border border-red-100 dark:border-red-900">
+                      <div className="bg-red-50 dark:bg-red-900/30 p-3 rounded-xl border border-red-100 dark:border-red-900">
                         <h4 className="text-xs font-semibold text-red-700 dark:text-red-400 uppercase mb-1">
                           Error
                         </h4>

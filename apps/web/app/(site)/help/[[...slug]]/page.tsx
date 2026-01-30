@@ -240,11 +240,11 @@ export default async function HelpPage({ params }: HelpPageProps) {
             prose-p:text-gray-600 prose-p:leading-relaxed
             prose-a:text-black prose-a:underline hover:prose-a:text-gray-600
             prose-strong:text-black prose-strong:font-semibold
-            prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-xl prose-pre:
+            prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-2xl prose-pre:
             prose-blockquote:border-l-2 prose-blockquote:border-black prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:not-italic prose-blockquote:rounded-r-lg
             prose-ul:list-disc prose-ul:pl-0 prose-ul:space-y-2
             prose-li:text-gray-600 prose-li:pl-2
-            prose-img:rounded-xl prose-img: prose-img:border prose-img:border-gray-100
+            prose-img:rounded-2xl prose-img: prose-img:border prose-img:border-gray-100
             "
           dangerouslySetInnerHTML={{ __html: html! }}
         />
@@ -261,7 +261,7 @@ export default async function HelpPage({ params }: HelpPageProps) {
               <Link
                 key={guide.slug}
                 href={`/help/${guide.slug}`}
-                className="group p-6 border border-gray-100 rounded-xl hover:border-black transition-all"
+                className="group p-6 border border-gray-100 rounded-2xl hover:border-black transition-all"
               >
                 <div className="text-3xl mb-3 grayscale group-hover:grayscale-0 transition-all">
                   {guide.icon}

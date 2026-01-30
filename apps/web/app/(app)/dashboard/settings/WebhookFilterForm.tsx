@@ -152,12 +152,12 @@ export default function WebhookFilterForm({
   const vercelSource = getSourceFilter("vercel");
 
   return (
-    <div className="mt-4 border border-border rounded-lg">
+    <div className="mt-4 border border-border rounded-xl">
       <Button
         type="button"
         variant="ghost"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-accent rounded-lg transition-colors h-auto"
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-accent rounded-xl transition-colors h-auto"
       >
         <div className="flex items-center gap-2">
           <Filter
@@ -260,7 +260,7 @@ export default function WebhookFilterForm({
                     {githubSource.filters.repositories?.map((repo) => (
                       <div
                         key={repo}
-                        className="flex items-center gap-1 px-2 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs rounded-md"
+                        className="flex items-center gap-1 px-2 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs rounded-xl"
                       >
                         <span>{repo}</span>
                         <Button

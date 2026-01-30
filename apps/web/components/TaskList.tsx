@@ -151,14 +151,14 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between bg-card p-4 rounded-lg border border-border">
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between bg-card p-4 rounded-xl border border-border">
         <div className="flex items-center gap-3 flex-wrap">
           {/* Bulk actions */}
           {selectedTasks.size > 0 && (
             <button
               onClick={handleBulkDelete}
               disabled={isDeleting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30 border border-red-200 dark:border-red-900 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30 border border-red-200 dark:border-red-900 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isDeleting ? (
                 <>
@@ -179,7 +179,7 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
+            className="px-3 py-2 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
           >
             <option value="all">All Tasks</option>
             <option value="pending">Pending</option>
@@ -192,7 +192,7 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as "date" | "status")}
-            className="px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
+            className="px-3 py-2 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground"
           >
             <option value="date">Sort by Date</option>
             <option value="status">Sort by Status</option>
@@ -208,7 +208,7 @@ export default function TaskList({ initialTasks, agentMap }: TaskListProps) {
       </div>
 
       {/* Task List */}
-      <div className="bg-card text-card-foreground rounded-xl border border-border overflow-hidden">
+      <div className="bg-card text-card-foreground rounded-2xl border border-border overflow-hidden">
         {sortedTasks.length === 0 ? (
           <div className="text-center py-12 px-4">
             <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">

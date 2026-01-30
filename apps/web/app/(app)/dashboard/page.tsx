@@ -15,6 +15,7 @@ import {
 import { Types } from "mongoose";
 import Link from "next/link";
 import { Button } from "@/components/ui/aevr/button";
+import { Add } from "iconsax-react";
 
 interface DashboardPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -90,26 +91,23 @@ export default async function DashboardPage(props: DashboardPageProps) {
           <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
           <p className="text-muted-foreground">Welcome to your dashboard</p>
         </div>
-        <a
-          href={githubInstallUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add Repository
-        </a>
+        <Button asChild>
+          <a href={githubInstallUrl} target="_blank" rel="noopener noreferrer">
+            <Add className="size-6" variant="TwoTone" color="currentColor" />
+            Add Repository
+          </a>
+        </Button>
       </div>
 
       {successMessage && (
-        <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-lg flex items-center gap-2 border border-green-100 dark:border-green-900">
+        <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-xl flex items-center gap-2 border border-green-100 dark:border-green-900">
           <CheckCircle className="w-5 h-5" />
           {successMessage}
         </div>
       )}
 
       {installationId && !successMessage && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 p-4 rounded-lg flex items-start gap-2 border border-yellow-100 dark:border-yellow-900">
+        <div className="bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 p-4 rounded-xl flex items-start gap-2 border border-yellow-100 dark:border-yellow-900">
           <Activity className="w-5 h-5 mt-0.5" />
           <div>
             <p className="font-semibold">Connection Pending...</p>
@@ -136,7 +134,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
+        <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">
               Events (24h)
@@ -146,7 +144,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
           <p className="text-2xl font-bold">{stats.eventsLast24Hours}</p>
         </div>
 
-        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
+        <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">
               Success Rate
@@ -156,7 +154,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
           <p className="text-2xl font-bold">{stats.successRate}%</p>
         </div>
 
-        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
+        <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">
               Total Failed
@@ -170,7 +168,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
       {/* Agents / Installations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Agents */}
-        <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
+        <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Zap className="w-5 h-5 text-muted-foreground" />
@@ -213,7 +211,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
                 return (
                   <div
                     key={agent.agentId}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-xl"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -245,7 +243,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
 
         {/* Installations / Recent Activity Column */}
         <div className="space-y-6">
-          <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
+          <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <Github className="w-5 h-5 text-muted-foreground" />
@@ -273,7 +271,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
                 {installations.map((inst) => (
                   <div
                     key={inst.installationId}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-xl"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center border border-border text-xs font-bold text-foreground">
@@ -298,7 +296,7 @@ export default async function DashboardPage(props: DashboardPageProps) {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-card text-card-foreground p-6 rounded-xl border border-border">
+          <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border">
             <ActivityFeed />
           </div>
         </div>

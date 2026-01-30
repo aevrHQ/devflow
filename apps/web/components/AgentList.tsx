@@ -132,7 +132,7 @@ export default function AgentList({ initialAgents }: AgentListProps) {
   };
 
   return (
-    <div className="bg-card text-card-foreground rounded-xl border border-border overflow-hidden">
+    <div className="bg-card text-card-foreground rounded-2xl border border-border overflow-hidden">
       {agents.length === 0 ? (
         <div className="text-center py-12 px-4">
           <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">

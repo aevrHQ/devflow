@@ -9,7 +9,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 dark:focus-visible:ring-neutral-300"
+      className="inline-flex items-center justify-center rounded-xl p-2 text-sm font-medium transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 dark:focus-visible:ring-neutral-300"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       title="Toggle theme"
     >
