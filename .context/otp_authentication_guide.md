@@ -230,18 +230,33 @@ export const User = models.User || model<User>("User", UserSchema);
 Stores hashed magic link tokens with expiration.
 
 ```typescript
-import mongoose, { Schema, model, models } from "mongoose";
+import { Schema, model, models, Document, Model } from "mongoose";
 
-const MagicLinkTokenSchema = new Schema({
+export interface IMagicLinkToken {
+  email: string;
+  tokenHash: string;
+  otpHash?: string;
+  expires: Date;
+  used: boolean;
+  keepSignedIn: boolean;
+  createdAt: Date;
+}
+
+export interface MagicLinkTokenDocument extends IMagicLinkToken, Document {}
+
+const MagicLinkTokenSchema = new Schema<MagicLinkTokenDocument>({
   email: { type: String, required: true },
   tokenHash: { type: String, required: true },
+  otpHash: { type: String }, // 6-digit OTP hash
   expires: { type: Date, required: true },
   used: { type: Boolean, default: false },
   keepSignedIn: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now, expires: 900 }, // Auto-delete after 15 mins
 });
 
 export const MagicLinkToken =
-  models.MagicLinkToken || model("MagicLinkToken", MagicLinkTokenSchema);
+  (models.MagicLinkToken as Model<MagicLinkTokenDocument>) ||
+  model<MagicLinkTokenDocument>("MagicLinkToken", MagicLinkTokenSchema);
 ```
 
 ### Wallet Model (for new user provisioning)
@@ -458,24 +473,28 @@ export function createEmailButton(text: string, url: string): string {
 /**
  * Send magic link email to user
  */
-export async function sendMagicLink(email: string, link: string) {
-  const emailService = new EmailService();
+/**
+ * Send magic link email to user
+ */
+export async function sendMagicLink(email: string, link: string, otp?: string) {
   const content = `
-    <p>Click the button below to securely login to your account. This link expires in 15 minutes.</p>
-    ${createEmailButton("Login to Wallet", link)}
-    <p>If you didn't request this login, please ignore this email.</p>
+    <p>Click the button below to sign in. This link expires in 15 minutes.</p>
+    ${otp ? `<div style="text-align: center; margin: 24px 0; background-color: #f1f5f9; padding: 12px; border-radius: 8px; font-size: 24px; font-weight: bold; letter-spacing: 4px;">${otp}</div>` : ""}
+    <p>Or use the code above if you are logging in on a different device.</p>
   `;
 
-  const htmlBody = emailService.generateMinimalistTemplate({
-    title: "Login to Your Account",
-    content,
-  });
-
-  await emailService.sendEmail({
-    to: { email },
-    subject: "Your Magic Login Link",
-    htmlBody,
-  });
+  // Uses the configured email provider (Resend/Nodemailer)
+  await emailService.sendStyledEmail(
+    email,
+    otp ? `Your Login Code: ${otp}` : "Sign in to DevFlow",
+    {
+      title: otp ? `Your Login Code: ${otp}` : "Sign in to DevFlow",
+      content,
+      actionUrl: link,
+      actionText: "Sign In",
+      footerText: "DevFlow Security",
+    },
+  );
 }
 
 // Export singleton instance
@@ -649,59 +668,227 @@ Handles requesting a new magic link.
 ```typescript
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import { MagicLinkToken } from "@/models/MagicLinkToken";
+import MagicLinkToken from "@/models/MagicLinkToken";
 import { sendMagicLink } from "@/lib/email";
 import crypto from "crypto";
-import { logger } from "@/lib/utils";
+import { z } from "zod";
+import { logger } from "@untools/logger";
+
+const requestSchema = z.object({
+  email: z.string().email(),
+  keepSignedIn: z.boolean().optional(),
+  returnTo: z.string().optional().nullable(),
+});
 
 export async function POST(request: Request) {
-  const requestId = crypto.randomUUID();
-  logger.info(`[${requestId}] Magic link request started`);
-
   try {
-    const { email, keepSignedIn } = await request.json();
-    logger.info(`[${requestId}] Requesting magic link for: ${email}`);
+    const body = await request.json();
+    const result = requestSchema.safeParse(body);
 
-    if (!email) {
-      logger.warn(`[${requestId}] Email missing in request`);
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400 },
+      );
     }
+
+    const { email, keepSignedIn, returnTo } = result.data;
 
     await connectToDatabase();
 
     // Generate secure random token
     const token = crypto.randomBytes(32).toString("hex");
-    // Store only the hash (never store plain token)
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    // Generate 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
     // Store token in database
     await MagicLinkToken.create({
       email,
       tokenHash,
+      otpHash,
       expires,
       keepSignedIn: !!keepSignedIn,
     });
 
-    // Construct magic link with plain token (hash stored in DB)
-    const link = `${
-      process.env.NEXT_PUBLIC_APP_URL
-    }/api/auth/magic-link/verify?token=${token}&email=${encodeURIComponent(
-      email,
-    )}`;
+    // Construct magic link
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    let link = `${baseUrl}/api/auth/magic-link/verify?token=${token}&email=${encodeURIComponent(email)}`;
 
-    // Send the email
-    await sendMagicLink(email, link);
+    if (returnTo) {
+      link += `&return_to=${encodeURIComponent(returnTo)}`;
+    }
 
-    logger.info(`[${requestId}] Magic link sent successfully to: ${email}`);
+    // Send the email with both Link and OTP
+    await sendMagicLink(email, link, otp);
+
+    logger.info(`[Auth] Magic link sent to: ${email}`);
     return NextResponse.json({ success: true, message: "Magic link sent" });
   } catch (error) {
-    logger.error(`[${requestId}] Magic link request error`, error);
+    console.error("Magic link request error", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
     );
   }
+}
+```
+
+### OTP Verification (`app/api/auth/otp/verify/route.ts`)
+
+Handles verifying the 6-digit OTP code for users who prefer copying a code over clicking a link.
+
+```typescript
+import { NextResponse } from "next/server";
+import connectToDatabase from "@/lib/mongodb";
+import MagicLinkToken from "@/models/MagicLinkToken";
+import User from "@/models/User";
+import { signToken, setAuthCookie } from "@/lib/auth";
+import crypto from "crypto";
+import { z } from "zod";
+
+const verifySchema = z.object({
+  email: z.string().trim().email(),
+  otp: z.string().trim().length(6),
+});
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const result = verifySchema.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json({ error: "Invalid format" }, { status: 400 });
+    }
+
+    const { email, otp } = result.data;
+    await connectToDatabase();
+
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    // Find valid token
+    const magicToken = await MagicLinkToken.findOne({
+      email,
+      otpHash,
+    });
+
+    if (!magicToken) {
+      return NextResponse.json(
+        { error: "Invalid or expired code" },
+        { status: 400 },
+      );
+    }
+
+    if (magicToken.used) {
+      return NextResponse.json({ error: "Code already used" }, { status: 400 });
+    }
+
+    if (new Date() > magicToken.expires) {
+      return NextResponse.json({ error: "Code expired" }, { status: 400 });
+    }
+
+    // Mark used
+    magicToken.used = true;
+    await magicToken.save();
+
+    // Find/Create User
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ email });
+    }
+
+    // Generate Session
+    const payload = { userId: user._id.toString(), email: user.email };
+    const maxAge = magicToken.keepSignedIn
+      ? 30 * 24 * 60 * 60 // 30 days
+      : 24 * 60 * 60; // 1 day
+
+    const jwtToken = signToken(payload, "1d");
+    await setAuthCookie(jwtToken, maxAge);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
+```
+
+### Slack Integration (`app/api/auth/slack/callback/route.ts`)
+
+Handles the OAuth callback from Slack to connect a channel.
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import connectToDatabase from "@/lib/mongodb";
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const code = searchParams.get("code");
+  const state = searchParams.get("state"); // Format: "channel_{userId}_{channelIndex}"
+
+  if (!code || !state) {
+    return NextResponse.redirect(
+      new URL("/dashboard/settings?error=missing_params", request.url),
+    );
+  }
+
+  // ... Verify state and exchange code for token ...
+
+  const response = await fetch("https://slack.com/api/oauth.v2.access", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: formData,
+  });
+
+  const data = await response.json();
+
+  if (data.ok) {
+    // Save tokens to Channel model
+    // ...
+    return NextResponse.redirect(
+      new URL("/dashboard/settings?success=slack_connected", request.url),
+    );
+  }
+
+  return NextResponse.redirect(
+    new URL("/dashboard/settings?error=slack_failed", request.url),
+  );
+}
+```
+
+### Agent Authentication (`app/api/auth/agent/credentials/route.ts`)
+
+Used by the CLI (`devflow init`) to retrieve cloud credentials securely.
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { verifyAgentToken, extractToken } from "@/lib/agentAuth";
+import User from "@/models/User";
+import { decryptCredentials } from "@/lib/credentialEncryption";
+
+export async function GET(request: NextRequest) {
+  // 1. Verify Agent Token (from Authorization header)
+  const token = extractToken(request.headers.get("Authorization") || "");
+  const payload = verifyAgentToken(token);
+
+  if (!payload?.userId)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // 2. Fetch & Decrypt Credentials
+  const user = await User.findById(payload.userId).select("credentials");
+
+  // 3. Return Creds
+  return NextResponse.json({
+    success: true,
+    credentials: {
+      github_token: user?.credentials?.github
+        ? decrypt(user.credentials.github)
+        : undefined,
+    },
+  });
 }
 ```
 
