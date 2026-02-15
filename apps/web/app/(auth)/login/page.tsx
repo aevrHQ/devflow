@@ -74,10 +74,10 @@ function LoginForm() {
       if (!res.ok) throw new Error("Invalid code");
 
       // Success - Redirect
-      router.push(returnTo || "/dashboard");
+      // Force full reload to ensure auth cookies are picked up by server components immediately
+      window.location.href = returnTo || "/dashboard";
     } catch {
       setError("Invalid code. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -102,10 +102,10 @@ function LoginForm() {
       }
 
       setIsSuccess(true);
-      router.push(returnTo || "/dashboard");
+      // Force full reload
+      window.location.href = returnTo || "/dashboard";
     } catch (err) {
       setError((err as Error).message || "Login failed");
-    } finally {
       setIsLoading(false);
     }
   };
