@@ -24,6 +24,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { logout } from "@/app/actions/auth";
 
 export function NavUser({
   user,
@@ -101,7 +102,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()}>
               <LogoutCurve size={16} color="currentColor" variant="TwoTone" />
               Log out
             </DropdownMenuItem>
