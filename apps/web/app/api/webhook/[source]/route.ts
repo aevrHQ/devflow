@@ -48,12 +48,28 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     // Encrypt payload before saving (AES-256-GCM)
     const encryptedPayload = encryptJSON(payload);
 
-    await WebhookEvent.create({
-      source,
-      event: eventType,
-      payload: encryptedPayload,
-      status: "pending",
-    });
+    // Resolve userId early so it can be stored with the event
+    const url = new URL(request.url);
+    const userId = url.searchParams.get("userId");
+
+    // Store the event; non-fatal if it fails (e.g. DB over-quota).
+    // Webhook processing continues even if event logging fails, but
+    // event history may be incomplete for this request.
+    try {
+      await WebhookEvent.create({
+        source,
+        event: eventType,
+        payload: encryptedPayload,
+        status: "pending",
+        ...(userId ? { userId } : {}),
+      });
+    } catch (dbError) {
+      console.error(
+        "Failed to log webhook event to DB (non-fatal). " +
+          "Webhook will still be processed, but event history may be incomplete:",
+        dbError,
+      );
+    }
 
     // Store payload (legacy/file storage) - keeping this for now as it gives a public URL
     const payloadId = storePayload(source, payload);
@@ -105,9 +121,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     // Handle generic SaaS Webhooks (e.g. Render) via ?userId=...
-    const url = new URL(request.url);
-    const userId = url.searchParams.get("userId");
-
     if (userId && !installationId) {
       try {
         const user = await User.findById(userId);

@@ -7,6 +7,7 @@ export interface IWebhookEvent {
   payload: any;
   status: "pending" | "processed" | "failed" | "ignored";
   error?: string;
+  userId?: string;
   createdAt: Date;
 }
 
@@ -26,11 +27,17 @@ const WebhookEventSchema = new Schema<WebhookEventDocument>(
       default: "pending",
     },
     error: { type: String },
+    userId: { type: String },
   },
   {
     timestamps: true,
-    expireAfterSeconds: 60 * 60 * 24 * 7, // Auto-delete after 7 days
   },
+);
+
+// TTL index: auto-delete webhook events after 7 days
+WebhookEventSchema.index(
+  { createdAt: 1 },
+  { expireAfterSeconds: 60 * 60 * 24 * 7 },
 );
 
 const WebhookEvent =
